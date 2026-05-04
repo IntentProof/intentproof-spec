@@ -35,7 +35,7 @@
     "ci:local": "npm run typecheck && npm test"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
+    "@types/node": "^25.6.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "tsx": "^4.19.2",
