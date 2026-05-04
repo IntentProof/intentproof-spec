@@ -1,0 +1,41 @@
+{
+  "correlationId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "steps": [
+    {
+      "id": "step-auth-1",
+      "intent": "Let the shopper continue checkout by proving they are signed in.",
+      "action": "auth0.users.token.introspect",
+      "status": "ok",
+      "inputs": {
+        "token": "base64:AQIDBA=="
+      },
+      "output": {
+        "userId": "u_1"
+      },
+      "startedAt": "2026-05-04T12:02:00.000Z",
+      "completedAt": "2026-05-04T12:02:00.005Z",
+      "durationMs": 5,
+      "correlationId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    },
+    {
+      "id": "step-pay-2",
+      "intent": "Charge the authenticated customer for the items in their cart.",
+      "action": "stripe.payment_intent.confirm",
+      "status": "ok",
+      "inputs": {
+        "userId": "u_1",
+        "amount": 500
+      },
+      "output": {
+        "chargeId": "ch_999"
+      },
+      "startedAt": "2026-05-04T12:02:00.006Z",
+      "completedAt": "2026-05-04T12:02:00.050Z",
+      "durationMs": 44,
+      "correlationId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+      "attributes": {
+        "step": "payment"
+      }
+    }
+  ]
+}

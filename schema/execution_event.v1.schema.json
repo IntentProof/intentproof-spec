@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/execution_event.v1.schema.json",
+  "$comment": "Normative source tree: https://github.com/intentproof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
+  "title": "IntentProof ExecutionEvent v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "intent",
+    "action",
+    "status",
+    "inputs",
+    "startedAt",
+    "completedAt",
+    "durationMs"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable unique identifier for this execution record."
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Natural-language description of what the user or caller was trying to achieve (often a full sentence or question). No fixed grammar; SHOULD stay human-readable in logs and UIs."
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for the concrete operation. Many systems use hierarchical dotted names (e.g. vendor.resource.operation); REST paths, RPC names, or other conventions are allowed. The schema does not constrain the format."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"],
+      "description": "Terminal execution status."
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Captured call inputs. Values MUST be JSON-serializable (see semantics/serialization_rules.md).",
+      "additionalProperties": true
+    },
+    "output": {
+      "description": "Captured return value when status is ok, or optional captured value when captureError allows output on failure."
+    },
+    "error": {
+      "description": "Structured error when status is error.",
+      "$ref": "#/$defs/ExecutionError"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 / ISO 8601 instant when execution started."
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 / ISO 8601 instant when execution completed."
+    },
+    "durationMs": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Wall-clock duration in milliseconds between startedAt and completedAt."
+    },
+    "correlationId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional cross-cutting identifier for distributed tracing. MUST be trimmed and non-empty when present."
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Flat primitive key/value metadata attached to the event.",
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"]
+      },
+      "propertyNames": {
+        "pattern": "^[A-Za-z0-9_.:-]{1,256}$"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "ok" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["output"],
+        "not": { "required": ["error"] }
+      }
+    },
+    {
+      "if": {
+        "properties": { "status": { "const": "error" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["error"]
+      }
+    }
+  ],
+  "$defs": {
+    "ExecutionError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "message"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exception or error type name (e.g. Error, TypeError)."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message (may be empty string if the runtime provides none)."
+        },
+        "code": {
+          "type": "string",
+          "description": "Optional stable machine-readable code."
+        },
+        "stack": {
+          "type": ["string", "null"],
+          "description": "Optional stringified stack trace; null when stacks are suppressed."
+        },
+        "cause": {
+          "description": "Optional chained cause; MUST conform to ExecutionError when present.",
+          "$ref": "#/$defs/ExecutionError"
+        }
+      }
+    }
+  }
+}

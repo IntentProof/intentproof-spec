@@ -1,0 +1,44 @@
+{
+  "name": "intentproof-spec",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canonical IntentProof execution specification, schemas, golden oracles, and conformance tests for all SDKs.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "keywords": [
+    "intentproof",
+    "json-schema",
+    "observability",
+    "conformance",
+    "execution-events"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/intentproof/intentproof-spec.git"
+  },
+  "bugs": {
+    "url": "https://github.com/intentproof/intentproof-spec/issues"
+  },
+  "homepage": "https://github.com/intentproof/intentproof-spec#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "conformance": "bash scripts/run-conformance.sh",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate:event": "tsx tools/validate-event.ts",
+    "normalize:event": "tsx tools/normalize-event.ts",
+    "diff:events": "tsx tools/diff-events.ts",
+    "ci:local": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.5"
+  }
+}

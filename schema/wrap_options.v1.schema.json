@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/wrap_options.v1.schema.json",
+  "$comment": "Normative source tree: https://github.com/intentproof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
+  "title": "IntentProof WrapOptions v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Default natural-language intent for wrapped executions when the call site does not override it."
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Default operation identifier (often dotted like vendor.service.method); SDKs MAY derive from the callable when omitted."
+    },
+    "captureInputs": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, inputs MUST be serialized as an empty object {}."
+    },
+    "captureOutput": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false and status is ok, output MUST be null."
+    },
+    "captureError": {
+      "type": "boolean",
+      "default": true,
+      "description": "When true, failures MUST populate error; when false with captureOutput semantics, see semantics/wrap_semantics.md."
+    },
+    "captureStack": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, error.stack MUST be null on emitted events."
+    },
+    "propagateCorrelation": {
+      "type": "boolean",
+      "default": true,
+      "description": "When true, nested wraps inherit the active correlationId."
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"]
+      },
+      "description": "Static attributes merged into each emitted ExecutionEvent.attributes."
+    },
+    "exporterTimeoutMs": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Maximum time an exporter hook may block the wrap boundary; 0 means SDK default."
+    }
+  }
+}

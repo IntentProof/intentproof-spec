@@ -1,0 +1,21 @@
+{
+  "id": "01HZX8Q4K9M2V3N5P7R9T0W2Y4",
+  "intent": "Collect payment for the customer's cart using their saved card on file.",
+  "action": "stripe.payment_intent.confirm",
+  "status": "ok",
+  "inputs": {
+    "amount": 1299,
+    "currency": "USD"
+  },
+  "output": {
+    "chargeId": "ch_123"
+  },
+  "startedAt": "2026-05-04T12:00:00.000Z",
+  "completedAt": "2026-05-04T12:00:00.042Z",
+  "durationMs": 42,
+  "correlationId": "7b3f8c2e-4d1a-4b9e-9c0d-1e2f3a4b5c6d",
+  "attributes": {
+    "region": "us-east-1",
+    "sampleRate": 1
+  }
+}

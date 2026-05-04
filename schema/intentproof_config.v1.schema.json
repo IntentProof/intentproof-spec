@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/intentproof_config.v1.schema.json",
+  "$comment": "Normative source tree: https://github.com/intentproof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
+  "title": "IntentProof Runtime Config v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Config document version; MUST be 1 for this schema."
+    },
+    "defaultWrapOptions": {
+      "$ref": "./wrap_options.v1.schema.json",
+      "description": "Process-wide defaults merged under per-wrap options."
+    },
+    "exporters": {
+      "type": "array",
+      "description": "Ordered list of exporter identifiers or inline hooks (SDK-defined encoding).",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["console", "http", "otel", "custom"],
+            "description": "Exporter kind; custom MUST include implementation-specific fields."
+          },
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "Required for http exporters when used."
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Optional HTTP headers for http exporters."
+          },
+          "failOpen": {
+            "type": "boolean",
+            "default": true,
+            "description": "When true, exporter failures MUST NOT change user-visible outcomes."
+          }
+        }
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "headerName": {
+          "type": "string",
+          "default": "x-intentproof-correlation-id",
+          "description": "HTTP header used for inbound correlation extraction when applicable."
+        },
+        "generateOnMissing": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, SDK generates a UUID when no correlation is active."
+        }
+      }
+    },
+    "serialization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 32,
+          "description": "Maximum object graph depth for input/output capture."
+        },
+        "maxStringLength": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 65536,
+          "description": "Maximum serialized string length for any single field."
+        },
+        "redactKeys": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Case-insensitive key names to replace with [REDACTED] in captured objects."
+        }
+      }
+    }
+  }
+}
