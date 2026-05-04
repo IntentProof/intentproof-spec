@@ -1,6 +1,6 @@
 # Lifecycle Model (v1)
 
-Normative artifacts for this spec live in the repository **https://github.com/intentproof/intentproof-spec** (pinned tags recommended for SDK CI).
+Normative artifacts for the **IntentProof** specification live in **https://github.com/intentproof/intentproof-spec** (pinned tags recommended for SDK CI).
 
 ## Phases
 

@@ -35,7 +35,7 @@ SPEC_ROOT="$(resolve_root "${1:-}")"
 cd "$SPEC_ROOT"
 
 if [[ ! -f package.json ]] || [[ ! -d schema ]] || [[ ! -d golden ]]; then
-  echo "run-conformance.sh: '$SPEC_ROOT' does not look like intentproof-spec (missing package.json, schema/, or golden/)." >&2
+  echo "run-conformance.sh: '$SPEC_ROOT' does not look like an IntentProof specification checkout (intentproof-spec: missing package.json, schema/, or golden/)." >&2
   exit 2
 fi
 
@@ -54,7 +54,7 @@ if [[ -z "$node_major" || "$node_major" -lt 18 ]]; then
   exit 1
 fi
 
-echo "==> intentproof-spec conformance @ $SPEC_ROOT"
+echo "==> IntentProof specification conformance @ $SPEC_ROOT"
 
 if [[ "${INTENTPROOF_SPEC_SKIP_INSTALL:-0}" == "1" ]]; then
   if [[ ! -d node_modules ]]; then

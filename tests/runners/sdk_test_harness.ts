@@ -2,7 +2,7 @@
  * Cross-SDK conformance harness. Node SDKs import this module directly; Python/Java
  * SHOULD execute equivalent logic by loading the same golden files and schemas.
  *
- * Canonical spec repo: https://github.com/intentproof/intentproof-spec
+ * IntentProof specification (canonical repo): https://github.com/intentproof/intentproof-spec
  */
 import fs from "node:fs";
 import path from "node:path";
