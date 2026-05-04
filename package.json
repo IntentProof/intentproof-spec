@@ -39,7 +39,7 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.5"
   }
 }
