@@ -1,6 +1,6 @@
 # IntentProof Specification (`intentproof-spec`)
 
-**Canonical repository:** [github.com/intentproof/intentproof-spec](https://github.com/intentproof/intentproof-spec) (issues, releases, and source of truth).
+**Canonical repository:** [IntentProof specification on GitHub](https://github.com/intentproof/intentproof-spec) (issues, releases, and source of truth).
 
 This repo defines **execution semantics**, **JSON Schemas**, **golden oracles**, and **conformance tests** for IntentProof SDKs (Node.js, Python, Java). It is the authority layer for cross-language correctness: SDKs match only when they emit the same `ExecutionEvent` shapes and behavior described here.
 

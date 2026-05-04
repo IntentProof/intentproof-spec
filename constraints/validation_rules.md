@@ -4,7 +4,7 @@
 
 SDKs MUST validate serialized events with `schema/execution_event.v1.schema.json` using a Draft 2020-12 compatible validator (Ajv v8+, equivalent in other languages).
 
-Schema files declare `"$id"` under `https://intentproof.dev/schema/…` as a **logical document identifier** for validators; the **normative** bytes are the files in [intentproof-spec](https://github.com/intentproof/intentproof-spec) under `schema/` (see README for raw GitHub URLs). Do not assume that `$id` dereferences to a live HTTP response.
+Schema files declare `"$id"` under `https://intentproof.dev/schema/…` as a **logical document identifier** for validators; the **normative** bytes are the files in the [IntentProof specification repository (`intentproof-spec`)](https://github.com/intentproof/intentproof-spec) under `schema/` (see README for raw GitHub URLs). Do not assume that `$id` dereferences to a live HTTP response.
 
 ## Serialization rules
 

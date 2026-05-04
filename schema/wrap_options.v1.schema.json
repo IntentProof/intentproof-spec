@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://intentproof.dev/schema/wrap_options.v1.schema.json",
-  "$comment": "Normative source tree: https://github.com/intentproof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
+  "$comment": "Normative IntentProof source tree: https://github.com/intentproof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
   "title": "IntentProof WrapOptions v1",
   "type": "object",
   "additionalProperties": false,
