@@ -64,6 +64,7 @@ elif [[ -f "${sdk_root}/pyproject.toml" ]]; then
   require_file "scripts/verify-generated-types.sh"
   require_match "pyproject.toml" 'datamodel-code-generator==[0-9]+\.[0-9]+\.[0-9]+' "datamodel-code-generator must be exact-pinned"
   require_match "tox.ini" 'verify-generated-types\.sh' "tox static must run generated drift check"
+  require_match "tox.ini" 'check-no-handwritten-model-types\.sh' "tox static must run delegated no-handwritten checker"
 elif [[ -f "${sdk_root}/build.gradle.kts" ]]; then
   note "detected Java SDK"
   require_file "scripts/verify-generated-pojos.sh"
