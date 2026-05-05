@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canonicalJsonStringify, sortJsonValue } from "../lib/canonical-json.js";
+import { canonicalJsonStringify, sortJsonValue } from "../../tools/canonical/canonical-json.js";
 
 describe("canonicalJson", () => {
   it("sorts object keys deterministically", () => {

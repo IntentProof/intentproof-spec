@@ -1,12 +1,12 @@
 # Lifecycle Model (v1)
 
-Normative artifacts for the **IntentProof** specification live in **https://github.com/intentproof/intentproof-spec** (pinned tags recommended for SDK CI).
+Normative artifacts for the **IntentProof** specification live in **https://github.com/IntentProof/intentproof-spec** (pinned tags recommended for SDK CI).
 
 ## Phases
 
 1. **Configuration load**: `IntentProofConfig` validated against `schema/intentproof_config.v1.schema.json` (SDKs MAY subset unsupported fields but MUST preserve unknown keys only if schema allows—schema forbids unknown keys at root).
 2. **Registration**: Exporters register in stable order; order defines invocation sequence.
-3. **Wrap active**: Each wrap boundary runs Enter → Execute → Emit phases from `wrap_semantics.md`.
+3. **Wrap active**: Each wrap boundary runs Enter → Execute → Emit phases from `wrap_behavior.md`.
 4. **Shutdown** (optional SDK API): Flush exporters; after shutdown, wraps MUST either reject registration or no-op per SDK documentation—consistent across languages.
 
 ## Exporter contract

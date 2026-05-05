@@ -5,7 +5,7 @@ This document defines deterministic behavior for `wrap(fn, options)` (name may v
 ## Lifecycle
 
 1. **Enter**: Resolve effective `WrapOptions` by merging `IntentProofConfig.defaultWrapOptions` (if any) with call-site options, with call-site winning on conflicts.
-2. **Correlation snapshot**: Read the active `correlationId` from the runtime context store (see `correlation_rules.md`). If absent and `generateOnMissing` is true, generate a new UUID v4 string and bind it for the duration of this wrap unless overridden.
+2. **Correlation snapshot**: Read the active `correlationId` from the runtime context store (see `correlation.md`). If absent and `generateOnMissing` is true, generate a new UUID v4 string and bind it for the duration of this wrap unless overridden.
 3. **Start timestamp**: Capture `startedAt` as the earliest instant after correlation is resolved and before user code observes side effects from IntentProof (excluding exporter side effects).
 4. **Input capture**: If `captureInputs` is true, serialize arguments per serialization rules into `inputs`. If false, set `inputs` to `{}` exactly.
 5. **Execute user function**: Invoke the wrapped callable with the original arguments. Await the result if the callable returns a thenable (Promise or equivalent).

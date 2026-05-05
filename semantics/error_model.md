@@ -28,7 +28,7 @@
 ## captureError and captureOutput interaction
 
 - `captureError` does not remove the requirement to emit an `ExecutionEvent` with `status=error` when the wrapped callable throws.
-- Optional `output` on failure is controlled by wrap semantics (see `wrap_semantics.md`).
+- Optional `output` on failure is controlled by wrap semantics (see `wrap_behavior.md`).
 
 ## Guaranteed emission on failure
 

@@ -22,5 +22,8 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: npm
-      - name: Conformance (typecheck + Vitest + example smoke)
+      - name: Conformance (executable spec oracle)
+        env:
+          INTENTPROOF_REPLAY_VERIFY: "1"
+          INTENTPROOF_CONFORMANCE_JSON: "1"
         run: bash scripts/run-conformance.sh
