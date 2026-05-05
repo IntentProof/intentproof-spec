@@ -2,13 +2,14 @@ import { Ajv2020, type ErrorObject, type ValidateFunction } from "ajv/dist/2020.
 import addFormatsPlugin from "ajv-formats";
 import fs from "node:fs";
 import path from "node:path";
+import { loadSpecManifest } from "./spec-manifest.js";
 import { REPO_ROOT } from "./paths.js";
 
 /** ajv-formats default export is a callable plugin; its package typings disagree with verbatimModuleSyntax here. */
 const applyFormats = addFormatsPlugin as unknown as (ajv: Ajv2020) => void;
 
-function loadJson(file: string): object {
-  return JSON.parse(fs.readFileSync(path.join(REPO_ROOT, file), "utf8")) as object;
+function loadJson(relative: string): object {
+  return JSON.parse(fs.readFileSync(path.join(REPO_ROOT, relative), "utf8")) as object;
 }
 
 let executionValidator: ValidateFunction | undefined;
@@ -27,25 +28,28 @@ function createAjv(): Ajv2020 {
 
 export function getExecutionEventValidator(): ValidateFunction {
   if (!executionValidator) {
+    const m = loadSpecManifest();
     const ajv = createAjv();
-    executionValidator = ajv.compile(loadJson("schema/execution_event.v1.schema.json"));
+    executionValidator = ajv.compile(loadJson(m.schemas.execution_event));
   }
   return executionValidator;
 }
 
 export function getWrapOptionsValidator(): ValidateFunction {
   if (!wrapValidator) {
+    const m = loadSpecManifest();
     const ajv = createAjv();
-    wrapValidator = ajv.compile(loadJson("schema/wrap_options.v1.schema.json"));
+    wrapValidator = ajv.compile(loadJson(m.schemas.wrap_options));
   }
   return wrapValidator;
 }
 
 export function getIntentProofConfigValidator(): ValidateFunction {
   if (!configValidator) {
+    const m = loadSpecManifest();
     const ajv = createAjv();
-    const wrap = loadJson("schema/wrap_options.v1.schema.json");
-    const cfg = loadJson("schema/intentproof_config.v1.schema.json");
+    const wrap = loadJson(m.schemas.wrap_options);
+    const cfg = loadJson(m.schemas.intentproof_config);
     ajv.addSchema(wrap);
     configValidator = ajv.compile(cfg);
   }

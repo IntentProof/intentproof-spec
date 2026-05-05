@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import process from "node:process";
-import { sortJsonValue } from "../tests/lib/canonical-json.js";
+import { sortJsonValue } from "./canonical/canonical-json.js";
 
 function readJson(pathArg: string, label: string): unknown {
   if (!fs.existsSync(pathArg) || !fs.statSync(pathArg).isFile()) {

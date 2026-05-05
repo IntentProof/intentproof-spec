@@ -28,3 +28,17 @@ Values captured into `ExecutionEvent.inputs` and `ExecutionEvent.output` MUST ro
 ## Attributes vs inputs/output
 
 - `attributes` MUST remain flat primitives only (see `schema/execution_event.v1.schema.json`). Rich structures belong in `inputs` / `output` under the rules above.
+
+## Canonical JSON projection (normative)
+
+For **cross-SDK conformance**, any JSON value that participates in byte-identical checks (including full `ExecutionEvent` documents) MUST be projected through a single canonical form so that all languages agree after UTF-8 encoding.
+
+**Algorithm** (reference implementation: `tools/canonical/canonical-json.ts`; manifest entry `spec.json` → `tools.canonical_json`):
+
+1. **Sort keys** at every object depth: walk the value recursively; for each JSON object, emit a new object whose keys are the sorted lexicographic list of the original keys (Unicode code unit order as in ECMAScript `Array.prototype.sort` on strings). Arrays preserve element order; nested structures recurse.
+2. **Serialize** the sorted value with compact JSON: `JSON.stringify` with no added whitespace (same output shape as ECMA-262 `JSON.stringify` for the sorted structure).
+3. **Terminate** the document with exactly one line feed character (`U+000A`) after the closing token.
+
+The octet sequence is compared **verbatim**. Golden vectors live in `golden/canonicalization_cases.jsonl` (see `spec.json` → `goldens.canonicalization`). SDKs MUST implement this algorithm in native code or delegate to a shared library; hand-written “pretty print” JSON is non-conforming for oracle comparisons.
+
+This canonical projection applies **after** capture-time serialization rules above (e.g. redaction, depth limits) have produced a pure JSON value.

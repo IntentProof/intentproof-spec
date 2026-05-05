@@ -1,6 +1,7 @@
 {
   "name": "intentproof-spec",
   "version": "1.0.0",
+  "intentproofSpecVersion": "spec-v1.0.0",
   "private": true,
   "description": "Canonical IntentProof execution specification, schemas, golden oracles, and conformance tests for all SDKs.",
   "license": "Apache-2.0",
@@ -15,17 +16,20 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/intentproof/intentproof-spec.git"
+    "url": "https://github.com/IntentProof/intentproof-spec.git"
   },
   "bugs": {
-    "url": "https://github.com/intentproof/intentproof-spec/issues"
+    "url": "https://github.com/IntentProof/intentproof-spec/issues"
   },
-  "homepage": "https://github.com/intentproof/intentproof-spec#readme",
+  "homepage": "https://github.com/IntentProof/intentproof-spec#readme",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
     "conformance": "bash scripts/run-conformance.sh",
+    "check:spec-version": "tsx tools/check-spec-version.ts",
+    "spec:fingerprint": "tsx tools/spec-fingerprint.ts",
+    "replay:compare": "tsx tools/replay/compare-streams.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

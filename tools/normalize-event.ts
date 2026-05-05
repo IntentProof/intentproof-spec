@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import process from "node:process";
-import { canonicalJsonStringify } from "../tests/lib/canonical-json.js";
+import { canonicalJsonStringify } from "./canonical/canonical-json.js";
 
 const target = process.argv[2];
 if (!target || target === "--help" || target === "-h") {

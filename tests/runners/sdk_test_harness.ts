@@ -2,23 +2,29 @@
  * Cross-SDK conformance harness. Node SDKs import this module directly; Python/Java
  * SHOULD execute equivalent logic by loading the same golden files and schemas.
  *
- * IntentProof specification (canonical repo): https://github.com/intentproof/intentproof-spec
+ * IntentProof specification (canonical repo): https://github.com/IntentProof/intentproof-spec
+ * Entrypoint paths: spec.json
  */
 import fs from "node:fs";
-import path from "node:path";
-import { canonicalJsonStringify, sortJsonValue } from "../lib/canonical-json.js";
+import { canonicalJsonStringify, sortJsonValue } from "../../tools/canonical/canonical-json.js";
 import { analyzeExecutionEvent, type SemanticsIssue } from "../lib/semantics.js";
-import { REPO_ROOT, readUtf8 } from "../lib/paths.js";
+import { loadSpecManifest, resolveSpecPath } from "../lib/spec-manifest.js";
+import { readUtf8 } from "../lib/paths.js";
 import { formatAjvErrors, getExecutionEventValidator } from "../lib/validator.js";
 
 export { canonicalJsonStringify, sortJsonValue };
 
+const manifest = loadSpecManifest();
+
+/** Resolved paths from spec.json — single entrypoint for SDK vendoring. */
 export const SPEC_PATHS = {
-  executionEventSchema: path.join(REPO_ROOT, "schema/execution_event.v1.schema.json"),
-  wrapOptionsSchema: path.join(REPO_ROOT, "schema/wrap_options.v1.schema.json"),
-  intentproofConfigSchema: path.join(REPO_ROOT, "schema/intentproof_config.v1.schema.json"),
-  goldenExecutionEvents: path.join(REPO_ROOT, "golden/execution_event_cases.jsonl"),
-  goldenWrapBehavior: path.join(REPO_ROOT, "golden/wrap_behavior_cases.jsonl"),
+  executionEventSchema: resolveSpecPath(manifest.schemas.execution_event),
+  wrapOptionsSchema: resolveSpecPath(manifest.schemas.wrap_options),
+  intentproofConfigSchema: resolveSpecPath(manifest.schemas.intentproof_config),
+  goldenExecutionEvents: resolveSpecPath(manifest.goldens.execution_events),
+  goldenWrapBehavior: resolveSpecPath(manifest.goldens.wrap_behavior),
+  goldenCanonicalization: resolveSpecPath(manifest.goldens.canonicalization),
+  specVersion: manifest.version,
 } as const;
 
 export type GoldenExecutionEventCase = {
@@ -28,7 +34,7 @@ export type GoldenExecutionEventCase = {
 };
 
 export function loadGoldenExecutionEventCases(): GoldenExecutionEventCase[] {
-  const raw = readUtf8("golden/execution_event_cases.jsonl").trim().split("\n");
+  const raw = readUtf8(manifest.goldens.execution_events).trim().split("\n");
   return raw.filter(Boolean).map((line) => JSON.parse(line) as GoldenExecutionEventCase);
 }
 

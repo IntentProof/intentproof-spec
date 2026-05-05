@@ -1,0 +1,7 @@
+{"caseId":"flat-key-order","input":{"b":1,"a":2},"canonical":"{\"a\":2,\"b\":1}\n"}
+{"caseId":"nested-objects","input":{"z":1,"a":{"m":2,"b":1}},"canonical":"{\"a\":{\"b\":1,\"m\":2},\"z\":1}\n"}
+{"caseId":"array-preserves-order","input":{"k":[3,1,2]},"canonical":"{\"k\":[3,1,2]}\n"}
+{"caseId":"empty-object-root","input":{},"canonical":"{}\n"}
+{"caseId":"null-root","input":null,"canonical":"null\n"}
+{"caseId":"boolean-root","input":true,"canonical":"true\n"}
+{"caseId":"deep-mixed","input":{"event":{"id":"x","inputs":{},"attributes":{"z":0,"a":1}}},"canonical":"{\"event\":{\"attributes\":{\"a\":1,\"z\":0},\"id\":\"x\",\"inputs\":{}}}\n"}

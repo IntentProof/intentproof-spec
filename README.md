@@ -1,6 +1,6 @@
 # IntentProof Specification (`intentproof-spec`)
 
-**Canonical repository:** [IntentProof specification on GitHub](https://github.com/intentproof/intentproof-spec) (issues, releases, and source of truth).
+**Canonical repository:** [IntentProof specification on GitHub](https://github.com/IntentProof/intentproof-spec) (issues, releases, and source of truth).
 
 This repo defines **execution semantics**, **JSON Schemas**, **golden oracles**, and **conformance tests** for IntentProof SDKs (Node.js, Python, Java). It is the authority layer for cross-language correctness: SDKs match only when they emit the same `ExecutionEvent` shapes and behavior described here.
 
@@ -8,9 +8,9 @@ This repo defines **execution semantics**, **JSON Schemas**, **golden oracles**,
 
 | Schema | Raw on `main` |
 |--------|----------------|
-| `execution_event.v1` | [`execution_event.v1.schema.json`](https://raw.githubusercontent.com/intentproof/intentproof-spec/main/schema/execution_event.v1.schema.json) |
-| `wrap_options.v1` | [`wrap_options.v1.schema.json`](https://raw.githubusercontent.com/intentproof/intentproof-spec/main/schema/wrap_options.v1.schema.json) |
-| `intentproof_config.v1` | [`intentproof_config.v1.schema.json`](https://raw.githubusercontent.com/intentproof/intentproof-spec/main/schema/intentproof_config.v1.schema.json) |
+| `execution_event.v1` | [`execution_event.v1.schema.json`](https://raw.githubusercontent.com/IntentProof/intentproof-spec/main/schema/execution_event.v1.schema.json) |
+| `wrap_options.v1` | [`wrap_options.v1.schema.json`](https://raw.githubusercontent.com/IntentProof/intentproof-spec/main/schema/wrap_options.v1.schema.json) |
+| `intentproof_config.v1` | [`intentproof_config.v1.schema.json`](https://raw.githubusercontent.com/IntentProof/intentproof-spec/main/schema/intentproof_config.v1.schema.json) |
 
 Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. That string is a **JSON Schema document identifier** (stable name and `$ref` base for validators). **It does not imply** a public HTTP server at that host. The **normative** text is always the file in this repository at the paths above.
 
@@ -27,13 +27,16 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `semantics/` | Normative prose for wrap behavior, correlation, errors, lifecycle, exporters, and serialization. |
 | `constraints/` | Invariants, validation rules, and required field matrices. |
 | `examples/` | Curated JSON fixtures for manual review and schema smoke tests. |
+| `spec.json` | **Single manifest:** schema paths, golden paths, semantics paths, spec version — SDKs anchor here. |
 | `golden/` | Machine-readable oracle lines (`.jsonl`) consumed by CI in every SDK. |
-| `tests/conformance/` | Vitest suite: schema gates, semantics checks, golden equivalence, correlation fixtures. |
-| `tests/lib/` | Shared validators (`validator.ts`, `semantics.ts`, `canonical-json.ts`). |
+| `tests/conformance/` | Vitest suite: schema gates, semantics checks, golden equivalence, canonicalization vectors. |
+| `tests/lib/` | Shared validators (`validator.ts`, `semantics.ts`, `spec-manifest.ts`). |
 | `tests/runners/sdk_test_harness.ts` | Stable entrypoint other SDKs vendor or submodule to reuse oracle logic. |
-| `sdk_contracts/` | Language-native contract sketches aligned with the schemas. |
-| `tools/` | CLI helpers for validating, canonicalizing, and diffing events. |
-| `scripts/run-conformance.sh` | **SDK CI entrypoint:** installs deps, runs `tsc`, Vitest conformance, and example event validation. |
+| `sdk_contracts/` | Type-generation rules (`type_generation.md`), drift hardening checklist (`drift_hardening_checklist.md`), conformance boundary notes (`conformance_reality.md`), version pinning (`spec_version_pinning.md`). |
+| `tools/canonical/` | Normative canonical JSON (`canonical-json.ts`) referenced by `semantics/serialization_rules.md`. |
+| `tools/replay/` | Cross-SDK JSONL stream comparison (`compare-streams.ts`) post-canonicalization. |
+| `tools/` | CLI helpers for validating, canonicalizing, diffing, spec version checks, conformance JSON reports. |
+| `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, pins `intentproofSpecVersion`, `tsc`, Vitest, smoke, optional replay & JSON output. |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
 | `CHANGELOG.md` | Human-readable history of spec-facing changes. |
 | `.github/` | CI workflow (`workflows/ci.yml`) and Dependabot config. |
@@ -50,14 +53,19 @@ SDK packages SHOULD declare the **spec git tag** (or internal package version, i
 
 ## Integration for SDK maintainers
 
-1. **Vendor or submodule** this repository next to the SDK (or publish an internal npm package that ships `schema/`, `golden/`, and harness entrypoints). In CI, run **`scripts/run-conformance.sh`** (see below) against the pinned checkout so every language runs the same oracle.
-2. **Validate every emitted event** against `schema/execution_event.v1.schema.json` using a Draft 2020-12 compatible validator.
+1. **Vendor or submodule** this repository next to the SDK and treat **`spec.json` as the only path index** to schemas, goldens, and semantics. In CI, run **`scripts/run-conformance.sh`** against the pinned checkout so every language runs the same oracle. Declare **`intentproofSpecVersion`** (see `sdk_contracts/spec_version_pinning.md`) equal to `spec.json.version`.
+2. **Validate every emitted event** against the execution-event schema from `spec.json` → `schemas.execution_event` using a Draft 2020-12 compatible validator.
 3. **Run semantic checks** equivalent to `tests/lib/semantics.ts` after schema success (duration vs timestamps, attribute primitive shape, forbidden `error` field on `ok`, correlation trimming).
 4. **Load `golden/execution_event_cases.jsonl`** and assert `shouldValidate` matches the outcome of schema+semantics for each `event` payload. Any drift fails CI.
 5. **Load `golden/wrap_behavior_cases.jsonl`** in language-specific tests to assert wrap defaults, capture flags, correlation propagation, and exporter ordering behaviors match the expectations encoded in each JSON object.
-6. **Mirror contracts** in `sdk_contracts/` when evolving public types.
+6. **Generate types** from JSON Schema per `sdk_contracts/type_generation.md`; do not hand-edit `ExecutionEvent` / `WrapOptions` as the source of truth.
+7. **Audit SDK hardening controls** from this repo when wiring CI/release gates:
 
-Serialization rules for captured payloads are normative in `semantics/serialization_rules.md` (see also `constraints/validation_rules.md`).
+```bash
+bash scripts/check-sdk-hardening.sh /absolute/path/to/intentproof-sdk-<node|python|java>
+```
+
+Serialization rules for captured payloads are normative in `semantics/serialization_rules.md` (see also `constraints/validation_rules.md`). Byte-identical `ExecutionEvent` comparisons use the canonical projection in that document, implemented under `tools/canonical/`.
 
 ### Node.js
 
@@ -79,7 +87,7 @@ Serialization rules for captured payloads are normative in `semantics/serializat
 
 ## Continuous integration
 
-GitHub Actions runs the **language-agnostic conformance script** on every push and pull request (see `.github/workflows/ci.yml`). Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
+GitHub Actions runs the **language-agnostic conformance script** on every push and pull request (see `.github/workflows/ci.yml`). A scheduled cross-SDK parity workflow (`.github/workflows/cross-sdk-parity.yml`) audits SDK hardening controls and runs SDK-side conformance against the same pinned spec checkout. Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
 
 ### SDK CI (Python / Java / any runner)
 
@@ -118,13 +126,14 @@ npm run conformance            # install + typecheck + vitest + example smoke (s
 npm run validate:event -- examples/success_event.json
 npm run normalize:event -- examples/success_event.json
 npm run diff:events -- examples/success_event.json examples/error_event.json
+npm run spec:fingerprint       # deterministic schema fingerprint from spec.json -> schemas.*
 npm audit                       # expect 0 vulnerabilities on a fresh install
 ```
 
 ## Success criteria (release gate)
 
 - Node, Python, and Java SDKs each execute the **same golden assertions** (file-for-file) against `golden/`.
-- `ExecutionEvent` payloads are byte-identical after **canonical normalization** (`tools/normalize-event.ts`, helpers in `tests/lib/canonical-json.ts`) for deterministic fixtures.
+- `ExecutionEvent` payloads are byte-identical after **canonical normalization** (`tools/normalize-event.ts`, `tools/canonical/canonical-json.ts`) for deterministic fixtures.
 - No semantic drift: wrap ordering, correlation propagation, and error mapping follow `semantics/*.md`.
 - CI fails on any extra root fields (`additionalProperties: false` in schema) or forbidden states (`shouldValidate: false` golden cases must keep failing).
 

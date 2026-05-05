@@ -1,0 +1,72 @@
+name: Cross-SDK Parity
+
+on:
+  schedule:
+    - cron: "15 6 * * 1"
+  workflow_dispatch:
+  push:
+    paths:
+      - "schema/**"
+      - "golden/**"
+      - "tests/lib/semantics.ts"
+      - "spec.json"
+      - "scripts/run-conformance.sh"
+      - ".github/workflows/cross-sdk-parity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk:
+          - repo: IntentProof/intentproof-sdk-node
+            path: intentproof-sdk-node
+            verify: scripts/verify-generated-types.sh
+            conformance: scripts/spec-conformance.sh
+          - repo: IntentProof/intentproof-sdk-python
+            path: intentproof-sdk-python
+            verify: scripts/verify-generated-types.sh
+            conformance: scripts/spec-conformance.sh
+          - repo: IntentProof/intentproof-sdk-java
+            path: intentproof-sdk-java
+            verify: scripts/verify-generated-pojos.sh
+            conformance: scripts/spec-conformance.sh
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: intentproof-spec
+
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.sdk.repo }}
+          path: ${{ matrix.sdk.path }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: intentproof-spec/.nvmrc
+          cache: npm
+          cache-dependency-path: intentproof-spec/package-lock.json
+
+      - name: SDK hardening contract audit
+        run: |
+          bash intentproof-spec/scripts/check-sdk-hardening.sh "${{ github.workspace }}/${{ matrix.sdk.path }}"
+
+      - name: Verify generated artifacts are up to date
+        working-directory: ${{ matrix.sdk.path }}
+        env:
+          INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
+        run: bash "${{ matrix.sdk.verify }}"
+
+      - name: Run spec conformance from SDK
+        working-directory: ${{ matrix.sdk.path }}
+        env:
+          INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
+          INTENTPROOF_REPLAY_VERIFY: "1"
+          INTENTPROOF_CONFORMANCE_JSON: "1"
+        run: bash "${{ matrix.sdk.conformance }}"

@@ -1,0 +1,23 @@
+{
+  "version": "spec-v1.0.0",
+  "schemas": {
+    "execution_event": "schema/execution_event.v1.schema.json",
+    "wrap_options": "schema/wrap_options.v1.schema.json",
+    "intentproof_config": "schema/intentproof_config.v1.schema.json"
+  },
+  "goldens": {
+    "execution_events": "golden/execution_event_cases.jsonl",
+    "wrap_behavior": "golden/wrap_behavior_cases.jsonl",
+    "canonicalization": "golden/canonicalization_cases.jsonl"
+  },
+  "semantics": {
+    "wrap": "semantics/wrap_behavior.md",
+    "correlation": "semantics/correlation.md",
+    "serialization": "semantics/serialization_rules.md"
+  },
+  "tools": {
+    "canonical_json": "tools/canonical/canonical-json.ts",
+    "replay_compare": "tools/replay/compare-streams.ts",
+    "spec_fingerprint": "tools/spec-fingerprint.ts"
+  }
+}
