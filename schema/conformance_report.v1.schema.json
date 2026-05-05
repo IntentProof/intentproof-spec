@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/conformance_report.v1.schema.json",
+  "$comment": "Normative IntentProof source tree: https://github.com/IntentProof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
+  "title": "IntentProof Conformance Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "specFingerprint",
+    "sdk",
+    "environment",
+    "results",
+    "replay",
+    "generatedAt"
+  ],
+  "properties": {
+    "specVersion": { "type": "string", "minLength": 1 },
+    "specFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 over all spec.json referenced schemas, goldens, and semantics."
+    },
+    "sdk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "language", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "language": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "os"],
+      "properties": {
+        "runtime": { "type": "string", "minLength": 1 },
+        "os": { "type": "string", "minLength": 1 }
+      }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaValidation",
+        "semanticValidation",
+        "goldenTests",
+        "replayParity"
+      ],
+      "properties": {
+        "schemaValidation": { "$ref": "#/$defs/ResultStatus" },
+        "semanticValidation": { "$ref": "#/$defs/ResultStatus" },
+        "goldenTests": { "$ref": "#/$defs/ResultStatus" },
+        "replayParity": { "$ref": "#/$defs/ResultStatus" }
+      }
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalHash", "streamHashes"],
+      "properties": {
+        "canonicalHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "streamHashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "ResultStatus": {
+      "type": "string",
+      "enum": ["pass", "fail", "skip"]
+    }
+  }
+}

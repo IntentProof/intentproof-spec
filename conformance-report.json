@@ -1,0 +1,27 @@
+{
+  "specVersion": "spec-v1.0.0",
+  "specFingerprint": "58c8e26829e9662f8993d7442440bec304f20430683fdd9b5d400626feaabb28",
+  "sdk": {
+    "name": "intentproof-spec",
+    "language": "spec",
+    "version": "1.0.0"
+  },
+  "environment": {
+    "runtime": "node v22.22.0",
+    "os": "linux 6.19.10-300.fc44.aarch64"
+  },
+  "results": {
+    "schemaValidation": "pass",
+    "semanticValidation": "pass",
+    "goldenTests": "pass",
+    "replayParity": "pass"
+  },
+  "replay": {
+    "canonicalHash": "aee9ba9cebe4c3491ab1f297fdf98bbf1eb1cc3bf4607a4b5d385299aaf08027",
+    "streamHashes": {
+      "stream1": "aee9ba9cebe4c3491ab1f297fdf98bbf1eb1cc3bf4607a4b5d385299aaf08027",
+      "stream2": "aee9ba9cebe4c3491ab1f297fdf98bbf1eb1cc3bf4607a4b5d385299aaf08027"
+    }
+  },
+  "generatedAt": "2026-05-05T14:02:24.221Z"
+}
