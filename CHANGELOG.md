@@ -20,6 +20,7 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
+- Hardening audit (`scripts/check-sdk-hardening.sh`): Python SDK `tox.ini` must run `check-no-handwritten-model-types.sh` in the static env (parity with Node/Java delegated checker wiring).
 - Add cross-SDK hardening checklist (`sdk_contracts/drift_hardening_checklist.md`) and tighten type-generation policy to require exact-pinned generator versions.
 - Add SDK hardening contract audit script (`scripts/check-sdk-hardening.sh`) and wire parity/audit automation (`.github/workflows/cross-sdk-parity.yml`).
 - Add shared no-handwritten-model audit (`scripts/check-sdk-no-handwritten-model-types.sh`) and require SDK hardening checks to delegate to that spec-owned policy script.
