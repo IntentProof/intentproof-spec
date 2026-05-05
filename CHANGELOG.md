@@ -4,11 +4,28 @@ Repository: [IntentProof specification (`intentproof-spec`)](https://github.com/
 
 All notable changes to this specification repository are documented here. Versioning follows Git tags `spec-vMAJOR.MINOR.PATCH` (see README).
 
+## How this changelog differs from app/package repos
+
+- This repository is a **specification authority**, not a deployable app package.
+- Versions here track the **IntentProof contract** (`schema/`, `semantics/`, `golden/`),
+  published as spec tags like `spec-v1.0.0`.
+- Changelog sections therefore describe **spec-version impact**, not binary/package
+  release notes.
+- `PATCH`/`MINOR`/`MAJOR` should be interpreted as contract compatibility levels:
+  - `PATCH`: non-breaking clarifications/tooling/docs/tests.
+  - `MINOR`: backward-compatible contract additions.
+  - `MAJOR`: breaking contract changes requiring SDK major migration.
+- Non-normative repo/tooling changes may appear in `Unreleased`, and should be
+  labeled clearly when they do not change normative contract behavior.
+
 ## Unreleased
 
 - Add cross-SDK hardening checklist (`sdk_contracts/drift_hardening_checklist.md`) and tighten type-generation policy to require exact-pinned generator versions.
 - Add SDK hardening contract audit script (`scripts/check-sdk-hardening.sh`) and wire parity/audit automation (`.github/workflows/cross-sdk-parity.yml`).
 - Add deterministic schema fingerprint tooling (`tools/spec-fingerprint.ts`, `npm run spec:fingerprint`) and manifest registration (`spec.json` tools map).
+- Add `conformance-report.v1` system: schema (`schema/conformance_report.v1.schema.json`), report emitter (`tools/conformance-report.ts`), and docs (`docs/conformance-report.md`).
+- `scripts/run-conformance.sh` now emits validated `conformance-report.json` with deterministic spec/replay fingerprints and pass/fail phase results.
+- `spec.json` now indexes `schemas.conformance_report`; conformance tests assert manifest coverage.
 - Docs: README now covers hardening audit usage, cross-SDK parity workflow, and schema fingerprint command.
 - **IntentProof branding:** README and this changelog's repository link text; `semantics/lifecycle_model.md` and `constraints/validation_rules.md`; v1 schema `$comment` lines (`execution_event`, `wrap_options`, `intentproof_config`); `package.json` **IntentProof** npm keyword; `scripts/run-conformance.sh` validation and progress messages; `tests/runners/sdk_test_harness.ts` module header. Public GitHub paths remain `github.com/IntentProof/…`; wire identifiers unchanged.
 - Document canonical GitHub URL across README, NOTICE, scripts, and harness; add `homepage` in `package.json`.

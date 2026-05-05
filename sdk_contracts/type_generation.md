@@ -8,6 +8,8 @@ The IntentProof specification defines runtime truth in **`spec.json`** and **`sc
 2. **CI enforcement**: Each SDK’s CI MUST run generation (or verify generated output is up to date) such that drift from the pinned spec revision fails the build.
 3. **Contract sketches** (`sdk_contracts/*.ts`, `*.py`, `*.java`) are illustrative only—documentation for humans—until replaced by generated output checked into `src/generated/` (or equivalent). They MUST NOT be edited as the primary definition of fields or optionality.
 4. **Validators**: Runtime validation MUST use the same schema documents as code generation (same file paths relative to the vendored spec tree).
+5. **Conformance artifact**: SDK CI MUST emit `conformance-report.json` from the shared
+   `intentproof-spec` runner (`INTENTPROOF_CONFORMANCE_JSON=1`) and upload it as a CI artifact.
 
 ## Suggested generators
 

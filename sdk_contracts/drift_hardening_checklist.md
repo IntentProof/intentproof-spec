@@ -41,6 +41,7 @@ Use this checklist for **TypeScript (Node)**, **Python**, and **Java** SDK PR re
 ## 6) Conformance and behavior parity
 
 - [ ] SDK CI runs `scripts/spec-conformance.sh` against pinned spec checkout.
+- [ ] SDK CI emits and uploads `conformance-report.json` (v1) from the shared spec runner.
 - [ ] SDK-native golden tests verify emitted events against `golden/execution_event_cases.jsonl`.
 - [ ] Post-schema semantics (from `tests/lib/semantics.ts`) are mirrored in SDK tests.
 

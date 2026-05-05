@@ -10,6 +10,7 @@ describe("spec manifest (spec.json)", () => {
     const m = loadSpecManifest();
     expect(m.version).toMatch(/^spec-v1\./);
     expect(m.schemas.execution_event).toContain("execution_event");
+    expect(m.schemas.conformance_report).toContain("conformance_report");
     expect(m.goldens.execution_events).toContain("execution_event_cases");
     expect(m.goldens.canonicalization).toContain("canonicalization_cases");
     expect(m.tools?.spec_fingerprint).toContain("spec-fingerprint");

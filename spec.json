@@ -3,7 +3,8 @@
   "schemas": {
     "execution_event": "schema/execution_event.v1.schema.json",
     "wrap_options": "schema/wrap_options.v1.schema.json",
-    "intentproof_config": "schema/intentproof_config.v1.schema.json"
+    "intentproof_config": "schema/intentproof_config.v1.schema.json",
+    "conformance_report": "schema/conformance_report.v1.schema.json"
   },
   "goldens": {
     "execution_events": "golden/execution_event_cases.jsonl",

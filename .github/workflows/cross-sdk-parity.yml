@@ -24,15 +24,18 @@ jobs:
       fail-fast: false
       matrix:
         sdk:
-          - repo: IntentProof/intentproof-sdk-node
+          - id: node
+            repo: IntentProof/intentproof-sdk-node
             path: intentproof-sdk-node
             verify: scripts/verify-generated-types.sh
             conformance: scripts/spec-conformance.sh
-          - repo: IntentProof/intentproof-sdk-python
+          - id: python
+            repo: IntentProof/intentproof-sdk-python
             path: intentproof-sdk-python
             verify: scripts/verify-generated-types.sh
             conformance: scripts/spec-conformance.sh
-          - repo: IntentProof/intentproof-sdk-java
+          - id: java
+            repo: IntentProof/intentproof-sdk-java
             path: intentproof-sdk-java
             verify: scripts/verify-generated-pojos.sh
             conformance: scripts/spec-conformance.sh
@@ -69,4 +72,67 @@ jobs:
           INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
           INTENTPROOF_REPLAY_VERIFY: "1"
           INTENTPROOF_CONFORMANCE_JSON: "1"
-        run: bash "${{ matrix.sdk.conformance }}"
+        run: |
+          set -euo pipefail
+          bash "${{ matrix.sdk.conformance }}" | tee conformance.log
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import re
+
+          log = pathlib.Path("conformance.log").read_text(encoding="utf-8")
+          json_lines = [
+              ln for ln in log.splitlines() if re.match(r'^\s*\{.*\}\s*$', ln)
+          ]
+          if not json_lines:
+              raise SystemExit("missing conformance JSON line in output")
+          report = json.loads(json_lines[-1])
+          results = report.get("results", {})
+          norm = {
+              "specVersion": report.get("specVersion"),
+              "specFingerprint": report.get("specFingerprint"),
+              "results": results,
+          }
+          pathlib.Path("parity-stream.jsonl").write_text(
+              json.dumps(norm, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+
+      - name: Upload parity stream artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-stream-${{ matrix.sdk.id }}
+          path: ${{ matrix.sdk.path }}/parity-stream.jsonl
+          if-no-files-found: error
+
+  aggregate-compare:
+    runs-on: ubuntu-latest
+    needs: parity
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: parity-stream-node
+          path: parity-streams/node
+      - uses: actions/download-artifact@v4
+        with:
+          name: parity-stream-python
+          path: parity-streams/python
+      - uses: actions/download-artifact@v4
+        with:
+          name: parity-stream-java
+          path: parity-streams/java
+
+      - name: Compare SDK output streams centrally
+        run: |
+          npm exec -- tsx tools/replay/compare-streams.ts \
+            parity-streams/node/parity-stream.jsonl \
+            parity-streams/python/parity-stream.jsonl \
+            parity-streams/java/parity-stream.jsonl
