@@ -22,6 +22,7 @@ All notable changes to this specification repository are documented here. Versio
 
 - Add cross-SDK hardening checklist (`sdk_contracts/drift_hardening_checklist.md`) and tighten type-generation policy to require exact-pinned generator versions.
 - Add SDK hardening contract audit script (`scripts/check-sdk-hardening.sh`) and wire parity/audit automation (`.github/workflows/cross-sdk-parity.yml`).
+- Add shared no-handwritten-model audit (`scripts/check-sdk-no-handwritten-model-types.sh`) and require SDK hardening checks to delegate to that spec-owned policy script.
 - Add deterministic schema fingerprint tooling (`tools/spec-fingerprint.ts`, `npm run spec:fingerprint`) and manifest registration (`spec.json` tools map).
 - Add `conformance-report.v1` system: schema (`schema/conformance_report.v1.schema.json`), report emitter (`tools/conformance-report.ts`), and docs (`docs/conformance-report.md`).
 - `scripts/run-conformance.sh` now emits validated `conformance-report.json` with deterministic spec/replay fingerprints and pass/fail phase results.

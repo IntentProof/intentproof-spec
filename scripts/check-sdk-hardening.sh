@@ -47,6 +47,8 @@ PY
 note "auditing ${sdk_root}"
 require_file "scripts/check-no-bundled-schema.sh"
 require_file "scripts/check-sdk-spec-pin.sh"
+require_file "scripts/check-no-handwritten-model-types.sh"
+require_match "scripts/check-no-handwritten-model-types.sh" 'check-sdk-no-handwritten-model-types\.sh' "must delegate to spec shared no-handwritten checker"
 
 if [[ -f "${sdk_root}/packages/sdk/package.json" ]]; then
   note "detected Node SDK"
