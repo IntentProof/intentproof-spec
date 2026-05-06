@@ -25,7 +25,11 @@ All notable changes to this specification repository are documented here. Versio
   avoid false negatives while SDK pin/generated updates land after spec
   merges; update `ci.yml` PR parity-policy note text to match this model and
   direct maintainers to run parity manually post-merge (or rely on weekly
-  schedule).
+  schedule). Add Phase 1 tag-anchored parity controls: optional
+  `workflow_dispatch.spec_ref`, automatic target-ref resolution (latest
+  `spec-v*` tag by default), per-SDK adoption classification against target
+  commit, adoption-metadata summaries, and conditional stream-compare skipping
+  when one or more SDKs are pending adoption.
 
 ## 1.0.1 — 2026-05-06
 
