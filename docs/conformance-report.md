@@ -86,9 +86,8 @@ cross-run auditing and future certificate workflows.
 
 ## Future certificate issuance
 
-`conformance-report.json` is designed as the canonical input artifact for
-certificate issuance in a future phase:
-
-- deterministic spec fingerprint binds report to normative spec content
-- replay/canonical hashes bind report to cross-SDK output equivalence
-- structured phase results support policy-based issuance gates
+`conformance-report.json` is the canonical input for **conformance-certificate**
+issuance: when `INTENTPROOF_CONFORMANCE_JSON=1`, `run-conformance.sh` runs
+`tools/conformance-certificate.ts` after the report is written, producing
+`conformance-certificate.json` (`schema/conformance_certificate.v1`) if issuance
+policy gates pass. See `docs/certificate-issuance-policy.md`.

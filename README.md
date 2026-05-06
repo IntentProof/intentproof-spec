@@ -139,8 +139,9 @@ Equivalent from inside a clone of this repo: `npm run conformance` (runs the sam
 This is the **canonical executable oracle** for schema, semantics, and golden JSONL expectations; SDKs SHOULD pin a spec git tag and run this script in CI whenever that pin changes.
 
 When `INTENTPROOF_CONFORMANCE_JSON=1`, the runner emits a validated
-`conformance-report.json` artifact (`schema/conformance_report.v1`); see
-`docs/conformance-report.md`.
+`conformance-report.json` (`schema/conformance_report.v1`) and, when issuance
+gates pass, `conformance-certificate.json` (`schema/conformance_certificate.v1`);
+see `docs/conformance-report.md` and `docs/certificate-issuance-policy.md`.
 
 ## Commands
 
