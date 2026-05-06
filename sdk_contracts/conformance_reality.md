@@ -20,4 +20,4 @@ Without (2), an SDK can still **drift in emitted `ExecutionEvent` shape or seman
 
 Keep `tests/lib/semantics.ts` in the spec repo as the **single source of truth for the rule list**; **Python/Java/Node** golden tests should stay **manually aligned** with that file when semantics evolve (or share generated assertions in a future phase).
 
-Recommended hardening: run a scheduled cross-SDK parity workflow that checks generation drift gates plus SDK-side `spec-conformance.sh` against the same pinned `intentproof-spec` checkout (nightly + on schema/golden changes).
+Recommended hardening: run the cross-SDK parity workflow on a **schedule** (and **`workflow_dispatch`** against a **spec tag/commit**) so generation drift gates and SDK-side `spec-conformance.sh` run against the **same pinned `intentproof-spec` checkout** as the resolved target—not on every spec merge, which races SDK pin landings.

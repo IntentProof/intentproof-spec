@@ -19,6 +19,40 @@ This repository is the **normative** source for JSON Schemas, golden oracles, se
 
 **Shell scripts:** `scripts/*.sh` are linted with **shellcheck** in CI.
 
+## GitHub Actions secrets and variables
+
+Configure these on the **IntentProof** org (or on **`intentproof-spec`** only, if you scope access that way). Names must match exactly.
+
+### SDK release train (`.github/workflows/sdk-release-train.yml`)
+
+Opens pin-bump PRs in the Node, Python, and Java SDK repos after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT.
+
+| Kind | Name | Purpose |
+|------|------|---------|
+| **Organization variable** | `INTENTPROOF_BOT_APP_ID` | Numeric **App ID** from the GitHub App settings page. If unset, the workflow skips bump jobs and prints a setup note. |
+| **Organization secret** | `INTENTPROOF_BOT_APP_PRIVATE_KEY` | Full **PEM** private key generated for the app (`-----BEGIN …-----` through `-----END …-----`). Used by `actions/create-github-app-token`. |
+
+**GitHub App repository permissions** (for the three SDK repositories only): **Contents** read/write, **Pull requests** read/write. Install the app on the org and grant access to **`intentproof-sdk-node`**, **`intentproof-sdk-python`**, and **`intentproof-sdk-java`**.
+
+Remove any legacy **`INTENTPROOF_BOT_TOKEN`** org secret once everything uses the app.
+
+### Cross-SDK parity (`.github/workflows/cross-sdk-parity.yml`)
+
+Runs on a **weekly schedule** and **`workflow_dispatch`** only. No org secrets are required.
+
+Manual dispatch inputs (optional):
+
+| Input | Effect |
+|-------|--------|
+| **`spec_ref`** | Spec tag, branch, or SHA to validate against. Default: latest **`spec-v*`** tag (or workflow SHA if no such tag exists). |
+| **`require_full_adoption`** | When **true**, the workflow **fails** if any SDK’s declared pin commit does not match the resolved target commit. Default: **false** (pending adoption is reported but does not fail the run). |
+
+### Main CI / schema policy (`.github/workflows/ci.yml`)
+
+| Kind | Name | Purpose |
+|------|------|---------|
+| **Repository variable** (optional break-glass) | `SPEC_SCHEMA_COMPAT_OVERRIDE` | Set to **`true`** to allow a PR classified as **BREAKING** without label **`spec-breaking-approved`**. Prefer the label for normal process. |
+
 ## Terminology (shared with SDK repos)
 
 Use the same names across repositories and CI so pins and scripts stay unambiguous.

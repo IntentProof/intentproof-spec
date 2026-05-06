@@ -1,12 +1,11 @@
 name: Cross-SDK Parity
 
-# SDK conformance/hardening requires each SDK's declared intentproofSpecCommit to equal this repo's
-# checkout HEAD (the triggering ref). After advancing intentproof-spec/main, merge SDK PRs that bump
-# pins before expecting this workflow to pass.
+# Tag-anchored parity: resolve a target spec ref (workflow_dispatch.spec_ref, else latest spec-v*
+# tag), check out that commit, and compare each SDK's declared pin to the target. Adopted SDKs run
+# hardening, generated-artifact verify, conformance, and stream compare; pending adoption is reported
+# without failing the run unless require_full_adoption is enabled.
 #
-# Triggers:
-# - schedule / workflow_dispatch only: full parity stream compare.
-#   (No push trigger to avoid false negatives while SDK pin/update PRs land.)
+# Triggers: schedule + workflow_dispatch only (no default-branch push).
 
 on:
   schedule:
