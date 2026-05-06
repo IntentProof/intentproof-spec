@@ -20,26 +20,19 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **Parity workflow policy:** narrow `cross-sdk-parity` triggers to
-  `schedule` + `workflow_dispatch` only (remove default-branch `push`) to
-  avoid false negatives while SDK pin/generated updates land after spec
-  merges; update `ci.yml` PR parity-policy note text to match this model and
-  direct maintainers to run parity manually post-merge (or rely on weekly
-  schedule). Add Phase 1 tag-anchored parity controls: optional
-  `workflow_dispatch.spec_ref`, automatic target-ref resolution (latest
-  `spec-v*` tag by default), per-SDK adoption classification against target
-  commit, adoption-metadata summaries, and conditional stream-compare skipping
-  when one or more SDKs are pending adoption. Add Phase 2 strict-mode
-  controls: `workflow_dispatch.require_full_adoption` and a dedicated
-  enforcement job that fails parity runs when any SDK remains pending
-  adoption against the selected target spec ref.
-- **Stage 3 release-train automation:** add `sdk-release-train.yml` to open or
-  update SDK pin-bump PRs from a selected spec ref (`workflow_dispatch.spec_ref`
-  or `spec-v*` tag push), including per-SDK pin field updates and generated
-  fingerprint metadata refresh where present. Authenticate with a GitHub App
-  via org variable `INTENTPROOF_BOT_APP_ID` and org secret
-  `INTENTPROOF_BOT_APP_PRIVATE_KEY` (`actions/create-github-app-token`); a
-  setup note runs when the App ID variable is unset.
+- **Cross-SDK parity & release train:** `cross-sdk-parity` runs only on
+  **schedule** + **`workflow_dispatch`** (no push to default branch); targets a
+  resolved **spec tag/commit** (`spec_ref` input or latest `spec-v*`), classifies
+  **per-SDK adoption** vs that commit, skips stream compare when adoption is
+  incomplete, and supports optional **`require_full_adoption`** to fail if any
+  SDK lags. **`sdk-release-train.yml`** opens SDK pin-bump PRs on **`spec-v*`
+  tags** or manual dispatch, refreshes pin fields + fingerprint JSON where
+  applicable, and uses GitHub App auth (`INTENTPROOF_BOT_APP_ID` /
+  `INTENTPROOF_BOT_APP_PRIVATE_KEY`). PRs that touch normative paths get an
+  updated **parity policy note** in `ci.yml`.
+- **Docs:** refresh README, `sdk_contracts/conformance_reality.md`, workflow
+  header comments, and **`CONTRIBUTING.md`** (Actions variables/secrets,
+  parity dispatch inputs, `SPEC_SCHEMA_COMPAT_OVERRIDE`) to match the above.
 
 ## 1.0.1 — 2026-05-06
 

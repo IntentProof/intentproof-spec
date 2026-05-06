@@ -42,7 +42,7 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `signing/spec-integrity.public.pem` | Ed25519 public key for the manifest signature (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
 | `CHANGELOG.md` | Human-readable history of spec-facing changes. |
-| `.github/` | CI (`workflows/ci.yml`: conformance, schema compatibility on PRs, shellcheck), cross-SDK parity (`workflows/cross-sdk-parity.yml`), Dependabot. |
+| `.github/` | CI (`workflows/ci.yml`: conformance, schema compatibility on PRs, shellcheck), cross-SDK parity (`workflows/cross-sdk-parity.yml`: schedule + manual, tag-anchored target), SDK release train (`workflows/sdk-release-train.yml`: `spec-v*` tag or manual → bot PRs to bump SDK pins), Dependabot. |
 
 ## Versioning model
 
@@ -105,12 +105,12 @@ Cross-SDK drift controls are spelled out in `sdk_contracts/drift_hardening_check
 | **Pinned codegen tools** | Regex checks in `check-sdk-hardening.sh` | Exact versions (npm/pip/Toml/Gradle catalog) |
 | **Executable oracle (schemas + semantics + goldens)** | `scripts/run-conformance.sh`; Vitest under `tests/conformance/` | `scripts/spec-conformance.sh` → spec runner; upload `conformance-report.json` where applicable |
 | **Breaking schema changes explicit on PRs** | Workflow `schema-compatibility` in `.github/workflows/ci.yml` (`tools/schema-compatibility-classify.ts`); label **`spec-breaking-approved`** or **`SPEC_SCHEMA_COMPAT_OVERRIDE`** | Coordinated pin bumps when adopting breaks |
-| **Cross-language alignment** | `.github/workflows/cross-sdk-parity.yml`: weekly + **path-filtered** pushes to `main`/`master`; **pull requests** touching the same paths also run each SDK’s native CI gate (Node `npm run ci`, Python `pytest` + coverage, Java `./gradlew check`) after hardening/verify/conformance | Same matrix + SDK repos’ parity checks on qualifying PRs |
+| **Cross-language alignment** | `.github/workflows/cross-sdk-parity.yml`: **weekly schedule** + **`workflow_dispatch`** against a resolved **spec tag/commit** (optional `spec_ref`, optional **strict full adoption**); per-SDK adoption vs target commit; central stream compare when all SDKs are adopted. **SDK release train** (`.github/workflows/sdk-release-train.yml`) can open pin-bump PRs after **`spec-v*`** tags via org GitHub App credentials. | Each SDK’s CI still runs hardening, pin checks, drift verify, and `spec-conformance.sh` on PRs |
 | **Optional incident fingerprint** | `npm run spec:fingerprint` | Optional CI hook for debugging |
 
 Shell scripts under `scripts/` are linted in CI (**shellcheck**). Detail beyond this table: `sdk_contracts/spec_version_pinning.md`, `sdk_contracts/type_generation.md`.
 
-GitHub Actions runs the **language-agnostic conformance script** on every push and pull request (see `.github/workflows/ci.yml`), including **signed schema integrity verification** and, on pull requests, a **schema compatibility** job (**`BREAKING`** changes need PR label **`spec-breaking-approved`** or repository variable **`SPEC_SCHEMA_COMPAT_OVERRIDE=true`** as a documented break-glass escape hatch). A cross-SDK parity workflow (`.github/workflows/cross-sdk-parity.yml`) audits SDK hardening controls, runs SDK-side conformance against the same pinned spec checkout, compares conformance fingerprints across languages, and on **pull requests** that touch normative paths runs each SDK’s native test/build gate as well (pushes to the default branch use the lighter parity-only path for the same filters). Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
+GitHub Actions runs the **language-agnostic conformance script** on every push and pull request (see `.github/workflows/ci.yml`), including **signed schema integrity verification** and, on pull requests, a **schema compatibility** job (**`BREAKING`** changes need PR label **`spec-breaking-approved`** or repository variable **`SPEC_SCHEMA_COMPAT_OVERRIDE=true`** as a documented break-glass escape hatch). **Cross-SDK parity** (`.github/workflows/cross-sdk-parity.yml`) does **not** run on spec `push`; it runs on a **weekly schedule** and **`workflow_dispatch`**, targets a **stable spec ref** (tag/commit), and skips or fails based on **SDK adoption** vs that target. PRs that change normative paths get a **parity policy note** in CI pointing maintainers at manual/scheduled parity and SDK pin follow-up. After **`spec-v*`** tags, **SDK release train** (`.github/workflows/sdk-release-train.yml`) can propose SDK pin updates via PRs. Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
 
 ### SDK CI (Python / Java / any runner)
 
