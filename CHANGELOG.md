@@ -20,6 +20,15 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
+- **Stage 2 certification (draft docs, non-normative):** add
+  `docs/certification-rfc.md` (certificate family `cert-v0.1-draft`, trust model,
+  field sketch) and `docs/certificate-issuance-policy.md` (preconditions,
+  denial cases, staged rollout toward signed certificates).
+- **Stage 2 certificate schema (normative):** add
+  `schema/conformance_certificate.v1.schema.json` and index it from
+  `spec.json` → `schemas.conformance_certificate`. Regenerate and re-sign
+  `artifacts/spec-integrity.v1.json` when changing indexed schemas (see
+  **CONTRIBUTING.md**).
 - **Cross-SDK parity & release train:** `cross-sdk-parity` runs only on
   **schedule** + **`workflow_dispatch`** (no push to default branch); targets a
   resolved **spec tag/commit** (`spec_ref` input or latest `spec-v*`), classifies
