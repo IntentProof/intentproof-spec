@@ -20,7 +20,12 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- None yet.
+- **Parity workflow policy:** narrow `cross-sdk-parity` triggers to
+  `schedule` + `workflow_dispatch` only (remove default-branch `push`) to
+  avoid false negatives while SDK pin/generated updates land after spec
+  merges; update `ci.yml` PR parity-policy note text to match this model and
+  direct maintainers to run parity manually post-merge (or rely on weekly
+  schedule).
 
 ## 1.0.1 — 2026-05-06
 

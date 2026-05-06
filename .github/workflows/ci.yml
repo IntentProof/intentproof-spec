@@ -40,9 +40,10 @@ jobs:
             echo "## Cross-SDK parity policy"
             echo ""
             echo "This PR modifies normative spec paths."
-            echo "Cross-SDK parity now runs on \`push\` to default branch,"
-            echo "\`schedule\`, and \`workflow_dispatch\` (not on pull_request)."
-            echo "After merge, ensure SDK pin bumps are landed and parity passes."
+            echo "Cross-SDK parity runs on \`schedule\` and"
+            echo "\`workflow_dispatch\` only (not on pull_request or push)."
+            echo "After merge, land SDK pin+generated updates, then run parity"
+            echo "manually (or wait for the weekly scheduled run)."
           } >> "${GITHUB_STEP_SUMMARY}"
 
   shellcheck:

@@ -5,23 +5,13 @@ name: Cross-SDK Parity
 # pins before expecting this workflow to pass.
 #
 # Triggers:
-# - push (default branch): normative paths only — parity stream compare.
-# - schedule / workflow_dispatch: full parity (same as push).
+# - schedule / workflow_dispatch only: full parity stream compare.
+#   (No push trigger to avoid false negatives while SDK pin/update PRs land.)
 
 on:
   schedule:
     - cron: "15 6 * * 1"
   workflow_dispatch:
-  push:
-    branches: [main, master]
-    paths:
-      - "schema/**"
-      - "golden/**"
-      - "tests/conformance/**"
-      - "tests/lib/semantics.ts"
-      - "spec.json"
-      - "scripts/run-conformance.sh"
-      - ".github/workflows/cross-sdk-parity.yml"
 
 permissions:
   contents: read
