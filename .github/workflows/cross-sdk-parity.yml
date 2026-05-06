@@ -12,6 +12,11 @@ on:
   schedule:
     - cron: "15 6 * * 1"
   workflow_dispatch:
+    inputs:
+      spec_ref:
+        description: "Spec tag/branch/SHA to validate against (default: latest spec-v* tag)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -21,7 +26,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  resolve-target:
+    runs-on: ubuntu-latest
+    outputs:
+      target_ref: ${{ steps.resolve.outputs.target_ref }}
+      target_commit: ${{ steps.resolve.outputs.target_commit }}
+      target_version: ${{ steps.resolve.outputs.target_version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: intentproof-spec
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Resolve target spec ref
+        id: resolve
+        working-directory: intentproof-spec
+        run: |
+          set -euo pipefail
+          input_ref="${{ github.event.inputs.spec_ref || '' }}"
+          if [[ -n "${input_ref}" ]]; then
+            target_ref="${input_ref}"
+          else
+            target_ref="$(git tag --list 'spec-v*' --sort=-v:refname | head -n1 || true)"
+            if [[ -z "${target_ref}" ]]; then
+              target_ref="${GITHUB_SHA}"
+            fi
+          fi
+          git rev-parse --verify "${target_ref}^{commit}" >/dev/null
+          git checkout --quiet "${target_ref}"
+          target_commit="$(git rev-parse HEAD)"
+          target_version="$(python3 -c "import json;print(json.load(open('spec.json'))['version'])")"
+          {
+            echo "target_ref=${target_ref}"
+            echo "target_commit=${target_commit}"
+            echo "target_version=${target_version}"
+          } >> "${GITHUB_OUTPUT}"
+
   parity:
+    needs: resolve-target
     runs-on: ubuntu-latest
     timeout-minutes: 75
     strategy:
@@ -48,6 +90,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           path: intentproof-spec
+          ref: ${{ needs.resolve-target.outputs.target_ref }}
+          fetch-depth: 0
+          fetch-tags: true
 
       - uses: actions/checkout@v6
         with:
@@ -64,24 +109,69 @@ jobs:
         run: |
           bash intentproof-spec/scripts/check-sdk-hardening.sh "${{ github.workspace }}/${{ matrix.sdk.path }}"
 
+      - name: Classify SDK adoption for target spec ref
+        id: adoption
+        run: |
+          set -euo pipefail
+          sdk_root="${{ github.workspace }}/${{ matrix.sdk.path }}"
+          target_commit="${{ needs.resolve-target.outputs.target_commit }}"
+          sdk_commit="$(bash intentproof-spec/scripts/read-sdk-spec-commit.sh "${sdk_root}")"
+          if [[ "${sdk_commit}" == "${target_commit}" ]]; then
+            adopted=true
+          else
+            adopted=false
+          fi
+          {
+            echo "sdk_commit=${sdk_commit}"
+            echo "adopted=${adopted}"
+          } >> "${GITHUB_OUTPUT}"
+          cat > "${{ matrix.sdk.path }}/parity-meta.json" <<JSON
+          {
+            "sdk": "${{ matrix.sdk.id }}",
+            "targetRef": "${{ needs.resolve-target.outputs.target_ref }}",
+            "targetCommit": "${target_commit}",
+            "targetVersion": "${{ needs.resolve-target.outputs.target_version }}",
+            "sdkPinnedCommit": "${sdk_commit}",
+            "adopted": ${adopted}
+          }
+          JSON
+
+      - name: Upload parity metadata artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: parity-meta-${{ matrix.sdk.id }}
+          path: ${{ matrix.sdk.path }}/parity-meta.json
+          if-no-files-found: error
+
+      - name: Pending adoption note
+        if: steps.adoption.outputs.adopted != 'true'
+        run: |
+          {
+            echo "SDK ${{ matrix.sdk.id }} is pending adoption for target spec ref."
+            echo "Pinned commit: ${{ steps.adoption.outputs.sdk_commit }}"
+            echo "Target commit: ${{ needs.resolve-target.outputs.target_commit }}"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
       - name: Set up Java (parity verify)
-        if: matrix.sdk.id == 'java'
+        if: matrix.sdk.id == 'java' && steps.adoption.outputs.adopted == 'true'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
 
       - name: Set up Gradle (parity verify)
-        if: matrix.sdk.id == 'java'
+        if: matrix.sdk.id == 'java' && steps.adoption.outputs.adopted == 'true'
         uses: gradle/actions/setup-gradle@v6
 
       - name: Verify generated artifacts are up to date
+        if: steps.adoption.outputs.adopted == 'true'
         working-directory: ${{ matrix.sdk.path }}
         env:
           INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
         run: bash "${{ matrix.sdk.verify }}"
 
       - name: Run spec conformance from SDK
+        if: steps.adoption.outputs.adopted == 'true'
         working-directory: ${{ matrix.sdk.path }}
         env:
           INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
@@ -114,6 +204,7 @@ jobs:
           PY
 
       - name: Upload parity stream artifact
+        if: steps.adoption.outputs.adopted == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: parity-stream-${{ matrix.sdk.id }}
@@ -122,7 +213,7 @@ jobs:
 
   aggregate-compare:
     runs-on: ubuntu-latest
-    needs: parity
+    needs: [resolve-target, parity]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -136,18 +227,84 @@ jobs:
         with:
           name: parity-stream-node
           path: parity-streams/node
+          if-no-artifact-found: ignore
       - uses: actions/download-artifact@v8
         with:
           name: parity-stream-python
           path: parity-streams/python
+          if-no-artifact-found: ignore
       - uses: actions/download-artifact@v8
         with:
           name: parity-stream-java
           path: parity-streams/java
+          if-no-artifact-found: ignore
 
       - name: Compare SDK output streams centrally
         run: |
+          set -euo pipefail
+          streams=(
+            parity-streams/node/parity-stream.jsonl
+            parity-streams/python/parity-stream.jsonl
+            parity-streams/java/parity-stream.jsonl
+          )
+          present=0
+          for f in "${streams[@]}"; do
+            if [[ -f "${f}" ]]; then
+              present=$((present + 1))
+            fi
+          done
+          if [[ "${present}" -lt 3 ]]; then
+            {
+              echo "## Cross-SDK stream compare skipped"
+              echo ""
+              echo "Target ref: \`${{ needs.resolve-target.outputs.target_ref }}\`"
+              echo "Reason: one or more SDKs are pending adoption for target commit."
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
           npm exec -- tsx tools/replay/compare-streams.ts \
             parity-streams/node/parity-stream.jsonl \
             parity-streams/python/parity-stream.jsonl \
             parity-streams/java/parity-stream.jsonl
+
+  adoption-summary:
+    runs-on: ubuntu-latest
+    needs: [resolve-target, parity]
+    if: always()
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: parity-meta-*
+          path: parity-meta
+          if-no-artifact-found: ignore
+      - name: Emit adoption matrix summary
+        env:
+          TARGET_REF: ${{ needs.resolve-target.outputs.target_ref }}
+          TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
+          TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Target spec parity adoption"
+            echo ""
+            echo "- Target ref: \`${TARGET_REF}\`"
+            echo "- Target commit: \`${TARGET_COMMIT}\`"
+            echo "- Target version: \`${TARGET_VERSION}\`"
+            echo ""
+          } >> "${GITHUB_STEP_SUMMARY}"
+          python3 - <<'PY' >> "${GITHUB_STEP_SUMMARY}"
+          import json
+          from pathlib import Path
+
+          root = Path("parity-meta")
+          rows = []
+          if root.exists():
+            for path in sorted(root.rglob("parity-meta.json")):
+              rows.append(json.loads(path.read_text(encoding="utf-8")))
+
+          print("| SDK | Pinned commit | Adopted |")
+          print("| --- | --- | --- |")
+          for row in rows:
+              adopted = "yes" if row.get("adopted") else "no (pending)"
+              print(f"| {row.get('sdk')} | `{row.get('sdkPinnedCommit')}` | {adopted} |")
+          PY
