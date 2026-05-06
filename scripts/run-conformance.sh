@@ -151,6 +151,10 @@ if [[ "${INTENTPROOF_CONFORMANCE_JSON:-0}" == "1" ]]; then
   if [[ -z "${INTENTPROOF_SDK_LANGUAGE:-}" ]]; then
     export INTENTPROOF_SDK_LANGUAGE="${INTENTPROOF_SDK_ID:-spec}"
   fi
+  if [[ -z "${INTENTPROOF_SDK_VERSION:-}" ]]; then
+    sdk_version="$(node -p "require('./package.json').version")"
+    export INTENTPROOF_SDK_VERSION="$sdk_version"
+  fi
   npm exec -- tsx tools/conformance-report.ts || failed=1
 fi
 

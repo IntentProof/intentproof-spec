@@ -8,11 +8,11 @@ Every SDK package MUST declare which IntentProof specification revision it imple
 
 | Ecosystem | Location | Example |
 |-----------|----------|---------|
-| Node.js   | Root `package.json` | `"intentproofSpecVersion": "spec-v1.0.0"`, `"intentproofSpecCommit": "<40-char lowercase hex>"` |
+| Node.js   | Root `package.json` | `"intentproofSpecVersion": "spec-v1.0.1"`, `"intentproofSpecCommit": "<40-char lowercase hex>"` |
 | Node.js   | `packages/sdk/package.json` (workspace) | Same `intentproofSpecVersion` and `intentproofSpecCommit` as root |
-| Python    | `pyproject.toml` under `[tool.intentproof]` | `spec-version = "spec-v1.0.0"`, `spec-commit = "<40-char lowercase hex>"` |
+| Python    | `pyproject.toml` under `[tool.intentproof]` | `spec-version = "spec-v1.0.1"`, `spec-commit = "<40-char lowercase hex>"` |
 | Java (Maven) | Root `pom.xml` inside `<properties>` | Follow the same **version + full commit** contract as Gradle if your build uses Maven (exact property names are project-specific). |
-| Java (Gradle) | `gradle.properties` | `intentproofSpecVersion=spec-v1.0.0`, `intentproofSpecCommit=<40-char lowercase hex>` |
+| Java (Gradle) | `gradle.properties` | `intentproofSpecVersion=spec-v1.0.1`, `intentproofSpecCommit=<40-char lowercase hex>` |
 
 The **version** string MUST equal `spec.json.version`. The **commit** string MUST equal `git -C <spec-checkout> rev-parse HEAD` (full SHA, lowercase hex).
 
@@ -45,4 +45,4 @@ CI classifies schema diffs vs the merge base of the PR base branch (only paths f
 
 ## Releases
 
-Release notes SHOULD state the spec git tag (e.g. `spec-v1.0.0`) **and** the spec repository git SHA used for conformance so downstream consumers can audit equivalence across languages.
+Release notes SHOULD state the spec git tag (e.g. `spec-v1.0.1`) **and** the spec repository git SHA used for conformance so downstream consumers can audit equivalence across languages.

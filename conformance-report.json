@@ -1,10 +1,10 @@
 {
-  "specVersion": "spec-v1.0.0",
+  "specVersion": "spec-v1.0.1",
   "specFingerprint": "58c8e26829e9662f8993d7442440bec304f20430683fdd9b5d400626feaabb28",
   "sdk": {
     "name": "intentproof-spec",
     "language": "spec",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "environment": {
     "runtime": "node v22.22.0",
@@ -23,5 +23,5 @@
       "stream2": "aee9ba9cebe4c3491ab1f297fdf98bbf1eb1cc3bf4607a4b5d385299aaf08027"
     }
   },
-  "generatedAt": "2026-05-05T14:02:24.221Z"
+  "generatedAt": "2026-05-06T18:01:38.657Z"
 }
