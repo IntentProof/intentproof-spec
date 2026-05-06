@@ -50,10 +50,19 @@ require_file "scripts/check-sdk-spec-pin.sh"
 require_file "scripts/check-no-handwritten-model-types.sh"
 require_match "scripts/check-no-handwritten-model-types.sh" 'check-sdk-no-handwritten-model-types\.sh' "must delegate to spec shared no-handwritten checker"
 
+pin_validate() {
+  # Canonical pins (version + commit) vs this spec checkout HEAD — fail-fast if missing/mismatched.
+  if ! bash "${spec_root}/scripts/check-sdk-spec-pins.sh" "${sdk_root}" "${spec_root}"; then
+    err "spec pin validation failed (run: bash ${spec_root}/scripts/check-sdk-spec-pins.sh ${sdk_root} ${spec_root})"
+  fi
+}
+
 if [[ -f "${sdk_root}/packages/sdk/package.json" ]]; then
   note "detected Node SDK"
   require_file "scripts/verify-generated-types.sh"
   require_file "packages/sdk/package.json"
+  require_match "package.json" '"intentproofSpecCommit"\s*:\s*"[a-f0-9]{40}"' "root package.json must declare intentproofSpecCommit (40-char hex SHA)"
+  require_match "packages/sdk/package.json" '"intentproofSpecCommit"\s*:\s*"[a-f0-9]{40}"' "packages/sdk/package.json must declare intentproofSpecCommit (40-char hex SHA)"
   node_gen_ver="$(node -e "const p=require('${sdk_root}/packages/sdk/package.json'); process.stdout.write((p.devDependencies||{})['json-schema-to-typescript']||'');")"
   if [[ ! "${node_gen_ver}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     err "packages/sdk/package.json: json-schema-to-typescript must be exact-pinned (found '${node_gen_ver:-<missing>}')"
@@ -62,16 +71,23 @@ if [[ -f "${sdk_root}/packages/sdk/package.json" ]]; then
 elif [[ -f "${sdk_root}/pyproject.toml" ]]; then
   note "detected Python SDK"
   require_file "scripts/verify-generated-types.sh"
+  require_match "pyproject.toml" 'spec-commit\s*=\s*"[a-f0-9]{40}"' "pyproject.toml [tool.intentproof] must declare spec-commit (40-char hex SHA)"
   require_match "pyproject.toml" 'datamodel-code-generator==[0-9]+\.[0-9]+\.[0-9]+' "datamodel-code-generator must be exact-pinned"
   require_match "tox.ini" 'verify-generated-types\.sh' "tox static must run generated drift check"
   require_match "tox.ini" 'check-no-handwritten-model-types\.sh' "tox static must run delegated no-handwritten checker"
 elif [[ -f "${sdk_root}/build.gradle.kts" ]]; then
   note "detected Java SDK"
   require_file "scripts/verify-generated-pojos.sh"
+  require_match "gradle.properties" '^intentproofSpecVersion=' "gradle.properties must declare intentproofSpecVersion"
+  require_match "gradle.properties" 'intentproofSpecCommit=[a-f0-9]{40}' "gradle.properties must declare intentproofSpecCommit (40-char hex SHA)"
   require_match "gradle/libs.versions.toml" '^jsonschema2pojo\s*=\s*"[0-9]+\.[0-9]+\.[0-9]+"' "jsonschema2pojo must be exact-pinned"
   require_match ".github/workflows/ci.yml" 'verify-generated-pojos\.sh' "CI must run verify-generated-pojos.sh"
 else
   err "could not detect SDK type (expected Node/Python/Java repo layout)"
+fi
+
+if [[ -f "${sdk_root}/packages/sdk/package.json" ]] || [[ -f "${sdk_root}/pyproject.toml" ]] || [[ -f "${sdk_root}/build.gradle.kts" ]]; then
+  pin_validate
 fi
 
 if [[ "${fail}" -ne 0 ]]; then

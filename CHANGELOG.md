@@ -20,19 +20,13 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- Hardening audit (`scripts/check-sdk-hardening.sh`): Python SDK `tox.ini` must run `check-no-handwritten-model-types.sh` in the static env (parity with Node/Java delegated checker wiring).
-- Add cross-SDK hardening checklist (`sdk_contracts/drift_hardening_checklist.md`) and tighten type-generation policy to require exact-pinned generator versions.
-- Add SDK hardening contract audit script (`scripts/check-sdk-hardening.sh`) and wire parity/audit automation (`.github/workflows/cross-sdk-parity.yml`).
-- Add shared no-handwritten-model audit (`scripts/check-sdk-no-handwritten-model-types.sh`) and require SDK hardening checks to delegate to that spec-owned policy script.
-- Add deterministic schema fingerprint tooling (`tools/spec-fingerprint.ts`, `npm run spec:fingerprint`) and manifest registration (`spec.json` tools map).
-- Add `conformance-report.v1` system: schema (`schema/conformance_report.v1.schema.json`), report emitter (`tools/conformance-report.ts`), and docs (`docs/conformance-report.md`).
-- `scripts/run-conformance.sh` now emits validated `conformance-report.json` with deterministic spec/replay fingerprints and pass/fail phase results.
-- `spec.json` now indexes `schemas.conformance_report`; conformance tests assert manifest coverage.
-- Docs: README now covers hardening audit usage, cross-SDK parity workflow, and schema fingerprint command.
-- **IntentProof branding:** README and this changelog's repository link text; `semantics/lifecycle_model.md` and `constraints/validation_rules.md`; v1 schema `$comment` lines (`execution_event`, `wrap_options`, `intentproof_config`); `package.json` **IntentProof** npm keyword; `scripts/run-conformance.sh` validation and progress messages; `tests/runners/sdk_test_harness.ts` module header. Public GitHub paths remain `github.com/IntentProof/…`; wire identifiers unchanged.
-- Document canonical GitHub URL across README, NOTICE, scripts, and harness; add `homepage` in `package.json`.
-- Upgrade Vitest to **4.1.5** (aligned Vite/esbuild chain) so `npm audit` reports **0** vulnerabilities on a fresh install.
-- README: schema raw URL table, pin-tag reminder, `$id` clarification; schema `$comment` pointers to GitHub (normative tree URLs); validation rules link and Ajv spelling.
+- **CI & workflows:** **shellcheck** on **`scripts/*.sh`**; PR **schema-compatibility** (`tools/schema-compatibility-classify.ts`) with artifact + breaking gate (**`spec-breaking-approved`** / **`SPEC_SCHEMA_COMPAT_OVERRIDE`**); **cross-SDK parity** (normative path triggers, PR native SDK gates, aggregate compare); GitHub Actions bumps (**upload-artifact** v7, **download-artifact** v8, **setup-java** v5, **Gradle actions** v6, **setup-python** v6, **cache** v5 where used).
+- **Integrity, pins, hardening:** signed schema manifest (**`spec:integrity:*`**, `tools/spec-integrity.ts`, artifacts + **`signing/spec-integrity.public.pem`**, **`verify-spec-integrity.sh`**; verify in **`run-conformance.sh`** / **`ci:local`**); **`check-sdk-spec-pins.sh`**, **`read-sdk-spec-commit.sh`**, **`check-sdk-hardening.sh`** with delegated **`check-sdk-no-handwritten-model-types.sh`** and **`sdk_contracts`** drift / generator-pin policy (incl. Python **`tox`** static parity).
+- **Conformance outputs:** **`conformance-report.v1`** (schema, emitter, docs); validated **`conformance-report.json`** from **`run-conformance.sh`**; **`spec.json`** indexes conformance report + **schema fingerprint** tooling (**`npm run spec:fingerprint`**).
+- **Documentation & runtime:** **`CONTRIBUTING.md`**, **`sdk_contracts/README.md`**, README (drift summary, hardening/parity/fingerprint, schema URLs); **Node.js 22+** (**`engines`**, **`run-conformance.sh`**, **`.nvmrc`**).
+- **Housekeeping:** IntentProof naming/links across README/changelog/semantics/constraints/schemas/harness/`package.json`; canonical repo URLs + **`homepage`**; Vitest **4.1.5** ( **`npm audit`** clean on fresh install).
+
+_Normative contract behavior is unchanged unless called out above; most items are tooling, CI, and documentation._
 
 ## 1.0.0 — 2026-05-04
 

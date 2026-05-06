@@ -23,11 +23,15 @@
   },
   "homepage": "https://github.com/IntentProof/intentproof-spec#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "conformance": "bash scripts/run-conformance.sh",
     "check:spec-version": "tsx tools/check-spec-version.ts",
+    "spec:integrity:generate": "tsx tools/spec-integrity.ts generate",
+    "spec:integrity:sign": "tsx tools/spec-integrity.ts sign",
+    "spec:integrity:verify": "tsx tools/spec-integrity.ts verify",
+    "spec:compat:classify": "tsx tools/schema-compatibility-classify.ts",
     "spec:fingerprint": "tsx tools/spec-fingerprint.ts",
     "replay:compare": "tsx tools/replay/compare-streams.ts",
     "typecheck": "tsc --noEmit",
@@ -36,7 +40,7 @@
     "validate:event": "tsx tools/validate-event.ts",
     "normalize:event": "tsx tools/normalize-event.ts",
     "diff:events": "tsx tools/diff-events.ts",
-    "ci:local": "npm run typecheck && npm test"
+    "ci:local": "npm run spec:integrity:verify && npm run typecheck && npm test"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

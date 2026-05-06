@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Executable specification oracle for IntentProof SDK CI.
 # Spec entrypoint: spec.json (schemas, goldens, semantics paths).
-# Requires Node.js 18+ and npm on PATH.
+# Requires Node.js 22+ and npm on PATH (see repo .nvmrc / package.json engines).
 #
 # Usage:
 #   bash scripts/run-conformance.sh                    # from repo root, or any cwd
@@ -57,8 +57,8 @@ if ! command -v npm >/dev/null 2>&1; then
 fi
 
 node_major="$(node -p "parseInt(process.version.slice(1).split('.')[0], 10)")"
-if [[ -z "$node_major" || "$node_major" -lt 18 ]]; then
-  echo "run-conformance.sh: Node.js 18 or newer required (found $(node --version))." >&2
+if [[ -z "$node_major" || "$node_major" -lt 22 ]]; then
+  echo "run-conformance.sh: Node.js 22 or newer required (found $(node --version))." >&2
   exit 1
 fi
 
@@ -84,6 +84,7 @@ else
 fi
 
 npm run check:spec-version || failed=1
+npm run spec:integrity:verify || failed=1
 npm run typecheck || failed=1
 
 echo "==> Schema validation tests"

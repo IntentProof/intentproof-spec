@@ -16,7 +16,7 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 
 ### Prerequisites
 
-- **Node.js 18+** and **npm** (Node **22** recommended; see `.nvmrc` for the version used in CI).
+- **Node.js 22+** and **npm** (see **`.nvmrc`** for the exact version CI uses; **`package.json`** **`engines`** matches).
 - No runtime beyond Node is required for schemas, golden files, Vitest, or `scripts/run-conformance.sh`.
 
 ## Repository layout
@@ -32,14 +32,17 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `tests/conformance/` | Vitest suite: schema gates, semantics checks, golden equivalence, canonicalization vectors. |
 | `tests/lib/` | Shared validators (`validator.ts`, `semantics.ts`, `spec-manifest.ts`). |
 | `tests/runners/sdk_test_harness.ts` | Stable entrypoint other SDKs vendor or submodule to reuse oracle logic. |
-| `sdk_contracts/` | Type-generation rules (`type_generation.md`), drift hardening checklist (`drift_hardening_checklist.md`), conformance boundary notes (`conformance_reality.md`), version pinning (`spec_version_pinning.md`). |
+| `sdk_contracts/` | Type-generation rules (`type_generation.md`), drift hardening checklist (`drift_hardening_checklist.md`), conformance boundary notes (`conformance_reality.md`), version pinning (`spec_version_pinning.md`). Index: [`sdk_contracts/README.md`](sdk_contracts/README.md). |
 | `tools/canonical/` | Normative canonical JSON (`canonical-json.ts`) referenced by `semantics/serialization_rules.md`. |
 | `tools/replay/` | Cross-SDK JSONL stream comparison (`compare-streams.ts`) post-canonicalization. |
 | `tools/` | CLI helpers for validating, canonicalizing, diffing, spec version checks, conformance JSON reports. |
-| `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, pins `intentproofSpecVersion`, `tsc`, Vitest, smoke, optional replay & JSON output. |
+| `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, version pin check, **signed schema integrity verify**, `tsc`, Vitest, smoke, optional replay & JSON output. |
+| `scripts/check-sdk-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java SDK trees. |
+| `artifacts/spec-integrity.v1.json` (+ `.sig`) | Deterministic SHA-256 manifest over `spec.json` → `schemas.*`; verified every conformance run. |
+| `signing/spec-integrity.public.pem` | Ed25519 public key for the manifest signature (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
 | `CHANGELOG.md` | Human-readable history of spec-facing changes. |
-| `.github/` | CI workflow (`workflows/ci.yml`) and Dependabot config. |
+| `.github/` | CI (`workflows/ci.yml`: conformance, schema compatibility on PRs, shellcheck), cross-SDK parity (`workflows/cross-sdk-parity.yml`), Dependabot. |
 
 ## Versioning model
 
@@ -53,7 +56,7 @@ SDK packages SHOULD declare the **spec git tag** (or internal package version, i
 
 ## Integration for SDK maintainers
 
-1. **Vendor or submodule** this repository next to the SDK and treat **`spec.json` as the only path index** to schemas, goldens, and semantics. In CI, run **`scripts/run-conformance.sh`** against the pinned checkout so every language runs the same oracle. Declare **`intentproofSpecVersion`** (see `sdk_contracts/spec_version_pinning.md`) equal to `spec.json.version`.
+1. **Vendor or submodule** this repository next to the SDK and treat **`spec.json` as the only path index** to schemas, goldens, and semantics. In CI, run **`scripts/run-conformance.sh`** against the pinned checkout so every language runs the same oracle. Declare **`intentproofSpecVersion`** and **`intentproofSpecCommit`** (see `sdk_contracts/spec_version_pinning.md`): the version MUST equal `spec.json.version`, and the commit MUST equal `git rev-parse HEAD` in that checkout.
 2. **Validate every emitted event** against the execution-event schema from `spec.json` → `schemas.execution_event` using a Draft 2020-12 compatible validator.
 3. **Run semantic checks** equivalent to `tests/lib/semantics.ts` after schema success (duration vs timestamps, attribute primitive shape, forbidden `error` field on `ok`, correlation trimming).
 4. **Load `golden/execution_event_cases.jsonl`** and assert `shouldValidate` matches the outcome of schema+semantics for each `event` payload. Any drift fails CI.
@@ -64,6 +67,8 @@ SDK packages SHOULD declare the **spec git tag** (or internal package version, i
 ```bash
 bash scripts/check-sdk-hardening.sh /absolute/path/to/intentproof-sdk-<node|python|java>
 ```
+
+For a compact map of pins, signed-schema verification, codegen drift gates, and conformance enforcement, see **[Continuous integration → Drift protection at a glance](#drift-protection-at-a-glance)** below.
 
 Serialization rules for captured payloads are normative in `semantics/serialization_rules.md` (see also `constraints/validation_rules.md`). Byte-identical `ExecutionEvent` comparisons use the canonical projection in that document, implemented under `tools/canonical/`.
 
@@ -87,11 +92,29 @@ Serialization rules for captured payloads are normative in `semantics/serializat
 
 ## Continuous integration
 
-GitHub Actions runs the **language-agnostic conformance script** on every push and pull request (see `.github/workflows/ci.yml`). A scheduled cross-SDK parity workflow (`.github/workflows/cross-sdk-parity.yml`) audits SDK hardening controls and runs SDK-side conformance against the same pinned spec checkout. Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
+### Drift protection at a glance
+
+Cross-SDK drift controls are spelled out in `sdk_contracts/drift_hardening_checklist.md`. Here is a short map from **theme** to **where it is enforced**:
+
+| Theme | In this repo (`intentproof-spec`) | In SDK repos |
+|-------|-----------------------------------|--------------|
+| **Pins** (`spec.json` version + immutable commit) | `scripts/check-sdk-spec-pins.sh`; `scripts/check-sdk-hardening.sh`; `scripts/read-sdk-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; each SDK’s `scripts/check-sdk-spec-pin.sh` delegates to the spec script |
+| **Signed normative schemas** | `npm run spec:integrity:verify` inside `scripts/run-conformance.sh`; manifest `artifacts/spec-integrity.v1.json` + signature; `scripts/verify-spec-integrity.sh` | Run the same verify/conformance against the **pinned** spec tree |
+| **No handwritten canonical wire models** | `scripts/check-sdk-no-handwritten-model-types.sh` | Thin bridges only; delegate script required by `check-sdk-hardening.sh` |
+| **Generated sources match regen** | Hardening requires drift scripts to exist | `verify-generated-types.sh` (Node/Python) / `verify-generated-pojos.sh` (Java): regen + `git diff --exit-code` |
+| **Pinned codegen tools** | Regex checks in `check-sdk-hardening.sh` | Exact versions (npm/pip/Toml/Gradle catalog) |
+| **Executable oracle (schemas + semantics + goldens)** | `scripts/run-conformance.sh`; Vitest under `tests/conformance/` | `scripts/spec-conformance.sh` → spec runner; upload `conformance-report.json` where applicable |
+| **Breaking schema changes explicit on PRs** | Workflow `schema-compatibility` in `.github/workflows/ci.yml` (`tools/schema-compatibility-classify.ts`); label **`spec-breaking-approved`** or **`SPEC_SCHEMA_COMPAT_OVERRIDE`** | Coordinated pin bumps when adopting breaks |
+| **Cross-language alignment** | `.github/workflows/cross-sdk-parity.yml`: weekly + **path-filtered** pushes to `main`/`master`; **pull requests** touching the same paths also run each SDK’s native CI gate (Node `npm run ci`, Python `pytest` + coverage, Java `./gradlew check`) after hardening/verify/conformance | Same matrix + SDK repos’ parity checks on qualifying PRs |
+| **Optional incident fingerprint** | `npm run spec:fingerprint` | Optional CI hook for debugging |
+
+Shell scripts under `scripts/` are linted in CI (**shellcheck**). Detail beyond this table: `sdk_contracts/spec_version_pinning.md`, `sdk_contracts/type_generation.md`.
+
+GitHub Actions runs the **language-agnostic conformance script** on every push and pull request (see `.github/workflows/ci.yml`), including **signed schema integrity verification** and, on pull requests, a **schema compatibility** job (**`BREAKING`** changes need PR label **`spec-breaking-approved`** or repository variable **`SPEC_SCHEMA_COMPAT_OVERRIDE=true`** as a documented break-glass escape hatch). A cross-SDK parity workflow (`.github/workflows/cross-sdk-parity.yml`) audits SDK hardening controls, runs SDK-side conformance against the same pinned spec checkout, compares conformance fingerprints across languages, and on **pull requests** that touch normative paths runs each SDK’s native test/build gate as well (pushes to the default branch use the lighter parity-only path for the same filters). Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
 
 ### SDK CI (Python / Java / any runner)
 
-Vendor this repository (submodule, subtree, or copy at a pinned tag), install **Node.js 18+**, then invoke:
+Vendor this repository (submodule, subtree, or copy at a pinned tag), install **Node.js 22+** (see **`.nvmrc`** in this repo), then invoke:
 
 ```bash
 bash path/to/intentproof-spec/scripts/run-conformance.sh
@@ -140,6 +163,10 @@ npm audit                       # expect 0 vulnerabilities on a fresh install
 - `ExecutionEvent` payloads are byte-identical after **canonical normalization** (`tools/normalize-event.ts`, `tools/canonical/canonical-json.ts`) for deterministic fixtures.
 - No semantic drift: wrap ordering, correlation propagation, and error mapping follow `semantics/*.md`.
 - CI fails on any extra root fields (`additionalProperties: false` in schema) or forbidden states (`shouldValidate: false` golden cases must keep failing).
+
+## Contributing
+
+See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** (local verification, schema PR policy, integrity manifest rotation, **shared terminology** with SDK repos).
 
 ## Governance
 
