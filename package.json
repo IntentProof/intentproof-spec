@@ -41,7 +41,8 @@
     "normalize:event": "tsx tools/normalize-event.ts",
     "diff:events": "tsx tools/diff-events.ts",
     "ci:local": "npm run spec:integrity:verify && npm run typecheck && npm run test",
-    "conformance:certificate": "tsx tools/conformance-certificate.ts"
+    "conformance:certificate": "tsx tools/conformance-certificate.ts",
+    "validate:conformance-certificate": "tsx tools/validate-conformance-certificate.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

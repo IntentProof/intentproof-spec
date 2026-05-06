@@ -81,6 +81,11 @@ Conformance CI should fail when any of the following occurs:
 - report does not validate against `conformance_report.v1` schema
 - any `results.*` value is not `pass`
 
+In **`intentproof-spec`**, **`ci.yml`** and adopted jobs in **`cross-sdk-parity.yml`**
+require **`conformance-certificate.json`** (after emission), run
+**`npm run validate:conformance-certificate`**, and upload artifacts (**`conformance-artifacts`**
+or **`conformance-artifacts-<sdk>`**).
+
 SDK CI should upload `conformance-report.json` as a build artifact for
 cross-run auditing and future certificate workflows.
 

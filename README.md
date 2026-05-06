@@ -141,7 +141,10 @@ This is the **canonical executable oracle** for schema, semantics, and golden JS
 When `INTENTPROOF_CONFORMANCE_JSON=1`, the runner emits a validated
 `conformance-report.json` (`schema/conformance_report.v1`) and, when issuance
 gates pass, `conformance-certificate.json` (`schema/conformance_certificate.v1`);
-see `docs/conformance-report.md` and `docs/certificate-issuance-policy.md`.
+CI runs `npm run validate:conformance-certificate` and uploads report + certificate
+(**`conformance-artifacts`** in `ci.yml`, **`conformance-artifacts-<sdk>`** in parity
+for adopted SDKs). See `docs/conformance-report.md` and
+`docs/certificate-issuance-policy.md`.
 
 ## Commands
 
@@ -151,6 +154,7 @@ npm run typecheck              # TypeScript --noEmit (same as CI)
 npm test
 npm run ci:local               # typecheck + vitest
 npm run conformance            # install + typecheck + vitest + example smoke (see scripts/run-conformance.sh)
+npm run validate:conformance-certificate  # after a JSON conformance run: schema + digest binding checks
 npm run validate:event -- examples/success_event.json
 npm run normalize:event -- examples/success_event.json
 npm run diff:events -- examples/success_event.json examples/error_event.json
