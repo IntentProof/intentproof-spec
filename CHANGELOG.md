@@ -29,7 +29,10 @@ All notable changes to this specification repository are documented here. Versio
   `workflow_dispatch.spec_ref`, automatic target-ref resolution (latest
   `spec-v*` tag by default), per-SDK adoption classification against target
   commit, adoption-metadata summaries, and conditional stream-compare skipping
-  when one or more SDKs are pending adoption.
+  when one or more SDKs are pending adoption. Add Phase 2 strict-mode
+  controls: `workflow_dispatch.require_full_adoption` and a dedicated
+  enforcement job that fails parity runs when any SDK remains pending
+  adoption against the selected target spec ref.
 
 ## 1.0.1 — 2026-05-06
 
