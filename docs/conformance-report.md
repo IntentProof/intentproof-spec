@@ -30,7 +30,7 @@ Example:
 
 ```json
 {
-  "specVersion": "spec-v1.0.0",
+  "specVersion": "spec-v1.0.1",
   "specFingerprint": "58c8e26829e9662f8993d7442440bec304f20430683fdd9b5d400626feaabb28",
   "sdk": {
     "name": "intentproof-sdk-node",
