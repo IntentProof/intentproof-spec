@@ -1,0 +1,240 @@
+name: SDK Release Train
+
+on:
+  push:
+    tags:
+      - "spec-v*"
+  workflow_dispatch:
+    inputs:
+      spec_ref:
+        description: "Spec tag/branch/SHA to propagate (default: latest spec-v* tag)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-release-train-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  resolve-target:
+    runs-on: ubuntu-latest
+    outputs:
+      target_ref: ${{ steps.resolve.outputs.target_ref }}
+      target_commit: ${{ steps.resolve.outputs.target_commit }}
+      target_version: ${{ steps.resolve.outputs.target_version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: intentproof-spec
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Resolve target spec ref
+        id: resolve
+        working-directory: intentproof-spec
+        run: |
+          set -euo pipefail
+          input_ref="${{ github.event.inputs.spec_ref || '' }}"
+          if [[ -n "${input_ref}" ]]; then
+            target_ref="${input_ref}"
+          elif [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            target_ref="${GITHUB_REF_NAME}"
+          else
+            target_ref="$(git tag --list 'spec-v*' --sort=-v:refname | head -n1 || true)"
+            if [[ -z "${target_ref}" ]]; then
+              target_ref="${GITHUB_SHA}"
+            fi
+          fi
+          git rev-parse --verify "${target_ref}^{commit}" >/dev/null
+          git checkout --quiet "${target_ref}"
+          target_commit="$(git rev-parse HEAD)"
+          target_version="$(python3 -c "import json;print(json.load(open('spec.json'))['version'])")"
+          {
+            echo "target_ref=${target_ref}"
+            echo "target_commit=${target_commit}"
+            echo "target_version=${target_version}"
+          } >> "${GITHUB_OUTPUT}"
+
+  sdk-bump-prs:
+    needs: resolve-target
+    runs-on: ubuntu-latest
+    if: ${{ vars.INTENTPROOF_BOT_APP_ID != '' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk:
+          - id: node
+            repo: IntentProof/intentproof-sdk-node
+            path: intentproof-sdk-node
+          - id: python
+            repo: IntentProof/intentproof-sdk-python
+            path: intentproof-sdk-python
+          - id: java
+            repo: IntentProof/intentproof-sdk-java
+            path: intentproof-sdk-java
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: intentproof-spec
+          ref: ${{ needs.resolve-target.outputs.target_ref }}
+          fetch-depth: 1
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.INTENTPROOF_BOT_APP_ID }}
+          private-key: ${{ secrets.INTENTPROOF_BOT_APP_PRIVATE_KEY }}
+          owner: IntentProof
+          repositories: |
+            intentproof-sdk-node
+            intentproof-sdk-python
+            intentproof-sdk-java
+
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.sdk.repo }}
+          token: ${{ steps.app-token.outputs.token }}
+          path: ${{ matrix.sdk.path }}
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git -C "${{ matrix.sdk.path }}" config user.name "intentproof-bot"
+          git -C "${{ matrix.sdk.path }}" config user.email "intentproof-bot@users.noreply.github.com"
+
+      - name: Update SDK spec pins
+        env:
+          TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
+          TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+        run: |
+          set -euo pipefail
+          sdk="${{ matrix.sdk.id }}"
+          root="${{ matrix.sdk.path }}"
+          case "${sdk}" in
+            node)
+              python3 - <<'PY'
+              import json
+              from pathlib import Path
+              root = Path("${{ matrix.sdk.path }}")
+              target_version = "${TARGET_VERSION}"
+              target_commit = "${TARGET_COMMIT}"
+              for p in [root / "package.json", root / "packages/sdk/package.json"]:
+                  data = json.loads(p.read_text(encoding="utf-8"))
+                  data["intentproofSpecVersion"] = target_version
+                  data["intentproofSpecCommit"] = target_commit
+                  p.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+              fp = root / "packages/sdk/src/generated/spec_fingerprint.json"
+              if fp.exists():
+                  data = json.loads(fp.read_text(encoding="utf-8"))
+                  data["specVersion"] = target_version
+                  fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+              PY
+              ;;
+            python)
+              python3 - <<'PY'
+              import json
+              import tomllib
+              from pathlib import Path
+              root = Path("${{ matrix.sdk.path }}")
+              pyproject = root / "pyproject.toml"
+              text = pyproject.read_text(encoding="utf-8")
+              old = tomllib.loads(text)
+              old_v = old["tool"]["intentproof"]["spec-version"]
+              old_c = old["tool"]["intentproof"]["spec-commit"]
+              text = text.replace(f'spec-version = "{old_v}"', f'spec-version = "${TARGET_VERSION}"')
+              text = text.replace(f'spec-commit = "{old_c}"', f'spec-commit = "${TARGET_COMMIT}"')
+              pyproject.write_text(text, encoding="utf-8")
+              fp = root / "src/intentproof/generated/spec_fingerprint.json"
+              if fp.exists():
+                  data = json.loads(fp.read_text(encoding="utf-8"))
+                  data["specVersion"] = "${TARGET_VERSION}"
+                  fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+              PY
+              ;;
+            java)
+              python3 - <<'PY'
+              from pathlib import Path
+              root = Path("${{ matrix.sdk.path }}")
+              props = root / "gradle.properties"
+              text = props.read_text(encoding="utf-8")
+              out = []
+              for line in text.splitlines():
+                  if line.startswith("intentproofSpecVersion="):
+                      out.append(f"intentproofSpecVersion=${TARGET_VERSION}")
+                  elif line.startswith("intentproofSpecCommit="):
+                      out.append(f"intentproofSpecCommit=${TARGET_COMMIT}")
+                  else:
+                      out.append(line)
+              props.write_text("\n".join(out) + "\n", encoding="utf-8")
+              PY
+              ;;
+            *)
+              echo "unknown sdk ${sdk}" >&2
+              exit 2
+              ;;
+          esac
+
+      - name: Create or update bump PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_REF: ${{ needs.resolve-target.outputs.target_ref }}
+          TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
+          TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+        run: |
+          set -euo pipefail
+          repo="${{ matrix.sdk.repo }}"
+          workdir="${{ matrix.sdk.path }}"
+          branch="bot/spec-pin-${TARGET_VERSION}"
+
+          if git -C "${workdir}" diff --quiet; then
+            echo "No changes for ${repo}; skipping PR."
+            exit 0
+          fi
+
+          git -C "${workdir}" checkout -B "${branch}"
+          git -C "${workdir}" add -A
+          git -C "${workdir}" commit -m "chore(spec): adopt ${TARGET_VERSION} pin"
+          git -C "${workdir}" push -u origin "${branch}" --force-with-lease
+
+          existing="$(gh pr list --repo "${repo}" --head "${branch}" --base main --json number --jq '.[0].number' || true)"
+          if [[ -n "${existing}" && "${existing}" != "null" ]]; then
+            echo "PR already exists for ${repo}:${branch}"
+          else
+            gh pr create \
+              --repo "${repo}" \
+              --base main \
+              --head "${branch}" \
+              --title "chore(spec): adopt ${TARGET_VERSION} pin" \
+              --body "$(cat <<EOF
+## Summary
+- update SDK spec pin to \`${TARGET_VERSION}\`
+- set spec commit to \`${TARGET_COMMIT}\`
+- refresh generated spec fingerprint metadata when present
+
+## Source
+- target spec ref: \`${TARGET_REF}\`
+
+## Test plan
+- [ ] CI parity hardening checks pass
+- [ ] generated-artifact verify check passes
+EOF
+)"
+          fi
+
+  missing-token-note:
+    needs: resolve-target
+    runs-on: ubuntu-latest
+    if: ${{ vars.INTENTPROOF_BOT_APP_ID == '' }}
+    steps:
+      - name: Emit setup note
+        run: |
+          {
+            echo "## SDK release train skipped"
+            echo ""
+            echo "Org variable \`INTENTPROOF_BOT_APP_ID\` is not set."
+            echo "Configure the GitHub App install for the three SDK repos, then set:"
+            echo "- Variable: \`INTENTPROOF_BOT_APP_ID\` (App ID)"
+            echo "- Secret: \`INTENTPROOF_BOT_APP_PRIVATE_KEY\` (PEM from the app)"
+          } >> "${GITHUB_STEP_SUMMARY}"

@@ -33,6 +33,13 @@ All notable changes to this specification repository are documented here. Versio
   controls: `workflow_dispatch.require_full_adoption` and a dedicated
   enforcement job that fails parity runs when any SDK remains pending
   adoption against the selected target spec ref.
+- **Stage 3 release-train automation:** add `sdk-release-train.yml` to open or
+  update SDK pin-bump PRs from a selected spec ref (`workflow_dispatch.spec_ref`
+  or `spec-v*` tag push), including per-SDK pin field updates and generated
+  fingerprint metadata refresh where present. Authenticate with a GitHub App
+  via org variable `INTENTPROOF_BOT_APP_ID` and org secret
+  `INTENTPROOF_BOT_APP_PRIVATE_KEY` (`actions/create-github-app-token`); a
+  setup note runs when the App ID variable is unset.
 
 ## 1.0.1 — 2026-05-06
 
