@@ -20,13 +20,29 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **CI & workflows:** **shellcheck** on **`scripts/*.sh`**; PR **schema-compatibility** (`tools/schema-compatibility-classify.ts`) with artifact + breaking gate (**`spec-breaking-approved`** / **`SPEC_SCHEMA_COMPAT_OVERRIDE`**); **cross-SDK parity** (normative path triggers, PR native SDK gates, aggregate compare); GitHub Actions bumps (**upload-artifact** v7, **download-artifact** v8, **setup-java** v5, **Gradle actions** v6, **setup-python** v6, **cache** v5 where used).
-- **Integrity, pins, hardening:** signed schema manifest (**`spec:integrity:*`**, `tools/spec-integrity.ts`, artifacts + **`signing/spec-integrity.public.pem`**, **`verify-spec-integrity.sh`**; verify in **`run-conformance.sh`** / **`ci:local`**); **`check-sdk-spec-pins.sh`**, **`read-sdk-spec-commit.sh`**, **`check-sdk-hardening.sh`** with delegated **`check-sdk-no-handwritten-model-types.sh`** and **`sdk_contracts`** drift / generator-pin policy (incl. Python **`tox`** static parity).
-- **Conformance outputs:** **`conformance-report.v1`** (schema, emitter, docs); validated **`conformance-report.json`** from **`run-conformance.sh`**; **`spec.json`** indexes conformance report + **schema fingerprint** tooling (**`npm run spec:fingerprint`**).
-- **Documentation & runtime:** **`CONTRIBUTING.md`**, **`sdk_contracts/README.md`**, README (drift summary, hardening/parity/fingerprint, schema URLs); **Node.js 22+** (**`engines`**, **`run-conformance.sh`**, **`.nvmrc`**).
-- **Housekeeping:** IntentProof naming/links across README/changelog/semantics/constraints/schemas/harness/`package.json`; canonical repo URLs + **`homepage`**; Vitest **4.1.5** ( **`npm audit`** clean on fresh install).
+- **CI policy and workflows:** add `shellcheck` for `scripts/*.sh`; add PR
+  `schema-compatibility` classification with artifact + breaking-change gate
+  (`spec-breaking-approved` / `SPEC_SCHEMA_COMPAT_OVERRIDE`); run
+  `cross-sdk-parity` on `push` (normative paths), `schedule`, and
+  `workflow_dispatch` (not `pull_request`); add a PR policy-note job in
+  `ci.yml` for normative-path changes; upgrade workflow actions (`upload-artifact`
+  v7, `download-artifact` v8, `setup-java` v5, Gradle actions v6,
+  `setup-python` v6, cache v5).
+- **Integrity, pinning, and hardening:** add signed schema integrity verification
+  (`tools/spec-integrity.ts`, artifacts + signature/public key,
+  `verify-spec-integrity.sh`) and wire it into conformance; add cross-SDK pin and
+  hardening auditors (`check-sdk-spec-pins.sh`, `read-sdk-spec-commit.sh`,
+  `check-sdk-hardening.sh`) plus delegated no-handwritten-model checks.
+- **Conformance artifacts and tooling:** add `conformance_report.v1` schema/docs,
+  emit validated `conformance-report.json` from `run-conformance.sh`, and add
+  spec fingerprint tooling (`npm run spec:fingerprint`) indexed via `spec.json`.
+- **Docs, contracts, and runtime baseline:** expand `CONTRIBUTING.md`,
+  `sdk_contracts/README.md`, and README for drift policy/parity/fingerprints and
+  canonical schema paths; standardize on Node.js 22+ (`.nvmrc`, `engines`,
+  conformance scripts); align IntentProof naming/links and canonical repo
+  metadata.
 
-_Normative contract behavior is unchanged unless called out above; most items are tooling, CI, and documentation._
+_Normative contract behavior is unchanged in this Unreleased section; changes are CI/tooling/docs and governance hardening._
 
 ## 1.0.0 — 2026-05-04
 
