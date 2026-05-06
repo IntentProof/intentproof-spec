@@ -20,28 +20,22 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **Stage 2 certification:** Draft **`docs/certification-rfc.md`** (artifact
-  family `cert-v0.1-draft`, trust model) and **`docs/certificate-issuance-policy.md`**
-  (preconditions, denials, rollout). Normative **`schema/conformance_certificate.v1`**
-  + **`spec.json`** index; changing indexed schemas requires regenerating and
-  re-signing **`artifacts/spec-integrity.v1.*`** (**CONTRIBUTING.md**).
-  **`tools/conformance-certificate.ts`** / **`npm run conformance:certificate`**
-  emit **`conformance-certificate.json`** after **`conformance-report.json`** when
-  **`INTENTPROOF_CONFORMANCE_JSON=1`** (digest = SHA-256 of report file bytes;
-  issuance gates per issuance policy). Env: **`INTENTPROOF_CERTIFICATE_ALLOW_REPLAY_SKIP`**,
-  **`INTENTPROOF_CERTIFICATE_VERSION`**, **`INTENTPROOF_CERT_ISSUER`**. README,
-  **`docs/conformance-report.md`**, RFC, and issuance doc updated.
+- **Stage 2 certification:** Draft **RFC** + **issuance policy**; normative
+  **`conformance_certificate.v1`** in **`spec.json`** (re-sign
+  **`artifacts/spec-integrity.v1.*`** when indexed schemas change). Emitter
+  **`tools/conformance-certificate.ts`** (after report when **`INTENTPROOF_CONFORMANCE_JSON=1`**;
+  digest = SHA-256 of report bytes). Validator **`tools/validate-conformance-certificate.ts`**
+  / **`npm run validate:conformance-certificate`** (schema, digest, binding, all phases **pass**). **`ci.yml`**: validate + artifact **`conformance-artifacts`**.
+  **`cross-sdk-parity.yml`** (adopted SDKs): same validate + **`conformance-artifacts-<sdk>`**;
+  parity log parsing selects the **conformance report** JSON (not the trailing
+  certificate line). Env: **`INTENTPROOF_CERTIFICATE_*`**. Docs/README updated.
 - **Cross-SDK parity & release train:** **`cross-sdk-parity`** on **schedule** +
-  **`workflow_dispatch`** only (not default-branch **push**); target spec
-  **tag/commit** (`spec_ref` or latest **`spec-v*`**), **per-SDK adoption** vs
-  that commit, skip stream compare when adoption incomplete, optional
-  **`require_full_adoption`**. **`sdk-release-train.yml`**: pin-bump PRs on
-  **`spec-v*`** tags or manual dispatch, fingerprint refresh, GitHub App auth
-  (**`INTENTPROOF_BOT_APP_*`**). Normative-path PRs get **`ci.yml`** parity
-  policy note.
+  **`workflow_dispatch`** only; target **`spec-v*`** / `spec_ref`, **adoption** =
+  SDK pin SHA vs target, optional **`require_full_adoption`**. **`sdk-release-train.yml`**
+  (pin PRs, fingerprints, **`INTENTPROOF_BOT_APP_*`**). Normative-path PRs: **`ci.yml`**
+  parity note (includes cert tool paths).
 - **Docs:** **`sdk_contracts/conformance_reality.md`**, workflow headers,
-  **`CONTRIBUTING.md`** (Actions secrets/variables, parity inputs,
-  **`SPEC_SCHEMA_COMPAT_OVERRIDE`**).
+  **`CONTRIBUTING.md`** (Actions, **`SPEC_SCHEMA_COMPAT_OVERRIDE`**).
 
 ## 1.0.1 — 2026-05-06
 

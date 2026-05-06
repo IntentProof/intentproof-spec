@@ -20,8 +20,12 @@ for audit, CI gates, and (later) signing.
   (indexed from `spec.json` → `schemas.conformance_certificate`).
 - **In runner:** `tools/conformance-certificate.ts` (invoked from `run-conformance.sh`
   when `INTENTPROOF_CONFORMANCE_JSON=1`) writes `conformance-certificate.json`.
-- **Out of scope until follow-up PRs:** workflow artifact upload, dedicated CI
-  validation job, cryptographic signatures (see [certificate issuance policy](certificate-issuance-policy.md)).
+- **In CI (spec repo):** `ci.yml` validates with `tools/validate-conformance-certificate.ts`
+  and uploads `conformance-artifacts` (report + certificate).
+- **In parity CI:** adopted SDK matrix jobs validate and upload per-SDK
+  **`conformance-artifacts-<sdk>`** from the spec checkout.
+- **Out of scope until follow-up PRs:** cryptographic signatures (see
+  [certificate issuance policy](certificate-issuance-policy.md)).
 
 ## Relationship to conformance
 

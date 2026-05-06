@@ -41,8 +41,8 @@ Issuance **must be denied** (no certificate, CI must fail if emission is attempt
 
 | Phase | Behavior |
 |-------|----------|
-| **Now** | Unsigned `conformance-certificate.json` emitted when `INTENTPROOF_CONFORMANCE_JSON=1` and issuance gates pass (see `tools/conformance-certificate.ts`). |
-| **Next** | CI artifact upload + explicit schema/policy validation step in workflows. |
+| **Now** | Unsigned `conformance-certificate.json` when `INTENTPROOF_CONFORMANCE_JSON=1` and gates pass (`tools/conformance-certificate.ts`). **`ci.yml`** and adopted matrix rows in **`cross-sdk-parity.yml`** run **`validate-conformance-certificate`** and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`** (report + certificate). |
+| **Next** | Stage 2 signing + verification docs. |
 | **Stage 2 exit** | Signed or otherwise verifiable issuer binding per RFC + verification docs. |
 
 ## References

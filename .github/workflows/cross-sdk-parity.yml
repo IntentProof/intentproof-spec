@@ -202,7 +202,15 @@ jobs:
           ]
           if not json_lines:
               raise SystemExit("missing conformance JSON line in output")
-          report = json.loads(json_lines[-1])
+          report = None
+          for ln in reversed(json_lines):
+              obj = json.loads(ln)
+              res = obj.get("results")
+              if isinstance(res, dict) and "schemaValidation" in res:
+                  report = obj
+                  break
+          if report is None:
+              raise SystemExit("missing conformance report JSON in output (expected results.schemaValidation)")
           results = report.get("results", {})
           norm = {
               "specVersion": report.get("specVersion"),
@@ -213,6 +221,21 @@ jobs:
               json.dumps(norm, sort_keys=True) + "\n", encoding="utf-8"
           )
           PY
+
+      - name: Validate conformance certificate (spec tree)
+        if: steps.adoption.outputs.adopted == 'true'
+        working-directory: intentproof-spec
+        run: npm run validate:conformance-certificate
+
+      - name: Upload spec conformance artifacts
+        if: steps.adoption.outputs.adopted == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: conformance-artifacts-${{ matrix.sdk.id }}
+          path: |
+            intentproof-spec/conformance-report.json
+            intentproof-spec/conformance-certificate.json
+          if-no-files-found: error
 
       - name: Upload parity stream artifact
         if: steps.adoption.outputs.adopted == 'true'
