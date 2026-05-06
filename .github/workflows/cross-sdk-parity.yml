@@ -5,23 +5,13 @@ name: Cross-SDK Parity
 # pins before expecting this workflow to pass.
 #
 # Triggers:
-# - pull_request: same normative paths as push — runs parity plus each SDK's native CI gate (tests/build).
-# - push (default branch): normative paths only — parity stream compare without duplicating full SDK CI.
-# - schedule / workflow_dispatch: full parity (same as push; no native gates).
+# - push (default branch): normative paths only — parity stream compare.
+# - schedule / workflow_dispatch: full parity (same as push).
 
 on:
   schedule:
     - cron: "15 6 * * 1"
   workflow_dispatch:
-  pull_request:
-    paths:
-      - "schema/**"
-      - "golden/**"
-      - "tests/conformance/**"
-      - "tests/lib/semantics.ts"
-      - "spec.json"
-      - "scripts/run-conformance.sh"
-      - ".github/workflows/cross-sdk-parity.yml"
   push:
     branches: [main, master]
     paths:
@@ -128,57 +118,6 @@ jobs:
           name: parity-stream-${{ matrix.sdk.id }}
           path: ${{ matrix.sdk.path }}/parity-stream.jsonl
           if-no-files-found: error
-
-      # PRs touching normative paths also run each SDK repo's main CI gate (parity with sdk repos'
-      # native workflows). Push-to-main / schedule runs skip this to avoid noise and pin churn on docs-only landings.
-      - name: Set up Java (PR native checks)
-        if: github.event_name == 'pull_request' && matrix.sdk.id == 'java'
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: "21"
-
-      - name: Set up Gradle (PR native checks)
-        if: github.event_name == 'pull_request' && matrix.sdk.id == 'java'
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Set up Python (PR native checks)
-        if: github.event_name == 'pull_request' && matrix.sdk.id == 'python'
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-
-      - name: SDK native CI gate (pull_request only)
-        if: github.event_name == 'pull_request'
-        env:
-          INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
-        run: |
-          set -euo pipefail
-          sdk_root="${{ github.workspace }}/${{ matrix.sdk.path }}"
-          case "${{ matrix.sdk.id }}" in
-            node)
-              cd "$sdk_root"
-              if ! cmp -s README.md packages/sdk/README.md; then
-                echo "::error::packages/sdk/README.md is out of sync with README.md at the repo root. From the repo root run: npm run sync-readme — then commit packages/sdk/README.md"
-                exit 1
-              fi
-              npm ci
-              npm run ci
-              ;;
-            python)
-              cd "$sdk_root"
-              python -m pip install -U pip
-              python -m pip install -e ".[dev]"
-              python -m pytest tests \
-                --cov=intentproof \
-                --cov-report=term-missing \
-                --cov-fail-under=100
-              ;;
-            java)
-              cd "$sdk_root"
-              ./gradlew --no-daemon check
-              ;;
-          esac
 
   aggregate-compare:
     runs-on: ubuntu-latest

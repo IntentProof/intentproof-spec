@@ -13,6 +13,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  parity-policy-note:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Detect normative-path changes
+        id: changes
+        run: |
+          set -euo pipefail
+          git fetch origin "${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}" --depth=200
+          changed="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD || true)"
+          echo "$changed"
+          if printf '%s\n' "$changed" | grep -Eq '^(schema/|golden/|tests/conformance/|tests/lib/semantics\.ts$|spec\.json$|scripts/run-conformance\.sh$|\.github/workflows/cross-sdk-parity\.yml$)'; then
+            echo "normative=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "normative=false" >> "${GITHUB_OUTPUT}"
+          fi
+      - name: Emit parity policy note
+        if: steps.changes.outputs.normative == 'true'
+        run: |
+          {
+            echo "## Cross-SDK parity policy"
+            echo ""
+            echo "This PR modifies normative spec paths."
+            echo "Cross-SDK parity now runs on \`push\` to default branch,"
+            echo "\`schedule\`, and \`workflow_dispatch\` (not on pull_request)."
+            echo "After merge, ensure SDK pin bumps are landed and parity passes."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
   shellcheck:
     runs-on: ubuntu-latest
     timeout-minutes: 10
