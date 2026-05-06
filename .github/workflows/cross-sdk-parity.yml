@@ -17,6 +17,11 @@ on:
         description: "Spec tag/branch/SHA to validate against (default: latest spec-v* tag)"
         required: false
         type: string
+      require_full_adoption:
+        description: "Fail if any SDK is not pinned to target spec commit"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -32,6 +37,7 @@ jobs:
       target_ref: ${{ steps.resolve.outputs.target_ref }}
       target_commit: ${{ steps.resolve.outputs.target_commit }}
       target_version: ${{ steps.resolve.outputs.target_version }}
+      require_full_adoption: ${{ steps.resolve.outputs.require_full_adoption }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -56,10 +62,16 @@ jobs:
           git checkout --quiet "${target_ref}"
           target_commit="$(git rev-parse HEAD)"
           target_version="$(python3 -c "import json;print(json.load(open('spec.json'))['version'])")"
+          strict_input="${{ github.event.inputs.require_full_adoption || 'false' }}"
+          case "${strict_input}" in
+            true|True|TRUE|1|yes|on) strict=true ;;
+            *) strict=false ;;
+          esac
           {
             echo "target_ref=${target_ref}"
             echo "target_commit=${target_commit}"
             echo "target_version=${target_version}"
+            echo "require_full_adoption=${strict}"
           } >> "${GITHUB_OUTPUT}"
 
   parity:
@@ -282,6 +294,7 @@ jobs:
           TARGET_REF: ${{ needs.resolve-target.outputs.target_ref }}
           TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
           TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+          REQUIRE_FULL_ADOPTION: ${{ needs.resolve-target.outputs.require_full_adoption }}
         run: |
           set -euo pipefail
           {
@@ -290,6 +303,7 @@ jobs:
             echo "- Target ref: \`${TARGET_REF}\`"
             echo "- Target commit: \`${TARGET_COMMIT}\`"
             echo "- Target version: \`${TARGET_VERSION}\`"
+            echo "- Require full adoption: \`${REQUIRE_FULL_ADOPTION}\`"
             echo ""
           } >> "${GITHUB_STEP_SUMMARY}"
           python3 - <<'PY' >> "${GITHUB_STEP_SUMMARY}"
@@ -307,4 +321,37 @@ jobs:
           for row in rows:
               adopted = "yes" if row.get("adopted") else "no (pending)"
               print(f"| {row.get('sdk')} | `{row.get('sdkPinnedCommit')}` | {adopted} |")
+          PY
+
+  enforce-full-adoption:
+    runs-on: ubuntu-latest
+    needs: [resolve-target, parity]
+    if: needs.resolve-target.outputs.require_full_adoption == 'true'
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: parity-meta-*
+          path: parity-meta
+          if-no-artifact-found: ignore
+      - name: Enforce adoption completeness
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          rows = []
+          for path in sorted(Path("parity-meta").rglob("parity-meta.json")):
+              rows.append(json.loads(path.read_text(encoding="utf-8")))
+
+          pending = [r for r in rows if not r.get("adopted")]
+          if pending:
+              print("::error::Full adoption required, but SDKs are still pending:")
+              for row in pending:
+                  print(
+                      f"::error::{row.get('sdk')} pinned {row.get('sdkPinnedCommit')} "
+                      f"!= target {row.get('targetCommit')}"
+                  )
+              raise SystemExit(1)
+          print("Full adoption requirement satisfied.")
           PY
