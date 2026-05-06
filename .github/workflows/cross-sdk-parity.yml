@@ -74,6 +74,17 @@ jobs:
         run: |
           bash intentproof-spec/scripts/check-sdk-hardening.sh "${{ github.workspace }}/${{ matrix.sdk.path }}"
 
+      - name: Set up Java (parity verify)
+        if: matrix.sdk.id == 'java'
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle (parity verify)
+        if: matrix.sdk.id == 'java'
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Verify generated artifacts are up to date
         working-directory: ${{ matrix.sdk.path }}
         env:
