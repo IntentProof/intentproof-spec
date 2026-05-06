@@ -41,8 +41,8 @@ Issuance **must be denied** (no certificate, CI must fail if emission is attempt
 
 | Phase | Behavior |
 |-------|----------|
-| **Now** | Policy only; no certificate artifact in CI yet. |
-| **Next** | Emit unsigned `conformance-certificate.json` candidate; validate against new schema. |
+| **Now** | Unsigned `conformance-certificate.json` emitted when `INTENTPROOF_CONFORMANCE_JSON=1` and issuance gates pass (see `tools/conformance-certificate.ts`). |
+| **Next** | CI artifact upload + explicit schema/policy validation step in workflows. |
 | **Stage 2 exit** | Signed or otherwise verifiable issuer binding per RFC + verification docs. |
 
 ## References

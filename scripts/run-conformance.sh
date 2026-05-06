@@ -20,7 +20,10 @@
 #   INTENTPROOF_REPLAY_STREAMS       Colon-separated list of JSONL files (same line count);
 #                                    each line is one JSON value; compared post-canonicalization.
 #                                    Default: self-check using golden/canonicalization_cases.jsonl twice.
-#   INTENTPROOF_CONFORMANCE_JSON=1   Emit one JSON object (specVersion, sdk, result, commit, timestamp).
+#   INTENTPROOF_CONFORMANCE_JSON=1   Emit validated conformance-report.json and conformance-certificate.json.
+#   INTENTPROOF_CERTIFICATE_ALLOW_REPLAY_SKIP=1  Allow certificate when replayParity is skip (local only).
+#   INTENTPROOF_CERTIFICATE_VERSION   Certificate artifact version string (default cert-v0.1.0).
+#   INTENTPROOF_CERT_ISSUER          Issuer id (default intentproof-ci).
 #   INTENTPROOF_SDK_ID               sdk field when emitting JSON (default: spec).
 
 set -euo pipefail
@@ -156,6 +159,7 @@ if [[ "${INTENTPROOF_CONFORMANCE_JSON:-0}" == "1" ]]; then
     export INTENTPROOF_SDK_VERSION="$sdk_version"
   fi
   npm exec -- tsx tools/conformance-report.ts || failed=1
+  npm exec -- tsx tools/conformance-certificate.ts || failed=1
 fi
 
 if [[ "$failed" -ne 0 ]]; then

@@ -18,8 +18,10 @@ for audit, CI gates, and (later) signing.
   verifies).
 - **In repo:** normative JSON Schema at `schema/conformance_certificate.v1.schema.json`
   (indexed from `spec.json` → `schemas.conformance_certificate`).
-- **Out of scope until follow-up PRs:** CI emission of certificate artifacts,
-  cryptographic signatures (see [certificate issuance policy](certificate-issuance-policy.md)).
+- **In runner:** `tools/conformance-certificate.ts` (invoked from `run-conformance.sh`
+  when `INTENTPROOF_CONFORMANCE_JSON=1`) writes `conformance-certificate.json`.
+- **Out of scope until follow-up PRs:** workflow artifact upload, dedicated CI
+  validation job, cryptographic signatures (see [certificate issuance policy](certificate-issuance-policy.md)).
 
 ## Relationship to conformance
 
