@@ -5,8 +5,12 @@ Use this checklist for **TypeScript (Node)**, **Python**, and **Java** SDK PR re
 ## 1) Spec pin is explicit and enforced
 
 - [ ] SDK declares a pinned spec version (for example `intentproofSpecVersion` / `[tool.intentproof].spec-version`).
-- [ ] CI compares that value to `intentproof-spec/spec.json` `version` and fails on mismatch.
-- [ ] Release notes mention the pinned spec tag used for conformance.
+- [ ] SDK declares a pinned **immutable spec commit** (`intentproofSpecCommit` / `spec-commit` / `intentproofSpecCommit=`).
+- [ ] CI compares the version to `intentproof-spec/spec.json` `version` and the commit to `git rev-parse HEAD` in that checkout; both must match.
+- [ ] CI checks out `intentproof-spec` at the **declared commit SHA** (see SDK workflows / `scripts/read-sdk-spec-commit.sh`), not an unconstrained `main` tip that may bypass the pin contract.
+- [ ] CI runs **`spec:integrity:verify`** via `scripts/run-conformance.sh` (hashes + Ed25519 signature for `spec.json` → `schemas.*`).
+- [ ] Pull requests that change schemas are classified in spec CI (via `spec.json` → `schemas` only); **`BREAKING`** requires label **`spec-breaking-approved`** or repository variable **`SPEC_SCHEMA_COMPAT_OVERRIDE=true`** (break-glass).
+- [ ] Release notes mention the pinned spec tag **and git SHA** used for conformance.
 
 ## 2) Wire models are generated from schema
 
