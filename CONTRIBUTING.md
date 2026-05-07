@@ -56,9 +56,8 @@ Manual dispatch inputs (optional):
 | **Repository/org secret** (recommended) | `INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM` | PEM Ed25519 private key used to sign `conformance-certificate.json` during conformance runs. |
 | **Repository/org secret** (recommended) | `INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM` | Matching PEM Ed25519 public key used by certificate validation checks in CI/parity. |
 
-`ci.yml` separates untrusted and trusted paths: pull requests run a no-secrets
-conformance precheck, while push runs perform full secret-backed attestation
-checks.
+`ci.yml` is pull-request-only (no-secrets checks). Trusted attestation runs live
+in `conformance-attestation.yml` for push/tag/manual contexts.
 
 ## Terminology (shared with SDK repos)
 
