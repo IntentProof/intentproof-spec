@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Verify signed spec schema integrity manifest (artifacts + signing/*.public.pem).
+# Verify signed spec schema integrity manifest (artifacts + external public key).
 # Usage:
 #   bash scripts/verify-spec-integrity.sh [SPEC_ROOT]
 # Defaults SPEC_ROOT to INTENTPROOF_SPEC_ROOT or this repository.
+# Requires one of:
+#   INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM
+#   INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

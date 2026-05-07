@@ -17,12 +17,28 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { canonicalJsonStringify } from "./canonical/canonical-json.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..");
 
 function sha256Utf8(content: string): string {
   return crypto.createHash("sha256").update(content, "utf8").digest("hex");
+}
+
+function signCertificate(
+  certificateWithoutSignature: Record<string, unknown>,
+): { alg: string; keyId: string; value: string } | undefined {
+  const privateKeyPem = process.env.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM;
+  if (!privateKeyPem) return undefined;
+  const privateKey = crypto.createPrivateKey(privateKeyPem);
+  const payload = canonicalJsonStringify(certificateWithoutSignature);
+  const signature = crypto.sign(null, Buffer.from(payload, "utf8"), privateKey).toString("base64");
+  return {
+    alg: "ed25519",
+    keyId: process.env.INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID ?? "intentproof-ci-ed25519-v1",
+    value: signature,
+  };
 }
 
 function gitHead(): string | undefined {
@@ -119,7 +135,12 @@ async function main(): Promise<number> {
       oracle: "intentproof-spec/run-conformance",
       allPhasesPass: true,
     },
-  };
+  } as Record<string, unknown>;
+
+  const signature = signCertificate(certificate);
+  if (signature) {
+    certificate.signature = signature;
+  }
 
   const validateCert = ajv.compile(certSchema);
   if (!validateCert(certificate)) {

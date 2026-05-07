@@ -188,6 +188,9 @@ jobs:
           INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
           INTENTPROOF_REPLAY_VERIFY: "1"
           INTENTPROOF_CONFORMANCE_JSON: "1"
+          INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID: intentproof-ci-ed25519-v1
         run: |
           set -euo pipefail
           bash "${{ matrix.sdk.conformance }}" | tee conformance.log
@@ -225,6 +228,9 @@ jobs:
       - name: Validate conformance certificate (spec tree)
         if: steps.adoption.outputs.adopted == 'true'
         working-directory: intentproof-spec
+        env:
+          INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM != '' && secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM != '' && '1' || '0' }}
         run: npm run validate:conformance-certificate
 
       - name: Upload spec conformance artifacts

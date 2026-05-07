@@ -78,9 +78,10 @@
     "signature": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["alg", "value"],
+      "required": ["alg", "keyId", "value"],
       "properties": {
         "alg": { "type": "string", "minLength": 1 },
+        "keyId": { "type": "string", "minLength": 1 },
         "value": { "type": "string", "minLength": 1 }
       },
       "description": "Optional attestation signature; required for Stage 2 exit per certificate-issuance-policy.md."

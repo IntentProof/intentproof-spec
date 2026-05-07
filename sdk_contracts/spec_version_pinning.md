@@ -26,7 +26,7 @@ The **version** string MUST equal `spec.json.version`. The **commit** string MUS
 
 ## Schema integrity manifest
 
-Normative schema files listed under `spec.json` → `schemas` are hashed in **`artifacts/spec-integrity.v1.json`** with an **Ed25519** detached signature in **`artifacts/spec-integrity.v1.json.sig`**. The public key is **`signing/spec-integrity.public.pem`**. **`scripts/run-conformance.sh`** runs **`npm run spec:integrity:verify`** so every conformance run checks hashes and signature. **`scripts/verify-spec-integrity.sh`** is the shell wrapper used when you want install + verify without the full oracle.
+Normative schema files listed under `spec.json` → `schemas` are hashed in **`artifacts/spec-integrity.v1.json`** with an **Ed25519** detached signature in **`artifacts/spec-integrity.v1.json.sig`**. Verification requires an external public key via **`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM`** (or **`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH`**). **`scripts/run-conformance.sh`** runs **`npm run spec:integrity:verify`** so every conformance run checks hashes and signature. **`scripts/verify-spec-integrity.sh`** is the shell wrapper used when you want install + verify without the full oracle.
 
 Signing policy: this repository standardizes on **Ed25519 + PEM** for portability in CI without extra binaries. Organizations that prefer **Sigstore/cosign** or **GPG** may wrap the same canonical manifest bytes; verification in CI must still run **`npm run spec:integrity:verify`** (or fail closed) unless you replace it with an equivalently strict policy owned by your org.
 
@@ -41,7 +41,7 @@ CI classifies schema diffs vs the merge base of the PR base branch (only paths f
 1. Check out the `intentproof-spec` revision you intend to ship against (`spec.json.version` + `git rev-parse HEAD`).
 2. Add the **version** and **commit** fields in Node (root + `packages/sdk`), Python (`[tool.intentproof]`), or Gradle (`gradle.properties`) as in the table above.
 3. Run **`bash /path/to/intentproof-spec/scripts/check-sdk-spec-pins.sh /path/to/sdk /path/to/spec`** locally; fix mismatches until it passes.
-4. If you changed JSON Schemas in the spec repo, regenerate **`artifacts/spec-integrity.v1.json`** and its **`.sig`** there (`npm run spec:integrity:generate` then `npm run spec:integrity:sign -- --private-key /secure/path/spec-integrity.key.pem`), commit the updated manifest + signature + public key if rotated.
+4. If you changed JSON Schemas in the spec repo, regenerate **`artifacts/spec-integrity.v1.json`** and its **`.sig`** there (`npm run spec:integrity:generate` then `npm run spec:integrity:sign -- --private-key /secure/path/spec-integrity.key.pem`), commit the updated manifest + signature. Keep signing private keys **outside** the repo checkout; `tools/spec-integrity.ts sign` rejects in-repo key paths unless `INTENTPROOF_ALLOW_INSECURE_LOCAL_SIGNING_KEY=1` is explicitly set.
 
 ## Releases
 

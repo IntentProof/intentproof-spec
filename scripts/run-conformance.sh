@@ -24,6 +24,10 @@
 #   INTENTPROOF_CERTIFICATE_ALLOW_REPLAY_SKIP=1  Allow certificate when replayParity is skip (local only).
 #   INTENTPROOF_CERTIFICATE_VERSION   Certificate artifact version string (default cert-v0.1.0).
 #   INTENTPROOF_CERT_ISSUER          Issuer id (default intentproof-ci).
+#   INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM      PEM private key (Ed25519) to sign conformance certificate.
+#   INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID       Signature key identifier (default intentproof-ci-ed25519-v1).
+#   INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM    PEM public key for spec-integrity verify.
+#   INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH   Path to public key PEM (alternative to *_PEM).
 #   INTENTPROOF_SDK_ID               sdk field when emitting JSON (default: spec).
 
 set -euo pipefail

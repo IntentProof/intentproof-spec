@@ -29,6 +29,17 @@ All notable changes to this specification repository are documented here. Versio
   **`cross-sdk-parity.yml`** (adopted SDKs): same validate + **`conformance-artifacts-<sdk>`**;
   parity log parsing selects the **conformance report** JSON (not the trailing
   certificate line). Env: **`INTENTPROOF_CERTIFICATE_*`**. Docs/README updated.
+- **Stage 2 certificate signing/verification:** conformance certificate emission
+  now supports **Ed25519** signatures via
+  **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** (+ optional key id), and
+  certificate validation verifies signatures with
+  **`INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`**; CI/parity enforce required
+  signatures when both signing and verification secrets are configured.
+- **Integrity-key custody hardening:** `spec:integrity:verify` now requires an
+  external public key input (`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` or
+  `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH`) instead of repo-local
+  `signing/spec-integrity.public.pem`; docs/workflows updated to use org/repo
+  secrets for verification.
 - **Cross-SDK parity & release train:** **`cross-sdk-parity`** on **schedule** +
   **`workflow_dispatch`** only; target **`spec-v*`** / `spec_ref`, **adoption** =
   SDK pin SHA vs target, optional **`require_full_adoption`**. **`sdk-release-train.yml`**

@@ -41,8 +41,8 @@ Issuance **must be denied** (no certificate, CI must fail if emission is attempt
 
 | Phase | Behavior |
 |-------|----------|
-| **Now** | Unsigned `conformance-certificate.json` when `INTENTPROOF_CONFORMANCE_JSON=1` and gates pass (`tools/conformance-certificate.ts`). **`ci.yml`** and adopted matrix rows in **`cross-sdk-parity.yml`** run **`validate-conformance-certificate`** and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`** (report + certificate). |
-| **Next** | Stage 2 signing + verification docs. |
+| **Now** | Certificate emission supports **Ed25519 signatures** when `INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM` is configured; `tools/validate-conformance-certificate.ts` verifies signatures when present and can enforce them with `INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`. **`ci.yml`** and adopted matrix rows in **`cross-sdk-parity.yml`** run validation and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`** (report + certificate). |
+| **Next** | Enforce required signatures in all protected release/attestation workflows (no unsigned fallback). |
 | **Stage 2 exit** | Signed or otherwise verifiable issuer binding per RFC + verification docs. |
 
 ## References

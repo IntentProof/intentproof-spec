@@ -3,7 +3,7 @@
  *
  * Usage:
  *   tsx tools/spec-integrity.ts generate   # write artifacts/spec-integrity.v1.json
- *   tsx tools/spec-integrity.ts sign --private-key signing/spec-integrity.key.pem
+ *   tsx tools/spec-integrity.ts sign --private-key /secure/path/spec-integrity.key.pem
  *   tsx tools/spec-integrity.ts verify
  */
 import { createHash, createPrivateKey, createPublicKey, sign, verify } from "node:crypto";
@@ -85,6 +85,33 @@ function publicKeyPath(specRoot: string): string {
   return path.join(specRoot, "signing", "spec-integrity.public.pem");
 }
 
+function readVerifyPublicKey(specRoot: string): Buffer {
+  const pem = process.env.INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM;
+  if (pem && pem.trim().length > 0) {
+    return Buffer.from(pem, "utf8");
+  }
+  const keyPathEnv = process.env.INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH;
+  if (keyPathEnv && keyPathEnv.trim().length > 0) {
+    const abs = path.resolve(keyPathEnv);
+    if (!fs.existsSync(abs)) {
+      console.error(`spec-integrity verify: missing public key path from INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH: ${abs}`);
+      process.exit(1);
+    }
+    return fs.readFileSync(abs);
+  }
+  const legacyPath = publicKeyPath(specRoot);
+  if (fs.existsSync(legacyPath)) {
+    console.error(
+      "spec-integrity verify: signing/spec-integrity.public.pem is deprecated; set INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM or INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH",
+    );
+    process.exit(1);
+  }
+  console.error(
+    "spec-integrity verify: missing public key; set INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM or INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH",
+  );
+  process.exit(1);
+}
+
 function cmdGenerate(specRoot: string): void {
   const m = buildManifest(specRoot);
   const outDir = path.join(specRoot, "artifacts");
@@ -100,8 +127,20 @@ function cmdSign(specRoot: string, keyPath: string): void {
     console.error("spec-integrity: run generate first");
     process.exit(1);
   }
+  const resolvedKeyPath = path.resolve(keyPath);
+  const relFromRoot = path.relative(specRoot, resolvedKeyPath);
+  const keyUnderRepo =
+    relFromRoot !== "" &&
+    !relFromRoot.startsWith("..") &&
+    !path.isAbsolute(relFromRoot);
+  if (keyUnderRepo && process.env.INTENTPROOF_ALLOW_INSECURE_LOCAL_SIGNING_KEY !== "1") {
+    console.error(
+      "spec-integrity: refusing private key inside repository checkout; use an external secure path or set INTENTPROOF_ALLOW_INSECURE_LOCAL_SIGNING_KEY=1 explicitly",
+    );
+    process.exit(2);
+  }
   const payload = fs.readFileSync(manifestFile);
-  const key = createPrivateKey(fs.readFileSync(keyPath));
+  const key = createPrivateKey(fs.readFileSync(resolvedKeyPath));
   const sig = sign(null, payload, key);
   fs.writeFileSync(sigPath(specRoot), sig.toString("base64") + "\n", "utf8");
   console.error(`spec-integrity: wrote ${path.relative(specRoot, sigPath(specRoot))}`);
@@ -110,11 +149,9 @@ function cmdSign(specRoot: string, keyPath: string): void {
 export function verifyManifest(specRoot: string): void {
   const manifestFile = manifestPath(specRoot);
   const sigFile = sigPath(specRoot);
-  const pubFile = publicKeyPath(specRoot);
   for (const [label, p] of [
     ["manifest", manifestFile],
     ["signature", sigFile],
-    ["public key", pubFile],
   ]) {
     if (!fs.existsSync(p)) {
       console.error(`spec-integrity verify: missing ${label}: ${p}`);
@@ -162,7 +199,7 @@ export function verifyManifest(specRoot: string): void {
     console.error("spec-integrity verify: manifest JSON is not canonical (regenerate with generate)");
     process.exit(1);
   }
-  const pub = createPublicKey(fs.readFileSync(pubFile));
+  const pub = createPublicKey(readVerifyPublicKey(specRoot));
   const sig = Buffer.from(fs.readFileSync(sigFile, "utf8").trim(), "base64");
   const payload = fs.readFileSync(manifestFile);
   const ok = verify(null, payload, pub, sig);
