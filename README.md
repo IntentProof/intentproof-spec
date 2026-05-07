@@ -139,6 +139,7 @@ Or set **`INTENTPROOF_SPEC_ROOT`** to an absolute path to the spec checkout.
 | `INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID` | Optional key id embedded in certificate signature (`intentproof-ci-ed25519-v1` default). |
 | `INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM` | PEM public key used by `validate:conformance-certificate` for signature verification. |
 | `INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1` | Fail certificate validation when signature is missing. |
+| `INTENTPROOF_CERTIFICATE_SCHEMA_VERSION` | Certificate schema selector for emit/validate tooling (`v2` default; set `v1` only for compatibility validation lanes). |
 
 Equivalent from inside a clone of this repo: `npm run conformance` (runs the same shell script). For a quick local gate without the shell wrapper: `npm run ci:local` (typecheck + Vitest).
 

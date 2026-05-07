@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/conformance_certificate.v2.schema.json",
+  "$comment": "Normative IntentProof source tree: https://github.com/IntentProof/intentproof-spec/tree/main/schema — $id is a logical URI; see README.",
+  "title": "IntentProof Conformance Certificate v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "certificateVersion",
+    "issuer",
+    "issuedAt",
+    "subject",
+    "spec",
+    "conformanceReportDigest",
+    "claims"
+  ],
+  "properties": {
+    "certificateVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Certificate schema / artifact family version."
+    },
+    "issuer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "language", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "language": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["specVersion", "specFingerprint"],
+      "properties": {
+        "specVersion": { "type": "string", "minLength": 1 },
+        "specFingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "specCommit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        }
+      }
+    },
+    "conformanceReportDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle", "allPhasesPass"],
+      "properties": {
+        "oracle": { "type": "string", "minLength": 1 },
+        "allPhasesPass": { "type": "boolean" }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alg", "keyId", "value"],
+      "properties": {
+        "alg": { "type": "string", "minLength": 1 },
+        "keyId": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 }
+      },
+      "description": "If present, v2 requires keyId for issuer key disambiguation."
+    }
+  }
+}
