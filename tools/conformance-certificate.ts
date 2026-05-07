@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Reads conformance-report.json, emits conformance-certificate.json, validates
- * against schema/conformance_certificate.v1.schema.json.
+ * against conformance_certificate.<v1|v2> schema (v2 default).
  *
  * Preconditions: report must exist, validate as conformance_report.v1, and
  * satisfy issuance gates (all phases pass; replayParity not skip unless
@@ -21,6 +21,13 @@ import { canonicalJsonStringify } from "./canonical/canonical-json.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..");
+
+function certificateSchemaVersion(): "v1" | "v2" {
+  const raw = (process.env.INTENTPROOF_CERTIFICATE_SCHEMA_VERSION ?? "v2").toLowerCase();
+  if (raw === "v1" || raw === "v2") return raw;
+  console.error(`conformance-certificate: unsupported INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=${raw} (expected v1 or v2)`);
+  process.exit(2);
+}
 
 function sha256Utf8(content: string): string {
   return crypto.createHash("sha256").update(content, "utf8").digest("hex");
@@ -99,8 +106,9 @@ async function main(): Promise<number> {
   const reportSchema = JSON.parse(
     fs.readFileSync(path.join(repoRoot, "schema/conformance_report.v1.schema.json"), "utf8"),
   ) as object;
+  const certSchemaVersion = certificateSchemaVersion();
   const certSchema = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, "schema/conformance_certificate.v1.schema.json"), "utf8"),
+    fs.readFileSync(path.join(repoRoot, `schema/conformance_certificate.${certSchemaVersion}.schema.json`), "utf8"),
   ) as object;
 
   const ajv = new Ajv2020({ allErrors: true, strict: false });

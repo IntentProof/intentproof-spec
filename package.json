@@ -1,7 +1,7 @@
 {
   "name": "intentproof-spec",
-  "version": "1.0.1",
-  "intentproofSpecVersion": "spec-v1.0.1",
+  "version": "2.0.0",
+  "intentproofSpecVersion": "spec-v2.0.0",
   "private": true,
   "description": "Canonical IntentProof execution specification, schemas, golden oracles, and conformance tests for all SDKs.",
   "license": "Apache-2.0",

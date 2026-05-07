@@ -27,10 +27,12 @@ All notable changes to this specification repository are documented here. Versio
   `npm run validate:conformance-certificate` (schema, digest/report binding,
   all phases pass); CI/parity publish `conformance-artifacts*`; parity log
   parsing selects the conformance report JSON line.
-- **Certificate signing and schema compatibility:** certificate emission and
-  validation support Ed25519 signing via `INTENTPROOF_CERTIFICATE_*`; `v1`
-  keeps `signature.keyId` optional for compatibility while still emitting it;
-  keyId-required enforcement is deferred to a future `v2` schema.
+- **Certificate signing and v2 cutover:** certificate emission and validation
+  support Ed25519 signing via `INTENTPROOF_CERTIFICATE_*`; add
+  `schema/conformance_certificate.v2.schema.json` (requires `signature.keyId`
+  when signature is present), switch `spec.json` to v2, and default cert
+  emit/validate tooling to `INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v2`; v1
+  schema remains available for compatibility reference.
 - **Integrity-key custody and CI trust split:** `spec:integrity:verify` now
   requires external public key input
   (`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` or `_PATH`) instead of

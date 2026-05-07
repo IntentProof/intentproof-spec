@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Fail-closed checks for conformance-certificate.json after a conformance run:
- * JSON Schema (conformance_certificate.v1), digest and binding vs conformance-report.json,
+ * JSON Schema (conformance_certificate.<v1|v2>), digest and binding vs conformance-report.json,
  * all report phases pass.
  */
 import { Ajv2020 } from "ajv/dist/2020.js";
@@ -15,6 +15,15 @@ import { canonicalJsonStringify } from "./canonical/canonical-json.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..");
+
+function certificateSchemaVersion(): "v1" | "v2" {
+  const raw = (process.env.INTENTPROOF_CERTIFICATE_SCHEMA_VERSION ?? "v2").toLowerCase();
+  if (raw === "v1" || raw === "v2") return raw;
+  console.error(
+    `validate-conformance-certificate: unsupported INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=${raw} (expected v1 or v2)`,
+  );
+  process.exit(2);
+}
 
 function sha256Utf8(content: string): string {
   return crypto.createHash("sha256").update(content, "utf8").digest("hex");
@@ -57,8 +66,9 @@ function main(): number {
     return 1;
   }
 
+  const certSchemaVersion = certificateSchemaVersion();
   const certSchema = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, "schema/conformance_certificate.v1.schema.json"), "utf8"),
+    fs.readFileSync(path.join(repoRoot, `schema/conformance_certificate.${certSchemaVersion}.schema.json`), "utf8"),
   ) as object;
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   (addFormatsPlugin as unknown as (a: Ajv2020) => void)(ajv);
