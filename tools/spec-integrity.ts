@@ -85,7 +85,7 @@ function publicKeyPath(specRoot: string): string {
   return path.join(specRoot, "signing", "spec-integrity.public.pem");
 }
 
-function readVerifyPublicKey(specRoot: string): Buffer {
+function readVerifyPublicKey(specRoot: string): Buffer | undefined {
   const pem = process.env.INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM;
   if (pem && pem.trim().length > 0) {
     return Buffer.from(pem, "utf8");
@@ -106,10 +106,7 @@ function readVerifyPublicKey(specRoot: string): Buffer {
     );
     process.exit(1);
   }
-  console.error(
-    "spec-integrity verify: missing public key; set INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM or INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH",
-  );
-  process.exit(1);
+  return undefined;
 }
 
 function cmdGenerate(specRoot: string): void {
@@ -199,9 +196,16 @@ export function verifyManifest(specRoot: string): void {
     console.error("spec-integrity verify: manifest JSON is not canonical (regenerate with generate)");
     process.exit(1);
   }
-  const pub = createPublicKey(readVerifyPublicKey(specRoot));
-  const sig = Buffer.from(fs.readFileSync(sigFile, "utf8").trim(), "base64");
   const payload = fs.readFileSync(manifestFile);
+  const pubPem = readVerifyPublicKey(specRoot);
+  if (!pubPem) {
+    console.error(
+      "spec-integrity verify: missing public key; set INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM or INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH",
+    );
+    process.exit(1);
+  }
+  const pub = createPublicKey(pubPem);
+  const sig = Buffer.from(fs.readFileSync(sigFile, "utf8").trim(), "base64");
   const ok = verify(null, payload, pub, sig);
   if (!ok) {
     console.error("spec-integrity verify: Ed25519 signature invalid");
