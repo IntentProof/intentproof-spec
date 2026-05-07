@@ -20,39 +20,28 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **Stage 2 certification:** Draft **RFC** + **issuance policy**; normative
-  **`conformance_certificate.v1`** in **`spec.json`** (re-sign
-  **`artifacts/spec-integrity.v1.*`** when indexed schemas change). Emitter
-  **`tools/conformance-certificate.ts`** (after report when **`INTENTPROOF_CONFORMANCE_JSON=1`**;
-  digest = SHA-256 of report bytes). Validator **`tools/validate-conformance-certificate.ts`**
-  / **`npm run validate:conformance-certificate`** (schema, digest, binding, all phases **pass**). **`ci.yml`**: validate + artifact **`conformance-artifacts`**.
-  **`cross-sdk-parity.yml`** (adopted SDKs): same validate + **`conformance-artifacts-<sdk>`**;
-  parity log parsing selects the **conformance report** JSON (not the trailing
-  certificate line). Env: **`INTENTPROOF_CERTIFICATE_*`**. Docs/README updated.
-- **Stage 2 certificate signing/verification:** conformance certificate emission
-  now supports **Ed25519** signatures via
-  **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** (+ optional key id), and
-  certificate validation verifies signatures with
-  **`INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`**; CI/parity enforce required
-  signatures when both signing and verification secrets are configured.
-- **Integrity-key custody hardening:** `spec:integrity:verify` now requires an
-  external public key input (`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` or
-  `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH`) instead of repo-local
-  `signing/spec-integrity.public.pem`; docs/workflows updated to use org/repo
-  secrets for verification.
-- **Trust-split CI policy:** `ci.yml` now runs an untrusted conformance
-  precheck on pull requests (no secrets) and a trusted attestation conformance
-  gate on push (secret-backed integrity verification + certificate validation).
-- **Certificate schema compatibility:** keep `conformance_certificate.v1`
-  backward-compatible by treating `signature.keyId` as optional in `v1`; plan
-  to require `keyId` in a future `v2` schema cut.
-- **Cross-SDK parity & release train:** **`cross-sdk-parity`** on **schedule** +
-  **`workflow_dispatch`** only; target **`spec-v*`** / `spec_ref`, **adoption** =
-  SDK pin SHA vs target, optional **`require_full_adoption`**. **`sdk-release-train.yml`**
-  (pin PRs, fingerprints, **`INTENTPROOF_BOT_APP_*`**). Normative-path PRs: **`ci.yml`**
-  parity note (includes cert tool paths).
-- **Docs:** **`sdk_contracts/conformance_reality.md`**, workflow headers,
-  **`CONTRIBUTING.md`** (Actions, **`SPEC_SCHEMA_COMPAT_OVERRIDE`**).
+- **Stage 2 certification artifacts:** draft RFC + issuance policy now back
+  normative `conformance_certificate.v1` in `spec.json`; emitter
+  `tools/conformance-certificate.ts` (after `INTENTPROOF_CONFORMANCE_JSON=1`);
+  validator `tools/validate-conformance-certificate.ts` /
+  `npm run validate:conformance-certificate` (schema, digest/report binding,
+  all phases pass); CI/parity publish `conformance-artifacts*`; parity log
+  parsing selects the conformance report JSON line.
+- **Certificate signing and schema compatibility:** certificate emission and
+  validation support Ed25519 signing via `INTENTPROOF_CERTIFICATE_*`; `v1`
+  keeps `signature.keyId` optional for compatibility while still emitting it;
+  keyId-required enforcement is deferred to a future `v2` schema.
+- **Integrity-key custody and CI trust split:** `spec:integrity:verify` now
+  requires external public key input
+  (`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` or `_PATH`) instead of
+  `signing/spec-integrity.public.pem`; PR CI runs an untrusted no-secrets
+  precheck; trusted secret-backed attestation runs in
+  `conformance-attestation.yml` (push/tag/manual).
+- **Parity, release train, and docs:** `cross-sdk-parity` remains schedule +
+  `workflow_dispatch` only with adoption targeting (`spec_ref`,
+  `require_full_adoption`); release train uses `INTENTPROOF_BOT_APP_*`; docs
+  updated across `README.md`, `CONTRIBUTING.md`, workflow headers, and
+  `sdk_contracts/conformance_reality.md`.
 
 ## 1.0.1 — 2026-05-06
 

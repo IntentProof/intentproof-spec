@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [main, master]
   pull_request:
 
 permissions:
@@ -88,40 +86,6 @@ jobs:
           npm run validate:event -- examples/success_event.json
           npm run validate:event -- examples/error_event.json
           npm exec -- tsx tools/replay/compare-streams.ts golden/canonicalization_cases.jsonl golden/canonicalization_cases.jsonl
-
-  conformance-attestation:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: ".nvmrc"
-          cache: npm
-      - name: Conformance (trusted attestation gate)
-        env:
-          INTENTPROOF_REPLAY_VERIFY: "1"
-          INTENTPROOF_CONFORMANCE_JSON: "1"
-          INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM }}
-          INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM }}
-          INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID: intentproof-ci-ed25519-v1
-        run: bash scripts/run-conformance.sh
-
-      - name: Validate conformance certificate
-        env:
-          INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM }}
-          INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM != '' && secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM != '' && '1' || '0' }}
-        run: npm run validate:conformance-certificate
-
-      - name: Upload conformance report and certificate
-        uses: actions/upload-artifact@v7
-        with:
-          name: conformance-artifacts
-          path: |
-            conformance-report.json
-            conformance-certificate.json
-          if-no-files-found: error
 
   schema-compatibility:
     if: github.event_name == 'pull_request'
