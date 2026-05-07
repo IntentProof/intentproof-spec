@@ -20,6 +20,8 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
+## 2.0.0 — 2026-05-07
+
 - **Stage 2 certification artifacts:** draft RFC + issuance policy now back
   normative `conformance_certificate.v1` in `spec.json`; emitter
   `tools/conformance-certificate.ts` (after `INTENTPROOF_CONFORMANCE_JSON=1`);
