@@ -106,20 +106,24 @@ jobs:
 
       - name: Update SDK spec pins
         env:
+          SDK_ID: ${{ matrix.sdk.id }}
+          SDK_ROOT: ${{ matrix.sdk.path }}
           TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
           TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
         run: |
           set -euo pipefail
-          sdk="${{ matrix.sdk.id }}"
-          root="${{ matrix.sdk.path }}"
-          case "${sdk}" in
-            node)
-              python3 - <<'PY'
-              import json
-              from pathlib import Path
-              root = Path("${{ matrix.sdk.path }}")
-              target_version = "${TARGET_VERSION}"
-              target_commit = "${TARGET_COMMIT}"
+          python3 - <<'PY'
+          import json
+          import os
+          import tomllib
+          from pathlib import Path
+
+          sdk = os.environ["SDK_ID"]
+          root = Path(os.environ["SDK_ROOT"])
+          target_version = os.environ["TARGET_VERSION"]
+          target_commit = os.environ["TARGET_COMMIT"]
+
+          if sdk == "node":
               for p in [root / "package.json", root / "packages/sdk/package.json"]:
                   data = json.loads(p.read_text(encoding="utf-8"))
                   data["intentproofSpecVersion"] = target_version
@@ -130,51 +134,34 @@ jobs:
                   data = json.loads(fp.read_text(encoding="utf-8"))
                   data["specVersion"] = target_version
                   fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-              PY
-              ;;
-            python)
-              python3 - <<'PY'
-              import json
-              import tomllib
-              from pathlib import Path
-              root = Path("${{ matrix.sdk.path }}")
+          elif sdk == "python":
               pyproject = root / "pyproject.toml"
               text = pyproject.read_text(encoding="utf-8")
               old = tomllib.loads(text)
               old_v = old["tool"]["intentproof"]["spec-version"]
               old_c = old["tool"]["intentproof"]["spec-commit"]
-              text = text.replace(f'spec-version = "{old_v}"', f'spec-version = "${TARGET_VERSION}"')
-              text = text.replace(f'spec-commit = "{old_c}"', f'spec-commit = "${TARGET_COMMIT}"')
+              text = text.replace(f'spec-version = "{old_v}"', f'spec-version = "{target_version}"')
+              text = text.replace(f'spec-commit = "{old_c}"', f'spec-commit = "{target_commit}"')
               pyproject.write_text(text, encoding="utf-8")
               fp = root / "src/intentproof/generated/spec_fingerprint.json"
               if fp.exists():
                   data = json.loads(fp.read_text(encoding="utf-8"))
-                  data["specVersion"] = "${TARGET_VERSION}"
+                  data["specVersion"] = target_version
                   fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-              PY
-              ;;
-            java)
-              python3 - <<'PY'
-              from pathlib import Path
-              root = Path("${{ matrix.sdk.path }}")
+          elif sdk == "java":
               props = root / "gradle.properties"
-              text = props.read_text(encoding="utf-8")
               out = []
-              for line in text.splitlines():
+              for line in props.read_text(encoding="utf-8").splitlines():
                   if line.startswith("intentproofSpecVersion="):
-                      out.append(f"intentproofSpecVersion=${TARGET_VERSION}")
+                      out.append(f"intentproofSpecVersion={target_version}")
                   elif line.startswith("intentproofSpecCommit="):
-                      out.append(f"intentproofSpecCommit=${TARGET_COMMIT}")
+                      out.append(f"intentproofSpecCommit={target_commit}")
                   else:
                       out.append(line)
               props.write_text("\n".join(out) + "\n", encoding="utf-8")
-              PY
-              ;;
-            *)
-              echo "unknown sdk ${sdk}" >&2
-              exit 2
-              ;;
-          esac
+          else:
+              raise SystemExit(f"unknown sdk {sdk}")
+          PY
 
       - name: Create or update bump PR
         env:
