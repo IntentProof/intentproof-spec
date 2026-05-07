@@ -11,6 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { canonicalJsonStringify } from "./canonical/canonical-json.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..");
@@ -25,6 +26,14 @@ type Report = {
   sdk: { name: string; language: string; version: string };
   results: Record<string, string>;
 };
+
+function readPublicKey(): crypto.KeyObject | undefined {
+  const publicKeyPem = process.env.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM;
+  if (publicKeyPem) {
+    return crypto.createPublicKey(publicKeyPem);
+  }
+  return undefined;
+}
 
 function main(): number {
   const certPath = path.join(repoRoot, "conformance-certificate.json");
@@ -64,6 +73,7 @@ function main(): number {
     spec: { specVersion: string; specFingerprint: string };
     conformanceReportDigest: string;
     claims: { allPhasesPass: boolean };
+    signature?: { alg: string; keyId: string; value: string };
   };
 
   const expectedDigest = sha256Utf8(reportRaw);
@@ -96,6 +106,39 @@ function main(): number {
       console.error(`validate-conformance-certificate: report.results.${k} must be pass (got ${v})`);
       return 1;
     }
+  }
+
+  const requireSignature = process.env.INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE === "1";
+  if (!cert.signature) {
+    if (requireSignature) {
+      console.error("validate-conformance-certificate: signature is required but missing");
+      return 1;
+    }
+    console.log("OK");
+    return 0;
+  }
+
+  if (cert.signature.alg !== "ed25519") {
+    console.error(`validate-conformance-certificate: unsupported signature algorithm ${cert.signature.alg}`);
+    return 1;
+  }
+
+  const publicKey = readPublicKey();
+  if (!publicKey) {
+    console.error(
+      "validate-conformance-certificate: certificate contains signature but INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM is unset",
+    );
+    return 1;
+  }
+
+  const unsigned = { ...certData };
+  delete (unsigned as { signature?: unknown }).signature;
+  const payload = canonicalJsonStringify(unsigned);
+  const sig = Buffer.from(cert.signature.value, "base64");
+  const ok = crypto.verify(null, Buffer.from(payload, "utf8"), publicKey, sig);
+  if (!ok) {
+    console.error("validate-conformance-certificate: signature verification failed");
+    return 1;
   }
 
   console.log("OK");

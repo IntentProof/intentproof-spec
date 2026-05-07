@@ -77,9 +77,15 @@ jobs:
         env:
           INTENTPROOF_REPLAY_VERIFY: "1"
           INTENTPROOF_CONFORMANCE_JSON: "1"
+          INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID: intentproof-ci-ed25519-v1
         run: bash scripts/run-conformance.sh
 
       - name: Validate conformance certificate
+        env:
+          INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM != '' && secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM != '' && '1' || '0' }}
         run: npm run validate:conformance-certificate
 
       - name: Upload conformance report and certificate

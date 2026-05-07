@@ -83,10 +83,11 @@ NODE
   fi
 elif [[ -f "${sdk_root}/pyproject.toml" ]]; then
   _pin_tmp="$(mktemp)"
-  python3 - <<PY >"${_pin_tmp}"
+  python3 - "${sdk_root}/pyproject.toml" <<'PY' >"${_pin_tmp}"
 import tomllib
+import sys
 from pathlib import Path
-p = Path("${sdk_root}/pyproject.toml")
+p = Path(sys.argv[1])
 data = tomllib.loads(p.read_text(encoding="utf-8"))
 ip = data.get("tool", {}).get("intentproof", {})
 ver = ip.get("spec-version")
@@ -122,10 +123,11 @@ elif [[ -f "${sdk_root}/build.gradle.kts" ]]; then
     fail_pin "Java SDK missing gradle.properties"
   fi
   _pin_tmp="$(mktemp)"
-  python3 - <<PY >"${_pin_tmp}"
+  python3 - "${props}" <<'PY' >"${_pin_tmp}"
 import re
+import sys
 from pathlib import Path
-props = Path("${props}")
+props = Path(sys.argv[1])
 text = props.read_text(encoding="utf-8")
 
 def get(key: str):

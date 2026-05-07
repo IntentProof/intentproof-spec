@@ -11,7 +11,7 @@ This repository is the **normative** source for JSON Schemas, golden oracles, se
 2. **Schema edits**
    - PRs run **`schema-compatibility`** against the merge base. Classifications **`BREAKING`** require PR label **`spec-breaking-approved`** or repository variable **`SPEC_SCHEMA_COMPAT_OVERRIDE=true`** (documented break-glass), or revert/adjust the change.
 3. **Files listed under `spec.json` → `schemas`**
-   - Regenerate the integrity manifest and signature (private key off-repo). See **`sdk_contracts/spec_version_pinning.md`** (“Migration (SDK maintainers)” applies to spec maintainers for manifest rotation).
+   - Regenerate the integrity manifest and signature (private key off-repo). See **`sdk_contracts/spec_version_pinning.md`** (“Migration (SDK maintainers)” applies to spec maintainers for manifest rotation). `tools/spec-integrity.ts sign` rejects keys under the checkout path unless `INTENTPROOF_ALLOW_INSECURE_LOCAL_SIGNING_KEY=1` is set.
 4. **Interoperability**
    - Read **`sdk_contracts/single_source_policy.md`** and **`sdk_contracts/drift_hardening_checklist.md`** when changing anything SDKs must mirror.
 
@@ -52,6 +52,9 @@ Manual dispatch inputs (optional):
 | Kind | Name | Purpose |
 |------|------|---------|
 | **Repository variable** (optional break-glass) | `SPEC_SCHEMA_COMPAT_OVERRIDE` | Set to **`true`** to allow a PR classified as **BREAKING** without label **`spec-breaking-approved`**. Prefer the label for normal process. |
+| **Repository/org secret** (required for conformance integrity verify) | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM Ed25519 public key used by `spec:integrity:verify` in CI/parity runs. |
+| **Repository/org secret** (recommended) | `INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM` | PEM Ed25519 private key used to sign `conformance-certificate.json` during conformance runs. |
+| **Repository/org secret** (recommended) | `INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM` | Matching PEM Ed25519 public key used by certificate validation checks in CI/parity. |
 
 ## Terminology (shared with SDK repos)
 

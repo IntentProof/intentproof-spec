@@ -63,7 +63,7 @@ if [[ -f "${sdk_root}/packages/sdk/package.json" ]]; then
   require_file "packages/sdk/package.json"
   require_match "package.json" '"intentproofSpecCommit"\s*:\s*"[a-f0-9]{40}"' "root package.json must declare intentproofSpecCommit (40-char hex SHA)"
   require_match "packages/sdk/package.json" '"intentproofSpecCommit"\s*:\s*"[a-f0-9]{40}"' "packages/sdk/package.json must declare intentproofSpecCommit (40-char hex SHA)"
-  node_gen_ver="$(node -e "const p=require('${sdk_root}/packages/sdk/package.json'); process.stdout.write((p.devDependencies||{})['json-schema-to-typescript']||'');")"
+  node_gen_ver="$(IP_NODE_PKG_JSON="${sdk_root}/packages/sdk/package.json" node -e "const p=require(process.env.IP_NODE_PKG_JSON); process.stdout.write((p.devDependencies||{})['json-schema-to-typescript']||'');")"
   if [[ ! "${node_gen_ver}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     err "packages/sdk/package.json: json-schema-to-typescript must be exact-pinned (found '${node_gen_ver:-<missing>}')"
   fi

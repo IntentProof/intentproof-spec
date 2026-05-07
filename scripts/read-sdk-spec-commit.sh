@@ -42,12 +42,12 @@ NODE
 fi
 
 if [[ -f "${sdk_root}/pyproject.toml" ]]; then
-  python3 - <<PY
+  python3 - "${sdk_root}/pyproject.toml" <<'PY'
 import re
 import sys
 import tomllib
 from pathlib import Path
-p = Path("${sdk_root}/pyproject.toml")
+p = Path(sys.argv[1])
 data = tomllib.loads(p.read_text(encoding="utf-8"))
 ip = data.get("tool", {}).get("intentproof", {})
 commit = ip.get("spec-commit")
@@ -64,11 +64,11 @@ if [[ -f "${sdk_root}/build.gradle.kts" ]]; then
     echo "read-sdk-spec-commit: Java SDK missing gradle.properties" >&2
     exit 2
   fi
-  python3 - <<PY
+  python3 - "${props}" <<'PY'
 import re
 import sys
 from pathlib import Path
-text = Path("${props}").read_text(encoding="utf-8")
+text = Path(sys.argv[1]).read_text(encoding="utf-8")
 m = re.search(r"^intentproofSpecCommit=(.+)$", text, re.MULTILINE)
 if not m:
     sys.exit(2)

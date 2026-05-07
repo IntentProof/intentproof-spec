@@ -24,8 +24,10 @@ for audit, CI gates, and (later) signing.
   and uploads `conformance-artifacts` (report + certificate).
 - **In parity CI:** adopted SDK matrix jobs validate and upload per-SDK
   **`conformance-artifacts-<sdk>`** from the spec checkout.
-- **Out of scope until follow-up PRs:** cryptographic signatures (see
-  [certificate issuance policy](certificate-issuance-policy.md)).
+- **Signing support (Stage 2):** `tools/conformance-certificate.ts` can sign with
+  Ed25519 (`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`), and
+  `tools/validate-conformance-certificate.ts` verifies against
+  `INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`.
 
 ## Relationship to conformance
 
@@ -47,7 +49,7 @@ for audit, CI gates, and (later) signing.
 | `spec` | `specVersion` + `specFingerprint` + optional pinned git commit SHA. |
 | `conformanceReportDigest` | SHA-256 over canonical bytes of the source report (or embedded report id). |
 | `claims` | Minimal structured claims, e.g. `{ "oracle": "intentproof-spec/run-conformance", "allPhasesPass": true }`. |
-| `signature` | Optional in v0 draft; required before Stage 2 exit (see issuance policy). |
+| `signature` | Optional object carrying `{ alg, keyId, value }`; `alg=ed25519` in current implementation. |
 
 Field names and shapes are normative in
 `schema/conformance_certificate.v1.schema.json` (evolve with RFC revisions).

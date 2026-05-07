@@ -39,7 +39,7 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, version pin check, **signed schema integrity verify**, `tsc`, Vitest, smoke, optional replay & JSON output. |
 | `scripts/check-sdk-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java SDK trees. |
 | `artifacts/spec-integrity.v1.json` (+ `.sig`) | Deterministic SHA-256 manifest over `spec.json` → `schemas.*`; verified every conformance run. |
-| `signing/spec-integrity.public.pem` | Ed25519 public key for the manifest signature (private key stays off-repo). |
+| `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` / `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH` | External Ed25519 public key input used by integrity verification (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
 | `CHANGELOG.md` | Human-readable history of spec-facing changes. |
 | `.github/` | CI (`workflows/ci.yml`: conformance, schema compatibility on PRs, shellcheck), cross-SDK parity (`workflows/cross-sdk-parity.yml`: schedule + manual, tag-anchored target), SDK release train (`workflows/sdk-release-train.yml`: `spec-v*` tag or manual → bot PRs to bump SDK pins), Dependabot. |
@@ -133,6 +133,12 @@ Or set **`INTENTPROOF_SPEC_ROOT`** to an absolute path to the spec checkout.
 | `INTENTPROOF_SPEC_ROOT` | Use this directory as the spec repo (instead of resolving from the script location or first argument). |
 | `INTENTPROOF_SPEC_SKIP_INSTALL=1` | Skip `npm ci` / `npm install` (requires an existing `node_modules` in the spec tree, for example from a cache step). |
 | `INTENTPROOF_SPEC_SKIP_SMOKE=1` | Skip `validate:event` on the reference examples after Vitest. |
+| `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM public key used by `spec:integrity:verify` (preferred). |
+| `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH` | Path to PEM public key for `spec:integrity:verify` (alternative to `*_PEM`). |
+| `INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM` | Optional PEM private key (Ed25519) used to sign `conformance-certificate.json`. |
+| `INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID` | Optional key id embedded in certificate signature (`intentproof-ci-ed25519-v1` default). |
+| `INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM` | PEM public key used by `validate:conformance-certificate` for signature verification. |
+| `INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1` | Fail certificate validation when signature is missing. |
 
 Equivalent from inside a clone of this repo: `npm run conformance` (runs the same shell script). For a quick local gate without the shell wrapper: `npm run ci:local` (typecheck + Vitest).
 
