@@ -43,6 +43,9 @@ All notable changes to this specification repository are documented here. Versio
 - **Trust-split CI policy:** `ci.yml` now runs an untrusted conformance
   precheck on pull requests (no secrets) and a trusted attestation conformance
   gate on push (secret-backed integrity verification + certificate validation).
+- **Certificate schema compatibility:** keep `conformance_certificate.v1`
+  backward-compatible by treating `signature.keyId` as optional in `v1`; plan
+  to require `keyId` in a future `v2` schema cut.
 - **Cross-SDK parity & release train:** **`cross-sdk-parity`** on **schedule** +
   **`workflow_dispatch`** only; target **`spec-v*`** / `spec_ref`, **adoption** =
   SDK pin SHA vs target, optional **`require_full_adoption`**. **`sdk-release-train.yml`**

@@ -49,7 +49,7 @@ for audit, CI gates, and (later) signing.
 | `spec` | `specVersion` + `specFingerprint` + optional pinned git commit SHA. |
 | `conformanceReportDigest` | SHA-256 over canonical bytes of the source report (or embedded report id). |
 | `claims` | Minimal structured claims, e.g. `{ "oracle": "intentproof-spec/run-conformance", "allPhasesPass": true }`. |
-| `signature` | Optional object carrying `{ alg, keyId, value }`; `alg=ed25519` in current implementation. |
+| `signature` | Optional object carrying `{ alg, keyId, value }`; in `v1`, `keyId` is optional for compatibility and is planned to be required in `v2`. |
 
 Field names and shapes are normative in
 `schema/conformance_certificate.v1.schema.json` (evolve with RFC revisions).

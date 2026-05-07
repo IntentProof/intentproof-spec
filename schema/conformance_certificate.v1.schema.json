@@ -78,13 +78,13 @@
     "signature": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["alg", "keyId", "value"],
+      "required": ["alg", "value"],
       "properties": {
         "alg": { "type": "string", "minLength": 1 },
         "keyId": { "type": "string", "minLength": 1 },
         "value": { "type": "string", "minLength": 1 }
       },
-      "description": "Optional attestation signature; required for Stage 2 exit per certificate-issuance-policy.md."
+      "description": "Optional attestation signature; keyId is optional in v1 and planned to become required in v2."
     }
   }
 }
