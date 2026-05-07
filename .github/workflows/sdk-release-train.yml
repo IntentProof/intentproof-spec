@@ -163,6 +163,37 @@ jobs:
               raise SystemExit(f"unknown sdk {sdk}")
           PY
 
+      - name: Refresh SDK generated artifacts
+        env:
+          SDK_ID: ${{ matrix.sdk.id }}
+          SDK_ROOT: ${{ matrix.sdk.path }}
+          TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
+          TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+          INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
+        run: |
+          set -euo pipefail
+          case "${SDK_ID}" in
+            node)
+              npm --prefix "${SDK_ROOT}" ci
+              npm --prefix "${SDK_ROOT}" run sync-readme -w @intentproof/sdk
+              bash "${SDK_ROOT}/scripts/generate-schema-types.sh"
+              npm --prefix "${SDK_ROOT}" run format -w @intentproof/sdk
+              ;;
+            python)
+              python3 -m pip install -e "${SDK_ROOT}[dev]"
+              INTENTPROOF_SPEC_ROOT="${INTENTPROOF_SPEC_ROOT}" \
+                python3 "${SDK_ROOT}/scripts/generate_schema_models.py"
+              python3 -m ruff format "${SDK_ROOT}/src/intentproof/generated"
+              ;;
+            java)
+              # No additional generation needed for spec pin-only bumps.
+              ;;
+            *)
+              echo "unknown sdk ${SDK_ID}" >&2
+              exit 2
+              ;;
+          esac
+
       - name: Create or update bump PR
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
