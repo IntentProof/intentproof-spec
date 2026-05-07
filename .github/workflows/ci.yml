@@ -65,6 +65,7 @@ jobs:
           shellcheck "${scripts[@]}"
 
   conformance:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -73,7 +74,32 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: npm
-      - name: Conformance (executable spec oracle)
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Conformance (untrusted PR precheck)
+        run: |
+          set -euo pipefail
+          npm run check:spec-version
+          npm run typecheck
+          npm exec -- vitest run tests/conformance/schema_validation.test.ts
+          npm exec -- vitest run tests/conformance/semantics_validation.test.ts tests/conformance/correlation_tests.test.ts
+          npm exec -- vitest run tests/conformance/golden_event_tests.test.ts tests/conformance/wrap_behavior_golden.test.ts tests/conformance/canonicalization_golden.test.ts
+          npm exec -- vitest run tests/conformance/spec_manifest.test.ts tests/conformance/spec_version_contract.test.ts tests/conformance/canonical_json.test.ts tests/conformance/harness.test.ts
+          npm run validate:event -- examples/success_event.json
+          npm run validate:event -- examples/error_event.json
+          npm exec -- tsx tools/replay/compare-streams.ts golden/canonicalization_cases.jsonl golden/canonicalization_cases.jsonl
+
+  conformance-attestation:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+      - name: Conformance (trusted attestation gate)
         env:
           INTENTPROOF_REPLAY_VERIFY: "1"
           INTENTPROOF_CONFORMANCE_JSON: "1"

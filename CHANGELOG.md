@@ -40,6 +40,9 @@ All notable changes to this specification repository are documented here. Versio
   `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH`) instead of repo-local
   `signing/spec-integrity.public.pem`; docs/workflows updated to use org/repo
   secrets for verification.
+- **Trust-split CI policy:** `ci.yml` now runs an untrusted conformance
+  precheck on pull requests (no secrets) and a trusted attestation conformance
+  gate on push (secret-backed integrity verification + certificate validation).
 - **Cross-SDK parity & release train:** **`cross-sdk-parity`** on **schedule** +
   **`workflow_dispatch`** only; target **`spec-v*`** / `spec_ref`, **adoption** =
   SDK pin SHA vs target, optional **`require_full_adoption`**. **`sdk-release-train.yml`**
