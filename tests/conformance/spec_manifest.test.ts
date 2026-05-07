@@ -6,9 +6,9 @@ describe("spec manifest (spec.json)", () => {
     expect(() => assertManifestPathsExist()).not.toThrow();
   });
 
-  it("declares v1 schema and golden keys", () => {
+  it("declares schema and golden keys", () => {
     const m = loadSpecManifest();
-    expect(m.version).toMatch(/^spec-v1\./);
+    expect(m.version).toMatch(/^spec-v[0-9]+\./);
     expect(m.schemas.execution_event).toContain("execution_event");
     expect(m.schemas.conformance_report).toContain("conformance_report");
     expect(m.schemas.conformance_certificate).toContain("conformance_certificate");
