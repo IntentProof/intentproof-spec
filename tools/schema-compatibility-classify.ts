@@ -2,7 +2,7 @@
  * Classify JSON Schema changes (spec.json schemas.* only) vs merge-base.
  * Conservative: unknown tightening or removals default to BREAKING.
  */
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -168,7 +168,11 @@ export function classifySchemaChange(oldS: unknown, newS: unknown): SchemaClassi
 
 function gitShow(specRoot: string, rev: string, file: string): string | null {
   try {
-    return execSync(`git show ${rev}:${file}`, { cwd: specRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    return execFileSync("git", ["show", `${rev}:${file}`], {
+      cwd: specRoot,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    });
   } catch {
     return null;
   }
@@ -189,7 +193,11 @@ function loadSpecSchemas(specRoot: string, rev: "HEAD" | string): Record<string,
 }
 
 export function classifyAgainstBase(specRoot: string, baseRef: string): CompatibilityReport {
-  const mb = execSync(`git merge-base HEAD "${baseRef}"`, { cwd: specRoot, encoding: "utf8" }).trim();
+  const mb = execFileSync("git", ["merge-base", "HEAD", baseRef], {
+    cwd: specRoot,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  }).trim();
   const headSchemas = loadSpecSchemas(specRoot, "HEAD");
   let baseSchemas: Record<string, string>;
   try {
@@ -244,7 +252,7 @@ export function classifyAgainstBase(specRoot: string, baseRef: string): Compatib
   };
 }
 
-function main(): void {
+async function main(): Promise<void> {
   const specRoot = process.env.INTENTPROOF_SPEC_ROOT ? path.resolve(process.env.INTENTPROOF_SPEC_ROOT) : root;
   const argv = process.argv.slice(2);
   let baseRef = "origin/main";
@@ -259,8 +267,13 @@ function main(): void {
       i++;
     }
   }
-
-  const report = classifyAgainstBase(specRoot, baseRef);
+  let report: CompatibilityReport;
+  try {
+    report = classifyAgainstBase(specRoot, baseRef);
+  } catch (error) {
+    console.error(`schema-compatibility: invalid --base ref '${baseRef}'`);
+    process.exit(2);
+  }
   const line = `schema-compatibility: merge-base=${report.mergeBase} overall=${report.overall}`;
   console.error(line);
   for (const s of report.schemas) {
@@ -277,4 +290,4 @@ function main(): void {
   console.log(j.trimEnd());
 }
 
-main();
+void main();
