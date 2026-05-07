@@ -51,7 +51,7 @@ if [[ ! -f package.json ]] || [[ ! -f spec.json ]] || [[ ! -d schema ]] || [[ ! 
 fi
 
 if ! command -v node >/dev/null 2>&1; then
-  echo "run-conformance.sh: 'node' not found on PATH (Node 18+ required)." >&2
+  echo "run-conformance.sh: 'node' not found on PATH (Node 22+ required)." >&2
   exit 127
 fi
 if ! command -v npm >/dev/null 2>&1; then

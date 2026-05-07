@@ -41,7 +41,7 @@ function computeSpecFingerprint(manifest: Manifest): string {
   return sha256Utf8(lines.join("\n"));
 }
 
-function replayHashes(): { canonicalHash: string; streamHashes: Record<string, string> } {
+async function replayHashes(): Promise<{ canonicalHash: string; streamHashes: Record<string, string> }> {
   const streamsRaw = process.env.INTENTPROOF_REPLAY_STREAMS?.trim();
   const streamIdsRaw = process.env.INTENTPROOF_REPLAY_STREAM_IDS?.trim();
   const defaultStream = path.join(repoRoot, "golden/canonicalization_cases.jsonl");
@@ -55,7 +55,14 @@ function replayHashes(): { canonicalHash: string; streamHashes: Record<string, s
     const id = streamIds[i] ?? `stream${i + 1}`;
     const text = fs.readFileSync(streamPaths[i]!, "utf8").trim();
     const lines = text ? text.split("\n") : [];
-    const canonicalLines = lines.map((ln) => canonicalJsonStringify(JSON.parse(ln)));
+    const canonicalLines = await Promise.all(lines.map(async (ln, lineIdx) => {
+      try {
+        return canonicalJsonStringify(JSON.parse(ln));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        throw new Error(`conformance-report: invalid replay JSONL at ${streamPaths[i]}:${lineIdx + 1}: ${message}`);
+      }
+    }));
     const joined = canonicalLines.join("\n");
     const h = sha256Utf8(joined);
     streamHashes[id] = h;
@@ -75,6 +82,14 @@ async function main(): Promise<number> {
   const sdkVersion = process.env.INTENTPROOF_SDK_VERSION ?? "unknown";
   const status = (s: string | undefined): "pass" | "fail" | "skip" =>
     s === "pass" || s === "fail" || s === "skip" ? s : "fail";
+  let replay: { canonicalHash: string; streamHashes: Record<string, string> };
+  try {
+    replay = await replayHashes();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(message);
+    return 2;
+  }
   const report = {
     specVersion: manifest.version,
     specFingerprint: computeSpecFingerprint(manifest),
@@ -93,7 +108,7 @@ async function main(): Promise<number> {
       goldenTests: status(process.env.INTENTPROOF_RESULT_GOLDEN_TESTS),
       replayParity: status(process.env.INTENTPROOF_RESULT_REPLAY_PARITY),
     },
-    replay: replayHashes(),
+    replay,
     generatedAt: new Date().toISOString(),
   };
 
