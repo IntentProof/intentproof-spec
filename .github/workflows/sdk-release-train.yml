@@ -202,25 +202,27 @@ jobs:
           if [[ -n "${existing}" && "${existing}" != "null" ]]; then
             echo "PR already exists for ${repo}:${branch}"
           else
+            pr_body_file="$(mktemp)"
+            printf '%s\n' \
+              "## Summary" \
+              "- update SDK spec pin to \`${TARGET_VERSION}\`" \
+              "- set spec commit to \`${TARGET_COMMIT}\`" \
+              "- refresh generated spec fingerprint metadata when present" \
+              "" \
+              "## Source" \
+              "- target spec ref: \`${TARGET_REF}\`" \
+              "" \
+              "## Test plan" \
+              "- [ ] CI parity hardening checks pass" \
+              "- [ ] generated-artifact verify check passes" \
+              > "${pr_body_file}"
+
             gh pr create \
               --repo "${repo}" \
               --base main \
               --head "${branch}" \
               --title "chore(spec): adopt ${TARGET_VERSION} pin" \
-              --body "$(cat <<EOF
-## Summary
-- update SDK spec pin to \`${TARGET_VERSION}\`
-- set spec commit to \`${TARGET_COMMIT}\`
-- refresh generated spec fingerprint metadata when present
-
-## Source
-- target spec ref: \`${TARGET_REF}\`
-
-## Test plan
-- [ ] CI parity hardening checks pass
-- [ ] generated-artifact verify check passes
-EOF
-)"
+              --body-file "${pr_body_file}"
           fi
 
   missing-token-note:
