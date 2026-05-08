@@ -25,11 +25,16 @@ jobs:
           node-version-file: ".nvmrc"
           cache: npm
 
+      # secrets context is not allowed in step `if:`; pass PEMs via env and verify in shell.
       - name: Require certificate signing secrets
-        if: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM == '' || secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM == '' }}
+        env:
+          INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM }}
         run: |
-          echo '::error::Configure repository secrets INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM and INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM (Stage 2 signed attestation).'
-          exit 1
+          if [[ -z "${INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM}" || -z "${INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM}" ]]; then
+            echo '::error::Configure repository secrets INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM and INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM.'
+            exit 1
+          fi
 
       - name: Conformance (trusted attestation gate)
         env:
