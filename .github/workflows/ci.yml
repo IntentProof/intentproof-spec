@@ -62,6 +62,9 @@ jobs:
           fi
           shellcheck "${scripts[@]}"
 
+  # Untrusted PR precheck: Vitest + schema gates only. Signed conformance certificates and
+  # INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE validation run post-merge in conformance-attestation.yml
+  # and cross-sdk-parity.yml (trusted contexts with intentproof-spec repository secrets).
   conformance:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

@@ -25,6 +25,12 @@ jobs:
           node-version-file: ".nvmrc"
           cache: npm
 
+      - name: Require certificate signing secrets
+        if: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM == '' || secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM == '' }}
+        run: |
+          echo '::error::Configure repository secrets INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM and INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM (Stage 2 signed attestation).'
+          exit 1
+
       - name: Conformance (trusted attestation gate)
         env:
           INTENTPROOF_REPLAY_VERIFY: "1"
@@ -37,7 +43,7 @@ jobs:
       - name: Validate conformance certificate
         env:
           INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM }}
-          INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM != '' && secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM != '' && '1' || '0' }}
+          INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE: "1"
         run: npm run validate:conformance-certificate
 
       - name: Upload conformance report and certificate

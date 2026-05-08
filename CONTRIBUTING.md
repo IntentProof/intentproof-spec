@@ -6,8 +6,9 @@ This repository is the **normative** source for JSON Schemas, golden oracles, se
 
 1. **Install and verify locally**
    - `npm ci` (or reuse `node_modules` if already installed).
+   - **`spec:integrity:verify`** needs a public key: set **`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH`** to **`signing/spec-integrity.public.pem`** in this repo (or **`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM`**). Same requirement for **`npm run ci:local`** and **`npm run conformance`**.
    - Quick gate: `npm run ci:local` (integrity verify + typecheck + Vitest).
-   - Full oracle (matches CI conformance job closely): `npm run conformance`.
+   - Full oracle (same entrypoint as trusted **`conformance-attestation.yml`**, without CI secrets): `npm run conformance`.
 2. **Schema edits**
    - PRs run **`schema-compatibility`** against the merge base. Classifications **`BREAKING`** require PR label **`spec-breaking-approved`** or repository variable **`SPEC_SCHEMA_COMPAT_OVERRIDE=true`** (documented break-glass), or revert/adjust the change.
 3. **Files listed under `spec.json` → `schemas`**
@@ -36,9 +37,28 @@ Opens pin-bump PRs in the Node, Python, and Java SDK repos after a **`spec-v*`**
 
 Remove any legacy **`INTENTPROOF_BOT_TOKEN`** org secret once everything uses the app.
 
+### Conformance certificate signing (trusted workflows only)
+
+**Repository:** configure **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** and **`INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`** as secrets on **`intentproof-spec`** only (SDK repositories do not need them for current CI).
+
+Used by:
+
+- **`conformance-attestation.yml`** (push to default branch, **`spec-v*`** tags, **`workflow_dispatch`**) — emits a signed **`conformance-certificate.json`** and validates with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** (no unsigned fallback).
+- **`cross-sdk-parity.yml`** — for each **adopted** SDK matrix row, conformance signs the certificate and validation requires a verified signature.
+
+**Not used by** **`ci.yml`** pull-request jobs: PR conformance is an untrusted Vitest/schema precheck and does not exercise signed certificate attestation (that is **post-merge** on trusted workflows above).
+
+Optional: set **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID`** consistently in workflows (default **`intentproof-ci-ed25519-v1`**).
+
+| Kind | Name | Purpose |
+|------|------|---------|
+| **Organization secret** (typical) | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM public key for **`spec:integrity:verify`** in **`run-conformance.sh`**, **`cross-sdk-parity.yml`**, and SDK CI when provided (often org-wide). |
+
 ### Cross-SDK parity (`.github/workflows/cross-sdk-parity.yml`)
 
-Runs on a **weekly schedule** and **`workflow_dispatch`** only. No org secrets are required.
+Runs on a **weekly schedule** and **`workflow_dispatch`** only (not on **`pull_request`**).
+
+For adopted SDK rows, parity loads org/repo secrets (**`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM`**, certificate PEMs above) the same way as **`conformance-attestation.yml`**. If certificate secrets are missing while an SDK is adopted, the workflow fails fast instead of validating an unsigned certificate.
 
 Manual dispatch inputs (optional):
 
@@ -49,15 +69,15 @@ Manual dispatch inputs (optional):
 
 ### Main CI / schema policy (`.github/workflows/ci.yml`)
 
+Pull-request-only: Vitest oracle, schema compatibility, shellcheck — **no** certificate signing or signature verification (secrets are not assumed available on untrusted PR runs).
+
 | Kind | Name | Purpose |
 |------|------|---------|
 | **Repository variable** (optional break-glass) | `SPEC_SCHEMA_COMPAT_OVERRIDE` | Set to **`true`** to allow a PR classified as **BREAKING** without label **`spec-breaking-approved`**. Prefer the label for normal process. |
-| **Repository/org secret** (required for conformance integrity verify) | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM Ed25519 public key used by `spec:integrity:verify` in CI/parity runs. |
-| **Repository/org secret** (recommended) | `INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM` | PEM Ed25519 private key used to sign `conformance-certificate.json` during conformance runs. |
-| **Repository/org secret** (recommended) | `INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM` | Matching PEM Ed25519 public key used by certificate validation checks in CI/parity. |
 
-`ci.yml` is pull-request-only (no-secrets checks). Trusted attestation runs live
-in `conformance-attestation.yml` for push/tag/manual contexts.
+Trusted attestation (signed **`conformance-certificate.json`**) and **`npm run validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** run in **`conformance-attestation.yml`** and **`cross-sdk-parity.yml`** using **`intentproof-spec`** repository secrets — see **Conformance certificate signing** above.
+
+Other workflows often use **`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM`** (org-wide) for **`spec:integrity:verify`** on schedule/parity; **`ci.yml`** PR paths may avoid it by design — see workflow comments.
 
 ## Terminology (shared with SDK repos)
 
