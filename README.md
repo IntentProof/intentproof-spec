@@ -42,6 +42,7 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` / `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH` | External Ed25519 public key input used by integrity verification (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
 | `CHANGELOG.md` | Human-readable history of spec-facing changes. |
+| `docs/` | Conformance report + certificate policy + certification RFC — see [`docs/README.md`](docs/README.md). |
 | `.github/` | CI (`workflows/ci.yml`: PR checks only; `workflows/conformance-attestation.yml`: trusted push/tag attestation gate), cross-SDK parity (`workflows/cross-sdk-parity.yml`: schedule + manual, tag-anchored target), SDK release train (`workflows/sdk-release-train.yml`: `spec-v*` tag or manual → bot PRs to bump SDK pins), Dependabot. |
 
 ## Versioning model
@@ -147,11 +148,16 @@ This is the **canonical executable oracle** for schema, semantics, and golden JS
 
 When `INTENTPROOF_CONFORMANCE_JSON=1`, the runner emits a validated
 `conformance-report.json` (`schema/conformance_report.v1`) and, when issuance
-gates pass, `conformance-certificate.json` (`schema/conformance_certificate.v1`);
-CI runs `npm run validate:conformance-certificate` and uploads report + certificate
-(**`conformance-artifacts`** in `ci.yml`, **`conformance-artifacts-<sdk>`** in parity
-for adopted SDKs). See `docs/conformance-report.md` and
-`docs/certificate-issuance-policy.md`.
+gates pass, `conformance-certificate.json` (**default:** `schema/conformance_certificate.v2`;
+set `INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v1` only for compatibility lanes).
+
+**Trusted CI** on **`intentproof-spec`** runs `npm run validate:conformance-certificate`
+with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** and uploads report + certificate in
+**`conformance-attestation.yml`** (**`conformance-artifacts`**) and in **`cross-sdk-parity.yml`**
+for adopted SDKs (**`conformance-artifacts-<sdk>`**). Pull-request **`ci.yml`** does **not**
+emit or validate signed certificates (Vitest/schema precheck only).
+
+See **`docs/conformance-report.md`**, **`docs/certificate-issuance-policy.md`**, and **`docs/README.md`**.
 
 ## Commands
 
@@ -178,7 +184,9 @@ npm audit                       # expect 0 vulnerabilities on a fresh install
 
 ## Contributing
 
-See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** (local verification, schema PR policy, integrity manifest rotation, **shared terminology** with SDK repos).
+See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** (local verification including integrity public key, schema PR policy, manifest rotation, **shared terminology** with SDK repos).
+
+Further reading: **[`docs/README.md`](docs/README.md)** (conformance report, certificate issuance, certification RFC).
 
 ## Governance
 

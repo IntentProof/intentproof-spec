@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.pytest_cache/
 coverage/
 *.log
 .DS_Store

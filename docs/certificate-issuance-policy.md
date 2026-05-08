@@ -6,9 +6,9 @@
 ## Goal
 
 Document **when** an IntentProof **conformance certificate** may be issued and
-**when issuance must be denied**, so CI and humans apply the same bar. This policy
-references **`conformance-report.v1`** as the primary evidence object until the
-certificate schema and emitter exist.
+**when issuance must be denied**, so CI and humans apply the same bar. Evidence is
+**`conformance-report.v1`**; the normative certificate shape default is **`conformance_certificate.v2`**
+(see **`spec.json` → `schemas.conformance_certificate`**).
 
 ## Preconditions (all required unless noted)
 
@@ -41,9 +41,10 @@ Issuance **must be denied** (no certificate, CI must fail if emission is attempt
 
 | Phase | Behavior |
 |-------|----------|
-| **Now** | Certificate emission supports **Ed25519 signatures** when `INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM` is configured; `tools/validate-conformance-certificate.ts` verifies signatures when present and can enforce them with `INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`. **`ci.yml`** and adopted matrix rows in **`cross-sdk-parity.yml`** run validation and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`** (report + certificate). |
-| **Next** | Enforce required signatures in all protected release/attestation workflows (no unsigned fallback). |
-| **Stage 2 exit** | Signed or otherwise verifiable issuer binding per RFC + verification docs. |
+| **Active** | **`spec.json`** indexes **`conformance_certificate.v2`**. Emit/validate defaults to **`INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v2`**. **`conformance-attestation.yml`** and adopted **`cross-sdk-parity.yml`** rows sign certificates when **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** is set ( **`intentproof-spec`** secrets), run **`npm run validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**, and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`**. Fail-fast if PEM secrets are missing. Pull-request **`ci.yml`** does **not** perform signed certificate attestation. |
+| **Stage 2 exit** | Published verification evidence (e.g. trusted workflow run transcripts with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**) plus rotation procedures in this doc set. |
+
+Prior text (“optional signature”) applies only to **local** runs without signing keys; **trusted repo CI** requires signatures as above.
 
 ## References
 

@@ -81,18 +81,23 @@ Conformance CI should fail when any of the following occurs:
 - report does not validate against `conformance_report.v1` schema
 - any `results.*` value is not `pass`
 
-In **`intentproof-spec`**, **`ci.yml`** and adopted jobs in **`cross-sdk-parity.yml`**
-require **`conformance-certificate.json`** (after emission), run
-**`npm run validate:conformance-certificate`**, and upload artifacts (**`conformance-artifacts`**
-or **`conformance-artifacts-<sdk>`**).
+### Where validation runs
 
-SDK CI should upload `conformance-report.json` as a build artifact for
-cross-run auditing and future certificate workflows.
+| Context | Report | Certificate |
+|---------|--------|-------------|
+| **`intentproof-spec`** **`ci.yml`** (pull requests) | The PR **`conformance`** job runs Vitest + replay checks directly; it does **not** emit **`conformance-report.json`** or **`conformance-certificate.json`**. | None on PR (untrusted context; no signing secrets). |
+| **`intentproof-spec`** **`conformance-attestation.yml`** (default branch push, **`spec-v*`** tags, **`workflow_dispatch`**) | **`run-conformance.sh`** with **`INTENTPROOF_CONFORMANCE_JSON=1`** | **`validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**; artifact **`conformance-artifacts`**. |
+| **`cross-sdk-parity.yml`** (adopted SDK rows) | Same oracle from SDK checkout | Same validation; artifact **`conformance-artifacts-<sdk>`**. |
+| **SDK repos** | **`scripts/spec-conformance.sh`** → pinned **`run-conformance.sh`** | Emit/upload per SDK policy; authoritative signature enforcement on **`intentproof-spec`** trusted workflows (**certificate PEM secrets are repo-scoped to `intentproof-spec`**). |
 
-## Future certificate issuance
+SDK CI should upload `conformance-report.json` as a build artifact for cross-run auditing.
+
+## Certificate issuance
 
 `conformance-report.json` is the canonical input for **conformance-certificate**
 issuance: when `INTENTPROOF_CONFORMANCE_JSON=1`, `run-conformance.sh` runs
 `tools/conformance-certificate.ts` after the report is written, producing
-`conformance-certificate.json` (`schema/conformance_certificate.v1`) if issuance
-policy gates pass. See `docs/certificate-issuance-policy.md`.
+`conformance-certificate.json`. **Normative schema:** `spec.json` → **`schemas.conformance_certificate`**
+(currently **`conformance_certificate.v2`**; **`v1`** retained as a compatibility reference).
+
+See **`certificate-issuance-policy.md`** and **`certification-rfc.md`**.
