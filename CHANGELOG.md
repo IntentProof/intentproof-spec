@@ -22,6 +22,7 @@ All notable changes to this specification repository are documented here. Versio
 
 - **CI:** Trusted workflows (**`conformance-attestation.yml`**, adopted rows in **`cross-sdk-parity.yml`**) now require Ed25519 certificate signatures (**`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**) and fail fast if certificate PEM secrets are missing on **`intentproof-spec`** (secret presence enforced via **`env`** + shell because **`secrets` cannot appear in step `if:` expressions**).
 - **Docs:** README, **`docs/`**, **`sdk_contracts/`** aligned with **`conformance_certificate.v2`**, trusted vs PR **`ci.yml`** roles, and **`docs/README.md`** index.
+- **Docs:** **`certificate-issuance-policy.md`** — signing key custody, rotation, revocation / emergency disable, and operator **`validate:conformance-certificate`** recipe; **`certification-rfc.md`** trust model cross-link; **`CONTRIBUTING.md`** pointer to operator verification.
 
 ## 2.0.0 — 2026-05-07
 
