@@ -50,6 +50,8 @@ Used by:
 
 Optional: set **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID`** consistently in workflows (default **`intentproof-ci-ed25519-v1`**).
 
+**Verify a certificate locally** (after **`conformance-report.json`** + **`conformance-certificate.json`** exist at repo root): see **`docs/certificate-issuance-policy.md`** → **Operator verification** (`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1` + **`INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`**).
+
 | Kind | Name | Purpose |
 |------|------|---------|
 | **Organization secret** (typical) | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM public key for **`spec:integrity:verify`** in **`run-conformance.sh`**, **`cross-sdk-parity.yml`**, and SDK CI when provided (often org-wide). |

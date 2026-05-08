@@ -53,6 +53,7 @@ Field names and shapes are **normative** in **`schema/conformance_certificate.v2
 
 - **Issuer:** CI / org-controlled automation that emits only after a passing conformance job ([`certificate-issuance-policy.md`](certificate-issuance-policy.md)).
 - **Verifier:** any party with the spec schemas, the certificate schema, and the issuer **public** key material for signature verification.
+- **Key lifecycle:** rotation, custody, revocation, and operator **`npm run validate:conformance-certificate`** steps are normative for operators in [`certificate-issuance-policy.md`](certificate-issuance-policy.md) (**Signing key custody**, **Rotation**, **Revocation and emergency disable**, **Operator verification**).
 
 ## Versioning
 
