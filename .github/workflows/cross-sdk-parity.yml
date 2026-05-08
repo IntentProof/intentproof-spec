@@ -225,11 +225,17 @@ jobs:
           )
           PY
 
+      # secrets context is not allowed in step `if:`; pass PEMs via env and verify in shell.
       - name: Require certificate secrets for parity validation
-        if: ${{ steps.adoption.outputs.adopted == 'true' && (secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM == '' || secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM == '') }}
+        if: steps.adoption.outputs.adopted == 'true'
+        env:
+          INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM }}
+          INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM: ${{ secrets.INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM }}
         run: |
-          echo '::error::Configure INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM and INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM on intentproof-spec for adopted parity rows (signed certificate validation).'
-          exit 1
+          if [[ -z "${INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM}" || -z "${INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM}" ]]; then
+            echo '::error::Configure INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM and INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM on intentproof-spec for adopted parity rows (signed certificate validation).'
+            exit 1
+          fi
 
       - name: Validate conformance certificate (spec tree)
         if: steps.adoption.outputs.adopted == 'true'
