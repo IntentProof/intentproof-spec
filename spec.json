@@ -1,5 +1,5 @@
 {
-  "version": "spec-v2.0.0",
+  "version": "spec-v2.0.1",
   "schemas": {
     "execution_event": "schema/execution_event.v1.schema.json",
     "wrap_options": "schema/wrap_options.v1.schema.json",
