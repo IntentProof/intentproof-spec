@@ -1,6 +1,6 @@
 # Contributing to `intentproof-spec`
 
-This repository is the **normative** source for JSON Schemas, golden oracles, semantics references, and the executable Vitest oracle (`scripts/run-conformance.sh`). SDK repositories (**Node**, **Python**, **Java**) and **`intentproof-api`** consume it via pinned checkouts and shared contracts under **`sdk_contracts/`** (API mirrors the Python SDK pin contract in **`pyproject.toml`**).
+This repository is the **normative** source for JSON Schemas, golden oracles, semantics references, and the executable Vitest oracle (`scripts/run-conformance.sh`). SDK repositories (**Node**, **Python**, **Java**) and **`intentproof-api`** consume it via pinned checkouts and shared contracts under **`sdk_contracts/`**.
 
 ## Before you open a pull request
 
@@ -26,7 +26,7 @@ Configure these on the **IntentProof** org (or on **`intentproof-spec`** only, i
 
 ### Release train (`.github/workflows/release-train.yml`)
 
-Opens pin-bump PRs in downstream repositories (**Node**, **Python**, and **Java** SDKs and **`intentproof-api`**) after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT. For **`intentproof-api`**, the workflow updates **`[tool.intentproof]`** in **`pyproject.toml`** and regenerates **`app/generated/`** the same way maintainers would after a spec bump.
+Opens pin-bump PRs in downstream repositories (**Node**, **Python**, and **Java** SDKs and **`intentproof-api`**) after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT.
 
 | Kind | Name | Purpose |
 |------|------|---------|
