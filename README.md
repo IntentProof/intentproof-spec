@@ -37,7 +37,7 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `tools/replay/` | Cross-SDK JSONL stream comparison (`compare-streams.ts`) post-canonicalization. |
 | `tools/` | CLI helpers for validating, canonicalizing, diffing, spec version checks, conformance JSON reports. |
 | `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, version pin check, **signed schema integrity verify**, `tsc`, Vitest, smoke, optional replay & JSON output. |
-| `scripts/check-consumer-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java consumer repository layouts; `scripts/check-sdk-spec-pins.sh` forwards to it for compatibility. |
+| `scripts/check-consumer-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java consumer repository layouts. |
 | `artifacts/spec-integrity.v1.json` (+ `.sig`) | Deterministic SHA-256 manifest over `spec.json` → `schemas.*`; verified every conformance run. |
 | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` / `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH` | External Ed25519 public key input used by integrity verification (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |

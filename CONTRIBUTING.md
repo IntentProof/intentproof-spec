@@ -95,11 +95,10 @@ Use the same names across repositories and CI so pins and scripts stay unambiguo
 | **`scripts/run-conformance.sh`** | Runs in **this** repo (or with **`INTENTPROOF_SPEC_ROOT`**): npm install, **`spec:integrity:verify`**, typecheck, Vitest, smoke, optional replay / JSON report. |
 | **`scripts/spec-conformance.sh`** | Lives in **each consumer** repo (SDKs, API, …); invokes the spec oracle with **`INTENTPROOF_SPEC_ROOT`** pointing at the pinned spec tree. |
 | **`scripts/check-consumer-spec-pins.sh`** | Validates consumer manifests vs a spec checkout (**`spec.json`** version + **`HEAD`**). Invoked from **`intentproof-spec`** with consumer root + spec root paths. |
-| **`scripts/check-sdk-spec-pins.sh`** | Compatibility shim that forwards to **`check-consumer-spec-pins.sh`**. |
 | **`scripts/check-consumer-spec-pin.sh`** | Thin wrapper in SDK repositories; delegates to **`check-consumer-spec-pins.sh`**. **`intentproof-api`** uses **`scripts/check-spec-pin.sh`**. |
-| **`scripts/check-consumer-hardening.sh`** | Consumer audit: pins, drift scripts, generator pins, delegated policies. **`scripts/check-sdk-hardening.sh`** forwards to it. |
-| **`scripts/read-consumer-spec-commit.sh`** | Prints only the declared pin **commit** SHA (stdout). **`read-sdk-spec-commit.sh`** forwards to it. |
-| **`scripts/check-consumer-no-handwritten-model-types.sh`** | Enforces generated-canonical model policy for Node/Python/Java layouts. **`check-sdk-no-handwritten-model-types.sh`** forwards to it. |
+| **`scripts/check-consumer-hardening.sh`** | Consumer audit: pins, drift scripts, generator pins, delegated policies. |
+| **`scripts/read-consumer-spec-commit.sh`** | Prints only the declared pin **commit** SHA (stdout). |
+| **`scripts/check-consumer-no-handwritten-model-types.sh`** | Enforces generated-canonical model policy for Node/Python/Java layouts. |
 | **`ExecutionEvent`** | Wire payload shape defined by **`schema/execution_event.v1.schema.json`** (see **`spec.json`**). |
 
 SDK pinning details: **`sdk_contracts/spec_version_pinning.md`**. Contract boundaries: **`sdk_contracts/conformance_reality.md`**.
