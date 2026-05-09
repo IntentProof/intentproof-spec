@@ -12,11 +12,11 @@ Normative schema: **`spec.json` → `schemas.conformance_certificate`** → **`s
 
 1. **`spec.json`** indexes **`conformance_certificate.v2`**; **`INTENTPROOF_CERTIFICATE_SCHEMA_VERSION`** defaults to **`v2`** in emit/validate tooling.
 2. Node / Python / Java SDK pins target **`spec-v2.0.0`** + matching commit (verify SHAs in each SDK repo when adopting).
-3. **`conformance-attestation.yml`** and adopted **`cross-sdk-parity.yml`** rows validate with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** (**certificate PEM secrets on `intentproof-spec` only**).
+3. **`conformance-attestation.yml`** and adopted **`cross-consumer-parity.yml`** rows validate with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** (**certificate PEM secrets on `intentproof-spec` only**).
 
 ## SDK checklist (maintenance)
 
 - [x] **`intentproof-sdk-node`**: **`INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v2`** in conformance CI aligned with **`spec-v2.0.0`** adoption.
 - [x] **`intentproof-sdk-python`**: same.
 - [x] **`intentproof-sdk-java`**: same.
-- [ ] Periodic **cross-sdk-parity** run green for all **adopted** SDKs against the active **`spec-v*`** target (scheduled weekly + manual **`workflow_dispatch`**).
+- [ ] Periodic **cross-consumer-parity** run green for all **adopted** SDKs against the active **`spec-v*`** target (scheduled weekly + manual **`workflow_dispatch`**).

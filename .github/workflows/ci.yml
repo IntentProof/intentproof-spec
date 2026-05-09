@@ -26,7 +26,7 @@ jobs:
           git fetch origin "${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}" --depth=200
           changed="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD || true)"
           echo "$changed"
-          if printf '%s\n' "$changed" | grep -Eq '^(schema/|golden/|tests/conformance/|tests/lib/semantics\.ts$|spec\.json$|scripts/run-conformance\.sh$|tools/conformance-certificate\.ts$|tools/validate-conformance-certificate\.ts$|\.github/workflows/cross-sdk-parity\.yml$)'; then
+          if printf '%s\n' "$changed" | grep -Eq '^(schema/|golden/|tests/conformance/|tests/lib/semantics\.ts$|spec\.json$|scripts/run-conformance\.sh$|tools/conformance-certificate\.ts$|tools/validate-conformance-certificate\.ts$|\.github/workflows/cross-consumer-parity\.yml$)'; then
             echo "normative=true" >> "${GITHUB_OUTPUT}"
           else
             echo "normative=false" >> "${GITHUB_OUTPUT}"
@@ -35,12 +35,12 @@ jobs:
         if: steps.changes.outputs.normative == 'true'
         run: |
           {
-            echo "## Cross-SDK parity policy"
+            echo "## Consumer parity policy"
             echo ""
             echo "This PR modifies normative spec paths."
-            echo "Cross-SDK parity runs on \`schedule\` and"
+            echo "Consumer parity runs on \`schedule\` and"
             echo "\`workflow_dispatch\` only (not on pull_request or push)."
-            echo "After merge, land SDK pin+generated updates, then run parity"
+            echo "After merge, land downstream pin+generated updates, then run parity"
             echo "manually (or wait for the weekly scheduled run)."
           } >> "${GITHUB_STEP_SUMMARY}"
 
@@ -64,7 +64,7 @@ jobs:
 
   # Untrusted PR precheck: Vitest + schema gates only. Signed conformance certificates and
   # INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE validation run post-merge in conformance-attestation.yml
-  # and cross-sdk-parity.yml (trusted contexts with intentproof-spec repository secrets).
+  # and cross-consumer-parity.yml (trusted contexts with intentproof-spec repository secrets).
   conformance:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

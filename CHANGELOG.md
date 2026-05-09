@@ -20,7 +20,7 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **CI and tooling:** rename **`sdk-release-train.yml`** → **`release-train.yml`** (workflow display name **Release Train**; neutral job/matrix/env naming); add **`scripts/check-consumer-spec-pins.sh`** as the canonical consumer pin checker against **`spec.json`** and the spec checkout **`HEAD`**, retain **`scripts/check-sdk-spec-pins.sh`** as a delegating shim, and refresh README / CONTRIBUTING / **`sdk_contracts/spec_version_pinning.md`**.
+- **CI and tooling:** rename **`sdk-release-train.yml`** → **`release-train.yml`** (workflow display name **Release Train**; neutral job/matrix/env naming); introduce **`scripts/check-consumer-spec-pins.sh`** / **`read-consumer-spec-commit.sh`** / **`check-consumer-hardening.sh`** / **`check-consumer-no-handwritten-model-types.sh`** as canonical helpers (prior **`check-sdk-*`** names remain shims); rename **`cross-sdk-parity.yml`** → **`cross-consumer-parity.yml`** (**Consumer parity** workflow, **`matrix.consumer`**, **`pinned_commit`** outputs, neutral **`parity-meta.json`** keys with legacy fallbacks in summaries); refresh README / CONTRIBUTING / **`sdk_contracts/`** / **`docs/`** / **`ci.yml`** accordingly.
 
 ## 2.0.1 — 2026-05-08
 
@@ -53,7 +53,7 @@ All notable changes to this specification repository are documented here. Versio
   `signing/spec-integrity.public.pem`; PR CI runs an untrusted no-secrets
   precheck; trusted secret-backed attestation runs in
   `conformance-attestation.yml` (push/tag/manual).
-- **Parity, release train, and docs:** `cross-sdk-parity` remains schedule +
+- **Parity, release train, and docs:** `cross-consumer-parity` remains schedule +
   `workflow_dispatch` only with adoption targeting (`spec_ref`,
   `require_full_adoption`); release train uses `INTENTPROOF_BOT_APP_*`; docs
   updated across `README.md`, `CONTRIBUTING.md`, workflow headers, and
@@ -64,7 +64,7 @@ All notable changes to this specification repository are documented here. Versio
 - **CI policy and workflows:** add `shellcheck` for `scripts/*.sh`; add PR
   `schema-compatibility` classification with artifact + breaking-change gate
   (`spec-breaking-approved` / `SPEC_SCHEMA_COMPAT_OVERRIDE`); run
-  `cross-sdk-parity` on `push` (normative paths), `schedule`, and
+  `cross-consumer-parity` on `push` (normative paths), `schedule`, and
   `workflow_dispatch` (not `pull_request`); add a PR policy-note job in
   `ci.yml` for normative-path changes; pin Java parity verify jobs to
   Temurin 21 + Gradle setup for deterministic generated-source checks; upgrade

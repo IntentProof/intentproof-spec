@@ -41,7 +41,7 @@ Issuance **must be denied** (no certificate, CI must fail if emission is attempt
 
 | Phase | Behavior |
 |-------|----------|
-| **Active** | **`spec.json`** indexes **`conformance_certificate.v2`**. Emit/validate defaults to **`INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v2`**. **`conformance-attestation.yml`** and adopted **`cross-sdk-parity.yml`** rows sign certificates when **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** is set ( **`intentproof-spec`** secrets), run **`npm run validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**, and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`**. Fail-fast if PEM secrets are missing. Pull-request **`ci.yml`** does **not** perform signed certificate attestation. |
+| **Active** | **`spec.json`** indexes **`conformance_certificate.v2`**. Emit/validate defaults to **`INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v2`**. **`conformance-attestation.yml`** and adopted **`cross-consumer-parity.yml`** rows sign certificates when **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** is set ( **`intentproof-spec`** secrets), run **`npm run validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**, and upload **`conformance-artifacts`** / **`conformance-artifacts-<sdk>`**. Fail-fast if PEM secrets are missing. Pull-request **`ci.yml`** does **not** perform signed certificate attestation. |
 | **Stage 2 exit** | Published verification evidence (e.g. trusted workflow run transcripts with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**) plus rotation procedures in this doc set. |
 
 Prior text (“optional signature”) applies only to **local** runs without signing keys; **trusted repo CI** requires signatures as above.
@@ -50,7 +50,7 @@ Prior text (“optional signature”) applies only to **local** runs without sig
 
 | Role | Where | Notes |
 |------|--------|--------|
-| **Private key (Ed25519)** | GitHub secret **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** on **`intentproof-spec`** only | Used by **`conformance-attestation.yml`** and adopted **`cross-sdk-parity.yml`** rows to sign **`conformance-certificate.json`**. Never commit; generate off-repo. |
+| **Private key (Ed25519)** | GitHub secret **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** on **`intentproof-spec`** only | Used by **`conformance-attestation.yml`** and adopted **`cross-consumer-parity.yml`** rows to sign **`conformance-certificate.json`**. Never commit; generate off-repo. |
 | **Public key** | GitHub secret **`INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`** on **`intentproof-spec`** | Required for **`npm run validate:conformance-certificate`** when the certificate carries a **`signature`**. |
 | **`keyId`** | Workflow env / certificate field (default **`intentproof-ci-ed25519-v1`**) | **`conformance_certificate.v2`** requires **`signature.keyId`** when **`signature`** is present. Verifiers treat **`keyId`** as the stable name for “which public key applies.” |
 
@@ -90,7 +90,7 @@ npm run validate:conformance-certificate
 
 **Expected success:** the process exits **0** and prints **`OK`** (no further stdout). Failures print **`validate-conformance-certificate:`** … to stderr (schema, digest mismatch, missing signature when required, or Ed25519 verify failure).
 
-**CI:** the same command runs in **`conformance-attestation.yml`** and adopted **`cross-sdk-parity.yml`** rows with secrets injected by GitHub Actions (do not paste private key material into logs).
+**CI:** the same command runs in **`conformance-attestation.yml`** and adopted **`cross-consumer-parity.yml`** rows with secrets injected by GitHub Actions (do not paste private key material into logs).
 
 ## References
 

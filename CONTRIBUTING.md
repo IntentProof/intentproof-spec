@@ -44,7 +44,7 @@ Remove any legacy **`INTENTPROOF_BOT_TOKEN`** org secret once everything uses th
 Used by:
 
 - **`conformance-attestation.yml`** (push to default branch, **`spec-v*`** tags, **`workflow_dispatch`**) — emits a signed **`conformance-certificate.json`** and validates with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** (no unsigned fallback).
-- **`cross-sdk-parity.yml`** — for each **adopted** SDK matrix row, conformance signs the certificate and validation requires a verified signature.
+- **`cross-consumer-parity.yml`** — for each **adopted** matrix row, conformance signs the certificate and validation requires a verified signature.
 
 **Not used by** **`ci.yml`** pull-request jobs: PR conformance is an untrusted Vitest/schema precheck and does not exercise signed certificate attestation (that is **post-merge** on trusted workflows above).
 
@@ -54,9 +54,9 @@ Optional: set **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_ID`** consistently in workf
 
 | Kind | Name | Purpose |
 |------|------|---------|
-| **Organization secret** (typical) | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM public key for **`spec:integrity:verify`** in **`run-conformance.sh`**, **`cross-sdk-parity.yml`**, and SDK CI when provided (often org-wide). |
+| **Organization secret** (typical) | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` | PEM public key for **`spec:integrity:verify`** in **`run-conformance.sh`**, **`cross-consumer-parity.yml`**, and SDK CI when provided (often org-wide). |
 
-### Cross-SDK parity (`.github/workflows/cross-sdk-parity.yml`)
+### Consumer parity (`.github/workflows/cross-consumer-parity.yml`)
 
 Runs on a **weekly schedule** and **`workflow_dispatch`** only (not on **`pull_request`**).
 
@@ -77,7 +77,7 @@ Pull-request-only: Vitest oracle, schema compatibility, shellcheck — **no** ce
 |------|------|---------|
 | **Repository variable** (optional break-glass) | `SPEC_SCHEMA_COMPAT_OVERRIDE` | Set to **`true`** to allow a PR classified as **BREAKING** without label **`spec-breaking-approved`**. Prefer the label for normal process. |
 
-Trusted attestation (signed **`conformance-certificate.json`**) and **`npm run validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** run in **`conformance-attestation.yml`** and **`cross-sdk-parity.yml`** using **`intentproof-spec`** repository secrets — see **Conformance certificate signing** above.
+Trusted attestation (signed **`conformance-certificate.json`**) and **`npm run validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** run in **`conformance-attestation.yml`** and **`cross-consumer-parity.yml`** using **`intentproof-spec`** repository secrets — see **Conformance certificate signing** above.
 
 Other workflows often use **`INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM`** (org-wide) for **`spec:integrity:verify`** on schedule/parity; **`ci.yml`** PR paths may avoid it by design — see workflow comments.
 
@@ -88,16 +88,18 @@ Use the same names across repositories and CI so pins and scripts stay unambiguo
 | Term | Meaning |
 |------|---------|
 | **`intentproof-spec`** | This Git repository: canonical schemas, goldens, oracle. |
-| **`INTENTPROOF_SPEC_ROOT`** | Absolute path to an `intentproof-spec` checkout. Set by SDK CI and local scripts when the spec is not adjacent to the SDK. |
+| **`INTENTPROOF_SPEC_ROOT`** | Absolute path to an `intentproof-spec` checkout. Set by consumer CI and local scripts when the spec is not adjacent to the repo. |
 | **`intentproofSpecVersion`** (Node root + workspace **`package.json`**) | Must equal **`spec.json`** **`version`**. |
 | **`intentproofSpecCommit`** (Node / Gradle **`gradle.properties`**) | 40-character lowercase hex SHA; the **`intentproof-spec`** checkout used in CI must satisfy **`git rev-parse HEAD` == this commit**. |
 | **`spec-version`** / **`spec-commit`** | Python **`pyproject.toml`** **`[tool.intentproof]`** — same contract as version + commit above. |
 | **`scripts/run-conformance.sh`** | Runs in **this** repo (or with **`INTENTPROOF_SPEC_ROOT`**): npm install, **`spec:integrity:verify`**, typecheck, Vitest, smoke, optional replay / JSON report. |
-| **`scripts/spec-conformance.sh`** | Lives in **each SDK** repo; invokes the spec oracle with **`INTENTPROOF_SPEC_ROOT`** pointing at the pinned spec tree. |
+| **`scripts/spec-conformance.sh`** | Lives in **each consumer** repo (SDKs, API, …); invokes the spec oracle with **`INTENTPROOF_SPEC_ROOT`** pointing at the pinned spec tree. |
 | **`scripts/check-consumer-spec-pins.sh`** | Validates consumer manifests vs a spec checkout (**`spec.json`** version + **`HEAD`**). Invoked from **`intentproof-spec`** with consumer root + spec root paths. |
 | **`scripts/check-sdk-spec-pins.sh`** | Compatibility shim that forwards to **`check-consumer-spec-pins.sh`**. |
 | **`scripts/check-*-spec-pin.sh`** (per repo) | Thin wrapper in consumer repositories; delegates to the canonical checker above. |
-| **`scripts/check-sdk-hardening.sh`** | SDK audit: pins, drift scripts, generator pins, delegated policies. |
+| **`scripts/check-consumer-hardening.sh`** | Consumer audit: pins, drift scripts, generator pins, delegated policies. **`scripts/check-sdk-hardening.sh`** forwards to it. |
+| **`scripts/read-consumer-spec-commit.sh`** | Prints only the declared pin **commit** SHA (stdout). **`read-sdk-spec-commit.sh`** forwards to it. |
+| **`scripts/check-consumer-no-handwritten-model-types.sh`** | Enforces generated-canonical model policy for Node/Python/Java layouts. **`check-sdk-no-handwritten-model-types.sh`** forwards to it. |
 | **`ExecutionEvent`** | Wire payload shape defined by **`schema/execution_event.v1.schema.json`** (see **`spec.json`**). |
 
 SDK pinning details: **`sdk_contracts/spec_version_pinning.md`**. Contract boundaries: **`sdk_contracts/conformance_reality.md`**.
