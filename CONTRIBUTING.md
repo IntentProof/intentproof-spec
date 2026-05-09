@@ -94,8 +94,9 @@ Use the same names across repositories and CI so pins and scripts stay unambiguo
 | **`spec-version`** / **`spec-commit`** | Python **`pyproject.toml`** **`[tool.intentproof]`** — same contract as version + commit above. |
 | **`scripts/run-conformance.sh`** | Runs in **this** repo (or with **`INTENTPROOF_SPEC_ROOT`**): npm install, **`spec:integrity:verify`**, typecheck, Vitest, smoke, optional replay / JSON report. |
 | **`scripts/spec-conformance.sh`** | Lives in **each SDK** repo; invokes the spec oracle with **`INTENTPROOF_SPEC_ROOT`** pointing at the pinned spec tree. |
-| **`scripts/check-sdk-spec-pins.sh`** | Validates SDK manifests vs a spec checkout (**`spec.json`** version + **`HEAD`**). Run from **`intentproof-spec`**. |
-| **`scripts/check-sdk-spec-pin.sh`** | Per-SDK thin wrapper; delegates to **`check-sdk-spec-pins.sh`**. |
+| **`scripts/check-consumer-spec-pins.sh`** | Validates consumer manifests vs a spec checkout (**`spec.json`** version + **`HEAD`**). Invoked from **`intentproof-spec`** with consumer root + spec root paths. |
+| **`scripts/check-sdk-spec-pins.sh`** | Compatibility shim that forwards to **`check-consumer-spec-pins.sh`**. |
+| **`scripts/check-*-spec-pin.sh`** (per repo) | Thin wrapper in consumer repositories; delegates to the canonical checker above. |
 | **`scripts/check-sdk-hardening.sh`** | SDK audit: pins, drift scripts, generator pins, delegated policies. |
 | **`ExecutionEvent`** | Wire payload shape defined by **`schema/execution_event.v1.schema.json`** (see **`spec.json`**). |
 

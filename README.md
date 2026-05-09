@@ -37,7 +37,7 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `tools/replay/` | Cross-SDK JSONL stream comparison (`compare-streams.ts`) post-canonicalization. |
 | `tools/` | CLI helpers for validating, canonicalizing, diffing, spec version checks, conformance JSON reports. |
 | `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, version pin check, **signed schema integrity verify**, `tsc`, Vitest, smoke, optional replay & JSON output. |
-| `scripts/check-sdk-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java SDK trees. |
+| `scripts/check-consumer-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java consumer repository layouts; `scripts/check-sdk-spec-pins.sh` forwards to it for compatibility. |
 | `artifacts/spec-integrity.v1.json` (+ `.sig`) | Deterministic SHA-256 manifest over `spec.json` → `schemas.*`; verified every conformance run. |
 | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` / `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH` | External Ed25519 public key input used by integrity verification (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
@@ -97,9 +97,9 @@ Serialization rules for captured payloads are normative in `semantics/serializat
 
 Cross-SDK drift controls are spelled out in `sdk_contracts/drift_hardening_checklist.md`. Here is a short map from **theme** to **where it is enforced**:
 
-| Theme | In this repo (`intentproof-spec`) | In SDK repos |
-|-------|-----------------------------------|--------------|
-| **Pins** (`spec.json` version + immutable commit) | `scripts/check-sdk-spec-pins.sh`; `scripts/check-sdk-hardening.sh`; `scripts/read-sdk-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; each SDK’s `scripts/check-sdk-spec-pin.sh` delegates to the spec script |
+| Theme | In this repo (`intentproof-spec`) | In consumer repositories |
+|-------|-----------------------------------|--------------------------|
+| **Pins** (`spec.json` version + immutable commit) | `scripts/check-consumer-spec-pins.sh`; `scripts/check-sdk-hardening.sh`; `scripts/read-sdk-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; each repo’s thin wrapper (often `scripts/check-*-spec-pin.sh`) delegates to the canonical spec script |
 | **Signed normative schemas** | `npm run spec:integrity:verify` inside `scripts/run-conformance.sh`; manifest `artifacts/spec-integrity.v1.json` + signature; `scripts/verify-spec-integrity.sh` | Run the same verify/conformance against the **pinned** spec tree |
 | **No handwritten canonical wire models** | `scripts/check-sdk-no-handwritten-model-types.sh` | Thin bridges only; delegate script required by `check-sdk-hardening.sh` |
 | **Generated sources match regen** | Hardening requires drift scripts to exist | `verify-generated-types.sh` (Node/Python) / `verify-generated-pojos.sh` (Java): regen + `git diff --exit-code` |

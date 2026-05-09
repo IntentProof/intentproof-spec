@@ -18,10 +18,10 @@ The **version** string MUST equal `spec.json.version`. The **commit** string MUS
 
 ## Canonical enforcement
 
-- **`scripts/check-sdk-spec-pins.sh`** in this repository validates both fields for a given SDK root + spec root. Each SDK’s `scripts/check-sdk-spec-pin.sh` delegates to that script.
+- **`scripts/check-consumer-spec-pins.sh`** in this repository validates both fields for a given consumer repository root + spec checkout root. Consumer repositories typically ship a thin wrapper (for example `scripts/check-*-spec-pin.sh`) that delegates to this script; **`scripts/check-sdk-spec-pins.sh`** remains as a compatibility shim that forwards to **`check-consumer-spec-pins.sh`**.
 - **`scripts/read-sdk-spec-commit.sh`** prints only the declared **commit** SHA (for automation such as CI checkout `ref=`).
-- **`scripts/check-sdk-hardening.sh`** runs **`check-sdk-spec-pins.sh`** against the spec checkout next to it so audits fail closed when pins are missing or do not match `spec.json` / `HEAD`.
-- SDK CI SHOULD check out **`IntentProof/intentproof-spec` at the SDK-declared SHA** (not only `main`) so jobs stay green when `main` advances past the pin.
+- **`scripts/check-sdk-hardening.sh`** runs **`check-consumer-spec-pins.sh`** against the spec checkout next to it so audits fail closed when pins are missing or do not match `spec.json` / `HEAD`.
+- Consumer CI SHOULD check out **`IntentProof/intentproof-spec` at the declared pin SHA** (not only `main`) so jobs stay green when `main` advances past the pin.
 - The spec repository still uses **`tools/check-spec-version.ts`** for its own `package.json` `intentproofSpecVersion === spec.json.version` gate (spec repo does not carry an SDK-style commit pin in `package.json`).
 
 ## Schema integrity manifest
@@ -40,7 +40,7 @@ CI classifies schema diffs vs the merge base of the PR base branch (only paths f
 
 1. Check out the `intentproof-spec` revision you intend to ship against (`spec.json.version` + `git rev-parse HEAD`).
 2. Add the **version** and **commit** fields in Node (root + `packages/sdk`), Python (`[tool.intentproof]`), or Gradle (`gradle.properties`) as in the table above.
-3. Run **`bash /path/to/intentproof-spec/scripts/check-sdk-spec-pins.sh /path/to/sdk /path/to/spec`** locally; fix mismatches until it passes.
+3. Run **`bash /path/to/intentproof-spec/scripts/check-consumer-spec-pins.sh /path/to/consumer-repo /path/to/spec`** locally (or the **`check-sdk-spec-pins.sh`** shim with the same arguments); fix mismatches until it passes.
 4. If you changed JSON Schemas in the spec repo, regenerate **`artifacts/spec-integrity.v1.json`** and its **`.sig`** there (`npm run spec:integrity:generate` then `npm run spec:integrity:sign -- --private-key /secure/path/spec-integrity.key.pem`), commit the updated manifest + signature. Keep signing private keys **outside** the repo checkout; `tools/spec-integrity.ts sign` rejects in-repo key paths unless `INTENTPROOF_ALLOW_INSECURE_LOCAL_SIGNING_KEY=1` is explicitly set.
 
 ## Releases

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Print the SDK-declared immutable intentproof-spec git SHA (40-char lowercase hex).
-# Same discovery rules as scripts/check-sdk-spec-pins.sh (stdout is ONLY the SHA).
+# Same discovery rules as scripts/check-consumer-spec-pins.sh (stdout is ONLY the SHA).
 # Usage: read-sdk-spec-commit.sh /absolute/path/to/sdk-repo
 set -euo pipefail
 

@@ -20,7 +20,7 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **CI:** rename **`sdk-release-train.yml`** → **`release-train.yml`**; workflow display name **Release Train**; neutral job/matrix/env naming (`pin-bump-prs`, `matrix.repo`, `REPO_WORKDIR`, `PIN_TARGET_ID`).
+- **CI and tooling:** rename **`sdk-release-train.yml`** → **`release-train.yml`** (workflow display name **Release Train**; neutral job/matrix/env naming); add **`scripts/check-consumer-spec-pins.sh`** as the canonical consumer pin checker against **`spec.json`** and the spec checkout **`HEAD`**, retain **`scripts/check-sdk-spec-pins.sh`** as a delegating shim, and refresh README / CONTRIBUTING / **`sdk_contracts/spec_version_pinning.md`**.
 
 ## 2.0.1 — 2026-05-08
 

@@ -52,8 +52,8 @@ require_match "scripts/check-no-handwritten-model-types.sh" 'check-sdk-no-handwr
 
 pin_validate() {
   # Canonical pins (version + commit) vs this spec checkout HEAD — fail-fast if missing/mismatched.
-  if ! bash "${spec_root}/scripts/check-sdk-spec-pins.sh" "${sdk_root}" "${spec_root}"; then
-    err "spec pin validation failed (run: bash ${spec_root}/scripts/check-sdk-spec-pins.sh ${sdk_root} ${spec_root})"
+  if ! bash "${spec_root}/scripts/check-consumer-spec-pins.sh" "${sdk_root}" "${spec_root}"; then
+    err "spec pin validation failed (run: bash ${spec_root}/scripts/check-consumer-spec-pins.sh ${sdk_root} ${spec_root})"
   fi
 }
 
