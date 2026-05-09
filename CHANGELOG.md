@@ -20,7 +20,7 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- None yet.
+- **CI:** rename **`sdk-release-train.yml`** → **`release-train.yml`**; workflow display name **Release Train**; neutral job/matrix/env naming (`pin-bump-prs`, `matrix.repo`, `REPO_WORKDIR`, `PIN_TARGET_ID`).
 
 ## 2.0.1 — 2026-05-08
 

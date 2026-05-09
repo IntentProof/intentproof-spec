@@ -1,4 +1,4 @@
-name: SDK Release Train
+name: Release Train
 
 on:
   push:
@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: sdk-release-train-${{ github.workflow }}-${{ github.ref }}
+  group: release-train-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -57,23 +57,26 @@ jobs:
             echo "target_version=${target_version}"
           } >> "${GITHUB_OUTPUT}"
 
-  sdk-bump-prs:
+  pin-bump-prs:
     needs: resolve-target
     runs-on: ubuntu-latest
     if: ${{ vars.INTENTPROOF_BOT_APP_ID != '' }}
     strategy:
       fail-fast: false
       matrix:
-        sdk:
+        repo:
           - id: node
-            repo: IntentProof/intentproof-sdk-node
-            path: intentproof-sdk-node
+            repository: IntentProof/intentproof-sdk-node
+            workdir: intentproof-sdk-node
           - id: python
-            repo: IntentProof/intentproof-sdk-python
-            path: intentproof-sdk-python
+            repository: IntentProof/intentproof-sdk-python
+            workdir: intentproof-sdk-python
           - id: java
-            repo: IntentProof/intentproof-sdk-java
-            path: intentproof-sdk-java
+            repository: IntentProof/intentproof-sdk-java
+            workdir: intentproof-sdk-java
+          - id: api
+            repository: IntentProof/intentproof-api
+            workdir: intentproof-api
     steps:
       - uses: actions/checkout@v6
         with:
@@ -91,23 +94,24 @@ jobs:
             intentproof-sdk-node
             intentproof-sdk-python
             intentproof-sdk-java
+            intentproof-api
 
       - uses: actions/checkout@v6
         with:
-          repository: ${{ matrix.sdk.repo }}
+          repository: ${{ matrix.repo.repository }}
           token: ${{ steps.app-token.outputs.token }}
-          path: ${{ matrix.sdk.path }}
+          path: ${{ matrix.repo.workdir }}
           fetch-depth: 0
 
       - name: Configure git identity
         run: |
-          git -C "${{ matrix.sdk.path }}" config user.name "intentproof-bot"
-          git -C "${{ matrix.sdk.path }}" config user.email "intentproof-bot@users.noreply.github.com"
+          git -C "${{ matrix.repo.workdir }}" config user.name "intentproof-bot"
+          git -C "${{ matrix.repo.workdir }}" config user.email "intentproof-bot@users.noreply.github.com"
 
-      - name: Update SDK spec pins
+      - name: Update consumer repository spec pins
         env:
-          SDK_ID: ${{ matrix.sdk.id }}
-          SDK_ROOT: ${{ matrix.sdk.path }}
+          PIN_TARGET_ID: ${{ matrix.repo.id }}
+          REPO_WORKDIR: ${{ matrix.repo.workdir }}
           TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
           TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
         run: |
@@ -118,12 +122,12 @@ jobs:
           import tomllib
           from pathlib import Path
 
-          sdk = os.environ["SDK_ID"]
-          root = Path(os.environ["SDK_ROOT"])
+          pin_target = os.environ["PIN_TARGET_ID"]
+          root = Path(os.environ["REPO_WORKDIR"])
           target_version = os.environ["TARGET_VERSION"]
           target_commit = os.environ["TARGET_COMMIT"]
 
-          if sdk == "node":
+          if pin_target == "node":
               for p in [root / "package.json", root / "packages/sdk/package.json"]:
                   data = json.loads(p.read_text(encoding="utf-8"))
                   data["intentproofSpecVersion"] = target_version
@@ -134,7 +138,7 @@ jobs:
                   data = json.loads(fp.read_text(encoding="utf-8"))
                   data["specVersion"] = target_version
                   fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-          elif sdk == "python":
+          elif pin_target in ("python", "api"):
               pyproject = root / "pyproject.toml"
               text = pyproject.read_text(encoding="utf-8")
               old = tomllib.loads(text)
@@ -143,12 +147,13 @@ jobs:
               text = text.replace(f'spec-version = "{old_v}"', f'spec-version = "{target_version}"')
               text = text.replace(f'spec-commit = "{old_c}"', f'spec-commit = "{target_commit}"')
               pyproject.write_text(text, encoding="utf-8")
-              fp = root / "src/intentproof/generated/spec_fingerprint.json"
-              if fp.exists():
-                  data = json.loads(fp.read_text(encoding="utf-8"))
-                  data["specVersion"] = target_version
-                  fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-          elif sdk == "java":
+              if pin_target == "python":
+                  fp = root / "src/intentproof/generated/spec_fingerprint.json"
+                  if fp.exists():
+                      data = json.loads(fp.read_text(encoding="utf-8"))
+                      data["specVersion"] = target_version
+                      fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+          elif pin_target == "java":
               props = root / "gradle.properties"
               out = []
               for line in props.read_text(encoding="utf-8").splitlines():
@@ -160,36 +165,42 @@ jobs:
                       out.append(line)
               props.write_text("\n".join(out) + "\n", encoding="utf-8")
           else:
-              raise SystemExit(f"unknown sdk {sdk}")
+              raise SystemExit(f"unknown pin target {pin_target}")
           PY
 
-      - name: Refresh SDK generated artifacts
+      - name: Refresh generated artifacts
         env:
-          SDK_ID: ${{ matrix.sdk.id }}
-          SDK_ROOT: ${{ matrix.sdk.path }}
+          PIN_TARGET_ID: ${{ matrix.repo.id }}
+          REPO_WORKDIR: ${{ matrix.repo.workdir }}
           TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
           TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
           INTENTPROOF_SPEC_ROOT: ${{ github.workspace }}/intentproof-spec
         run: |
           set -euo pipefail
-          case "${SDK_ID}" in
+          case "${PIN_TARGET_ID}" in
             node)
-              npm --prefix "${SDK_ROOT}" ci
-              npm --prefix "${SDK_ROOT}" run sync-readme -w @intentproof/sdk
-              bash "${SDK_ROOT}/scripts/generate-schema-types.sh"
-              npm --prefix "${SDK_ROOT}" run format -w @intentproof/sdk
+              npm --prefix "${REPO_WORKDIR}" ci
+              npm --prefix "${REPO_WORKDIR}" run sync-readme -w @intentproof/sdk
+              bash "${REPO_WORKDIR}/scripts/generate-schema-types.sh"
+              npm --prefix "${REPO_WORKDIR}" run format -w @intentproof/sdk
               ;;
             python)
-              python3 -m pip install -e "${SDK_ROOT}[dev]"
+              python3 -m pip install -e "${REPO_WORKDIR}[dev]"
               INTENTPROOF_SPEC_ROOT="${INTENTPROOF_SPEC_ROOT}" \
-                python3 "${SDK_ROOT}/scripts/generate_schema_models.py"
-              python3 -m ruff format "${SDK_ROOT}/src/intentproof/generated"
+                python3 "${REPO_WORKDIR}/scripts/generate_schema_models.py"
+              python3 -m ruff format "${REPO_WORKDIR}/src/intentproof/generated"
+              ;;
+            api)
+              python3 -m pip install -e "${REPO_WORKDIR}[dev]"
+              INTENTPROOF_SPEC_ROOT="${INTENTPROOF_SPEC_ROOT}" \
+                python3 "${REPO_WORKDIR}/scripts/generate_spec_models.py"
+              python3 -m ruff format "${REPO_WORKDIR}/app/generated"
               ;;
             java)
               # No additional generation needed for spec pin-only bumps.
               ;;
             *)
-              echo "unknown sdk ${SDK_ID}" >&2
+              echo "unknown pin target ${PIN_TARGET_ID}" >&2
               exit 2
               ;;
           esac
@@ -200,10 +211,11 @@ jobs:
           TARGET_REF: ${{ needs.resolve-target.outputs.target_ref }}
           TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
           TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+          PIN_TARGET_LABEL: ${{ matrix.repo.id }}
         run: |
           set -euo pipefail
-          repo="${{ matrix.sdk.repo }}"
-          workdir="${{ matrix.sdk.path }}"
+          repo="${{ matrix.repo.repository }}"
+          workdir="${{ matrix.repo.workdir }}"
           branch="bot/spec-pin-${TARGET_VERSION}"
 
           if git -C "${workdir}" diff --quiet; then
@@ -223,16 +235,16 @@ jobs:
             pr_body_file="$(mktemp)"
             printf '%s\n' \
               "## Summary" \
-              "- update SDK spec pin to \`${TARGET_VERSION}\`" \
+              "- update **${PIN_TARGET_LABEL}** repository spec pin to \`${TARGET_VERSION}\`" \
               "- set spec commit to \`${TARGET_COMMIT}\`" \
-              "- refresh generated spec fingerprint metadata when present" \
+              "- refresh generated artifacts when applicable (fingerprints, generated models, etc.)" \
               "" \
               "## Source" \
               "- target spec ref: \`${TARGET_REF}\`" \
               "" \
               "## Test plan" \
-              "- [ ] CI parity hardening checks pass" \
-              "- [ ] generated-artifact verify check passes" \
+              "- [ ] CI passes for this repository" \
+              "- [ ] generated-artifact / drift checks pass" \
               > "${pr_body_file}"
 
             gh pr create \
@@ -251,10 +263,10 @@ jobs:
       - name: Emit setup note
         run: |
           {
-            echo "## SDK release train skipped"
+            echo "## Release train skipped"
             echo ""
             echo "Org variable \`INTENTPROOF_BOT_APP_ID\` is not set."
-            echo "Configure the GitHub App install for the three SDK repos, then set:"
+            echo "Configure the GitHub App install for downstream repositories (SDKs and API), then set:"
             echo "- Variable: \`INTENTPROOF_BOT_APP_ID\` (App ID)"
             echo "- Secret: \`INTENTPROOF_BOT_APP_PRIVATE_KEY\` (PEM from the app)"
           } >> "${GITHUB_STEP_SUMMARY}"
