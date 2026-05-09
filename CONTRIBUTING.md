@@ -24,9 +24,9 @@ This repository is the **normative** source for JSON Schemas, golden oracles, se
 
 Configure these on the **IntentProof** org (or on **`intentproof-spec`** only, if you scope access that way). Names must match exactly.
 
-### SDK release train (`.github/workflows/sdk-release-train.yml`)
+### Release train (`.github/workflows/release-train.yml`)
 
-Opens pin-bump PRs in the Node, Python, and Java SDK repos and in **`intentproof-api`** after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT. For **`intentproof-api`**, the workflow updates **`[tool.intentproof]`** in **`pyproject.toml`** and regenerates **`app/generated/`** the same way maintainers would after a spec bump.
+Opens pin-bump PRs in downstream repositories (**Node**, **Python**, and **Java** SDKs and **`intentproof-api`**) after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT. For **`intentproof-api`**, the workflow updates **`[tool.intentproof]`** in **`pyproject.toml`** and regenerates **`app/generated/`** the same way maintainers would after a spec bump.
 
 | Kind | Name | Purpose |
 |------|------|---------|
