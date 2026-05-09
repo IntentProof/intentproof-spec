@@ -87,7 +87,7 @@ Conformance CI should fail when any of the following occurs:
 |---------|--------|-------------|
 | **`intentproof-spec`** **`ci.yml`** (pull requests) | The PR **`conformance`** job runs Vitest + replay checks directly; it does **not** emit **`conformance-report.json`** or **`conformance-certificate.json`**. | None on PR (untrusted context; no signing secrets). |
 | **`intentproof-spec`** **`conformance-attestation.yml`** (default branch push, **`spec-v*`** tags, **`workflow_dispatch`**) | **`run-conformance.sh`** with **`INTENTPROOF_CONFORMANCE_JSON=1`** | **`validate:conformance-certificate`** with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**; artifact **`conformance-artifacts`**. |
-| **`cross-sdk-parity.yml`** (adopted SDK rows) | Same oracle from SDK checkout | Same validation; artifact **`conformance-artifacts-<sdk>`**. |
+| **`cross-consumer-parity.yml`** (adopted SDK rows) | Same oracle from SDK checkout | Same validation; artifact **`conformance-artifacts-<sdk>`**. |
 | **SDK repos** | **`scripts/spec-conformance.sh`** → pinned **`run-conformance.sh`** | Emit/upload per SDK policy; authoritative signature enforcement on **`intentproof-spec`** trusted workflows (**certificate PEM secrets are repo-scoped to `intentproof-spec`**). |
 
 SDK CI should upload `conformance-report.json` as a build artifact for cross-run auditing.

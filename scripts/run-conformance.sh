@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Executable specification oracle for IntentProof SDK CI.
+# Executable specification oracle for IntentProof consumer CI (SDK packs, API services, spec repo).
 # Spec entrypoint: spec.json (schemas, goldens, semantics paths).
 # Requires Node.js 22+ and npm on PATH (see repo .nvmrc / package.json engines).
 #

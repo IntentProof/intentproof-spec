@@ -25,7 +25,7 @@ for audit and CI gates.
 | Workflow | Certificate validation |
 |----------|------------------------|
 | **`conformance-attestation.yml`** | Runs after **`run-conformance.sh`**; **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`**; repository secrets **`INTENTPROOF_CERTIFICATE_*`**; artifact **`conformance-artifacts`**. |
-| **`cross-sdk-parity.yml`** (adopted SDKs) | Same bar from **`intentproof-spec`** checkout; artifact **`conformance-artifacts-<sdk>`**. |
+| **`cross-consumer-parity.yml`** (adopted SDKs) | Same bar from **`intentproof-spec`** checkout; artifact **`conformance-artifacts-<sdk>`**. |
 | **`ci.yml`** (pull requests) | **No** signed certificate path — PR jobs run Vitest/schema gates without certificate PEM secrets. |
 
 **Signing:** Ed25519 via **`INTENTPROOF_CERTIFICATE_SIGNING_KEY_PEM`** / verification via **`INTENTPROOF_CERTIFICATE_PUBLIC_KEY_PEM`** (**`intentproof-spec`** repository secrets). SDK repos do not require those secrets for current CI.

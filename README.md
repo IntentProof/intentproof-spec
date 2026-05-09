@@ -37,13 +37,13 @@ Each file under `schema/` sets `"$id"` to `https://intentproof.dev/schema/…`. 
 | `tools/replay/` | Cross-SDK JSONL stream comparison (`compare-streams.ts`) post-canonicalization. |
 | `tools/` | CLI helpers for validating, canonicalizing, diffing, spec version checks, conformance JSON reports. |
 | `scripts/run-conformance.sh` | **Executable spec oracle:** installs deps, version pin check, **signed schema integrity verify**, `tsc`, Vitest, smoke, optional replay & JSON output. |
-| `scripts/check-sdk-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java SDK trees. |
+| `scripts/check-consumer-spec-pins.sh` | Canonical **version + git SHA** pin check for Node / Python / Java consumer repository layouts; `scripts/check-sdk-spec-pins.sh` forwards to it for compatibility. |
 | `artifacts/spec-integrity.v1.json` (+ `.sig`) | Deterministic SHA-256 manifest over `spec.json` → `schemas.*`; verified every conformance run. |
 | `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PEM` / `INTENTPROOF_SPEC_INTEGRITY_PUBLIC_KEY_PATH` | External Ed25519 public key input used by integrity verification (private key stays off-repo). |
 | `LICENSE` / `NOTICE` | Apache-2.0 terms and attribution. |
 | `CHANGELOG.md` | Human-readable history of spec-facing changes. |
 | `docs/` | Conformance report + certificate policy + certification RFC — see [`docs/README.md`](docs/README.md). |
-| `.github/` | CI (`workflows/ci.yml`: PR checks only; `workflows/conformance-attestation.yml`: trusted push/tag attestation gate), cross-SDK parity (`workflows/cross-sdk-parity.yml`: schedule + manual, tag-anchored target), release train (`workflows/release-train.yml`: `spec-v*` tag or manual → bot PRs to bump pins in downstream repos), Dependabot. |
+| `.github/` | CI (`workflows/ci.yml`: PR checks only; `workflows/conformance-attestation.yml`: trusted push/tag attestation gate), consumer parity (`workflows/cross-consumer-parity.yml`: schedule + manual, tag-anchored target), release train (`workflows/release-train.yml`: `spec-v*` tag or manual → bot PRs to bump pins in downstream repos), Dependabot. |
 
 ## Versioning model
 
@@ -66,7 +66,7 @@ SDK packages SHOULD declare the **spec git tag** (or internal package version, i
 7. **Audit SDK hardening controls** from this repo when wiring CI/release gates:
 
 ```bash
-bash scripts/check-sdk-hardening.sh /absolute/path/to/intentproof-sdk-<node|python|java>
+bash scripts/check-consumer-hardening.sh /absolute/path/to/intentproof-sdk-<node|python|java>
 ```
 
 For a compact map of pins, signed-schema verification, codegen drift gates, and conformance enforcement, see **[Continuous integration → Drift protection at a glance](#drift-protection-at-a-glance)** below.
@@ -97,21 +97,21 @@ Serialization rules for captured payloads are normative in `semantics/serializat
 
 Cross-SDK drift controls are spelled out in `sdk_contracts/drift_hardening_checklist.md`. Here is a short map from **theme** to **where it is enforced**:
 
-| Theme | In this repo (`intentproof-spec`) | In SDK repos |
-|-------|-----------------------------------|--------------|
-| **Pins** (`spec.json` version + immutable commit) | `scripts/check-sdk-spec-pins.sh`; `scripts/check-sdk-hardening.sh`; `scripts/read-sdk-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; each SDK’s `scripts/check-sdk-spec-pin.sh` delegates to the spec script |
+| Theme | In this repo (`intentproof-spec`) | In consumer repositories |
+|-------|-----------------------------------|--------------------------|
+| **Pins** (`spec.json` version + immutable commit) | `scripts/check-consumer-spec-pins.sh`; `scripts/check-consumer-hardening.sh`; `scripts/read-consumer-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; each repo’s thin wrapper (often `scripts/check-*-spec-pin.sh`) delegates to the canonical spec script |
 | **Signed normative schemas** | `npm run spec:integrity:verify` inside `scripts/run-conformance.sh`; manifest `artifacts/spec-integrity.v1.json` + signature; `scripts/verify-spec-integrity.sh` | Run the same verify/conformance against the **pinned** spec tree |
-| **No handwritten canonical wire models** | `scripts/check-sdk-no-handwritten-model-types.sh` | Thin bridges only; delegate script required by `check-sdk-hardening.sh` |
+| **No handwritten canonical wire models** | `scripts/check-consumer-no-handwritten-model-types.sh` | Thin bridges only; delegate script required by `check-consumer-hardening.sh` |
 | **Generated sources match regen** | Hardening requires drift scripts to exist | `verify-generated-types.sh` (Node/Python) / `verify-generated-pojos.sh` (Java): regen + `git diff --exit-code` |
-| **Pinned codegen tools** | Regex checks in `check-sdk-hardening.sh` | Exact versions (npm/pip/Toml/Gradle catalog) |
+| **Pinned codegen tools** | Regex checks in `check-consumer-hardening.sh` | Exact versions (npm/pip/Toml/Gradle catalog) |
 | **Executable oracle (schemas + semantics + goldens)** | `scripts/run-conformance.sh`; Vitest under `tests/conformance/` | `scripts/spec-conformance.sh` → spec runner; upload `conformance-report.json` where applicable |
 | **Breaking schema changes explicit on PRs** | Workflow `schema-compatibility` in `.github/workflows/ci.yml` (`tools/schema-compatibility-classify.ts`); label **`spec-breaking-approved`** or **`SPEC_SCHEMA_COMPAT_OVERRIDE`** | Coordinated pin bumps when adopting breaks |
-| **Cross-language alignment** | `.github/workflows/cross-sdk-parity.yml`: **weekly schedule** + **`workflow_dispatch`** against a resolved **spec tag/commit** (optional `spec_ref`, optional **strict full adoption**); per-SDK adoption vs target commit; central stream compare when all SDKs are adopted. **Release train** (`.github/workflows/release-train.yml`) can open pin-bump PRs after **`spec-v*`** tags via org GitHub App credentials. | Each SDK’s CI still runs hardening, pin checks, drift verify, and `spec-conformance.sh` on PRs |
+| **Cross-language alignment** | `.github/workflows/cross-consumer-parity.yml`: **weekly schedule** + **`workflow_dispatch`** against a resolved **spec tag/commit** (optional `spec_ref`, optional **strict full adoption**); per-consumer adoption vs target commit; central stream compare when all matrix rows are adopted. **Release train** (`.github/workflows/release-train.yml`) can open pin-bump PRs after **`spec-v*`** tags via org GitHub App credentials. | Each downstream repo’s CI still runs hardening, pin checks, drift verify, and `spec-conformance.sh` on PRs |
 | **Optional incident fingerprint** | `npm run spec:fingerprint` | Optional CI hook for debugging |
 
 Shell scripts under `scripts/` are linted in CI (**shellcheck**). Detail beyond this table: `sdk_contracts/spec_version_pinning.md`, `sdk_contracts/type_generation.md`.
 
-GitHub Actions splits CI by trust context: pull requests run untrusted checks in `.github/workflows/ci.yml` (including conformance precheck, schema compatibility, and shellcheck), while trusted post-merge/tag attestation runs in `.github/workflows/conformance-attestation.yml` (`scripts/run-conformance.sh` with secret-backed integrity key verification and certificate signing/validation). **Cross-SDK parity** (`.github/workflows/cross-sdk-parity.yml`) does **not** run on spec `push`; it runs on a **weekly schedule** and **`workflow_dispatch`**, targets a **stable spec ref** (tag/commit), and skips or fails based on **SDK adoption** vs that target. PRs that change normative paths get a **parity policy note** in CI pointing maintainers at manual/scheduled parity and SDK pin follow-up. After **`spec-v*`** tags, **release train** (`.github/workflows/release-train.yml`) can propose downstream pin updates via PRs. Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
+GitHub Actions splits CI by trust context: pull requests run untrusted checks in `.github/workflows/ci.yml` (including conformance precheck, schema compatibility, and shellcheck), while trusted post-merge/tag attestation runs in `.github/workflows/conformance-attestation.yml` (`scripts/run-conformance.sh` with secret-backed integrity key verification and certificate signing/validation). **Consumer parity** (`.github/workflows/cross-consumer-parity.yml`) does **not** run on spec `push`; it runs on a **weekly schedule** and **`workflow_dispatch`**, targets a **stable spec ref** (tag/commit), and skips or fails based on consumer adoption vs that target. PRs that change normative paths get a **parity policy note** in CI pointing maintainers at manual/scheduled parity and downstream pin follow-up. After **`spec-v*`** tags, **release train** (`.github/workflows/release-train.yml`) can propose downstream pin updates via PRs. Dependabot is configured for **npm** and **GitHub Actions** (see `.github/dependabot.yml`).
 
 ### SDK CI (Python / Java / any runner)
 
@@ -153,7 +153,7 @@ set `INTENTPROOF_CERTIFICATE_SCHEMA_VERSION=v1` only for compatibility lanes).
 
 **Trusted CI** on **`intentproof-spec`** runs `npm run validate:conformance-certificate`
 with **`INTENTPROOF_CERTIFICATE_REQUIRE_SIGNATURE=1`** and uploads report + certificate in
-**`conformance-attestation.yml`** (**`conformance-artifacts`**) and in **`cross-sdk-parity.yml`**
+**`conformance-attestation.yml`** (**`conformance-artifacts`**) and in **`cross-consumer-parity.yml`**
 for adopted SDKs (**`conformance-artifacts-<sdk>`**). Pull-request **`ci.yml`** does **not**
 emit or validate signed certificates (Vitest/schema precheck only).
 

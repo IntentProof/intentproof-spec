@@ -6,7 +6,7 @@ This file states the **boundary of machine enforcement** so maintainers do not o
 
 - **`scripts/run-conformance.sh`** (Vitest) validates **this repo’s** JSON Schemas, **goldens** (`golden/*.jsonl`), **semantics** (`tests/lib/semantics.ts` + `schema` via Ajv), and **canonicalization** vectors. It is the **authoritative oracle for the spec artifacts** and the **TypeScript reference implementation** of the checks.
 - It does **not** import or execute the **Node, Python, or Java SDKs** as libraries. A green spec CI run **does not** prove that a given SDK’s `wrap()` output is correct.
-- **Pull-request** workflows (`ci.yml`) exercise Vitest/schema gates without emitting **`conformance-report.json`** / signed **`conformance-certificate.json`**. **Trusted** workflows (**`conformance-attestation.yml`**, **`cross-sdk-parity.yml`** adopted rows) emit and verify certificates per **`docs/certificate-issuance-policy.md`**.
+- **Pull-request** workflows (`ci.yml`) exercise Vitest/schema gates without emitting **`conformance-report.json`** / signed **`conformance-certificate.json`**. **Trusted** workflows (**`conformance-attestation.yml`**, **`cross-consumer-parity.yml`** adopted rows) emit and verify certificates per **`docs/certificate-issuance-policy.md`**.
 
 ## SDK responsibilities
 
