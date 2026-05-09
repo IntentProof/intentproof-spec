@@ -28,12 +28,14 @@ require_file() {
 }
 
 require_pin_wrapper() {
-  if [[ -f "${consumer_root}/scripts/check-spec-pin.sh" ]]; then
+  if [[ -f "${consumer_root}/scripts/check-consumer-spec-pin.sh" ]]; then
+    require_file "scripts/check-consumer-spec-pin.sh"
+  elif [[ -f "${consumer_root}/scripts/check-spec-pin.sh" ]]; then
     require_file "scripts/check-spec-pin.sh"
   elif [[ -f "${consumer_root}/scripts/check-sdk-spec-pin.sh" ]]; then
     require_file "scripts/check-sdk-spec-pin.sh"
   else
-    err "missing scripts/check-spec-pin.sh or scripts/check-sdk-spec-pin.sh (thin wrapper to intentproof-spec pin checker)"
+    err "missing scripts/check-consumer-spec-pin.sh, check-spec-pin.sh, or check-sdk-spec-pin.sh (thin wrapper to intentproof-spec pin checker)"
   fi
 }
 
