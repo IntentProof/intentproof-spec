@@ -74,6 +74,9 @@ jobs:
           - id: java
             repo: IntentProof/intentproof-sdk-java
             path: intentproof-sdk-java
+          - id: api
+            repo: IntentProof/intentproof-api
+            path: intentproof-api
     steps:
       - uses: actions/checkout@v6
         with:
@@ -91,6 +94,7 @@ jobs:
             intentproof-sdk-node
             intentproof-sdk-python
             intentproof-sdk-java
+            intentproof-api
 
       - uses: actions/checkout@v6
         with:
@@ -104,7 +108,7 @@ jobs:
           git -C "${{ matrix.sdk.path }}" config user.name "intentproof-bot"
           git -C "${{ matrix.sdk.path }}" config user.email "intentproof-bot@users.noreply.github.com"
 
-      - name: Update SDK spec pins
+      - name: Update consumer repository spec pins
         env:
           SDK_ID: ${{ matrix.sdk.id }}
           SDK_ROOT: ${{ matrix.sdk.path }}
@@ -134,7 +138,7 @@ jobs:
                   data = json.loads(fp.read_text(encoding="utf-8"))
                   data["specVersion"] = target_version
                   fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-          elif sdk == "python":
+          elif sdk in ("python", "api"):
               pyproject = root / "pyproject.toml"
               text = pyproject.read_text(encoding="utf-8")
               old = tomllib.loads(text)
@@ -143,11 +147,12 @@ jobs:
               text = text.replace(f'spec-version = "{old_v}"', f'spec-version = "{target_version}"')
               text = text.replace(f'spec-commit = "{old_c}"', f'spec-commit = "{target_commit}"')
               pyproject.write_text(text, encoding="utf-8")
-              fp = root / "src/intentproof/generated/spec_fingerprint.json"
-              if fp.exists():
-                  data = json.loads(fp.read_text(encoding="utf-8"))
-                  data["specVersion"] = target_version
-                  fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+              if sdk == "python":
+                  fp = root / "src/intentproof/generated/spec_fingerprint.json"
+                  if fp.exists():
+                      data = json.loads(fp.read_text(encoding="utf-8"))
+                      data["specVersion"] = target_version
+                      fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
           elif sdk == "java":
               props = root / "gradle.properties"
               out = []
@@ -185,6 +190,12 @@ jobs:
                 python3 "${SDK_ROOT}/scripts/generate_schema_models.py"
               python3 -m ruff format "${SDK_ROOT}/src/intentproof/generated"
               ;;
+            api)
+              python3 -m pip install -e "${SDK_ROOT}[dev]"
+              INTENTPROOF_SPEC_ROOT="${INTENTPROOF_SPEC_ROOT}" \
+                python3 "${SDK_ROOT}/scripts/generate_spec_models.py"
+              python3 -m ruff format "${SDK_ROOT}/app/generated"
+              ;;
             java)
               # No additional generation needed for spec pin-only bumps.
               ;;
@@ -200,6 +211,7 @@ jobs:
           TARGET_REF: ${{ needs.resolve-target.outputs.target_ref }}
           TARGET_COMMIT: ${{ needs.resolve-target.outputs.target_commit }}
           TARGET_VERSION: ${{ needs.resolve-target.outputs.target_version }}
+          PIN_TARGET_ID: ${{ matrix.sdk.id }}
         run: |
           set -euo pipefail
           repo="${{ matrix.sdk.repo }}"
@@ -223,16 +235,16 @@ jobs:
             pr_body_file="$(mktemp)"
             printf '%s\n' \
               "## Summary" \
-              "- update SDK spec pin to \`${TARGET_VERSION}\`" \
+              "- update **${PIN_TARGET_ID}** repository spec pin to \`${TARGET_VERSION}\`" \
               "- set spec commit to \`${TARGET_COMMIT}\`" \
-              "- refresh generated spec fingerprint metadata when present" \
+              "- refresh generated artifacts when applicable (SDK fingerprint JSON / API generated models)" \
               "" \
               "## Source" \
               "- target spec ref: \`${TARGET_REF}\`" \
               "" \
               "## Test plan" \
-              "- [ ] CI parity hardening checks pass" \
-              "- [ ] generated-artifact verify check passes" \
+              "- [ ] CI passes for this repository" \
+              "- [ ] generated-artifact / drift checks pass" \
               > "${pr_body_file}"
 
             gh pr create \
@@ -254,7 +266,7 @@ jobs:
             echo "## SDK release train skipped"
             echo ""
             echo "Org variable \`INTENTPROOF_BOT_APP_ID\` is not set."
-            echo "Configure the GitHub App install for the three SDK repos, then set:"
+            echo "Configure the GitHub App install for the SDK and API repositories, then set:"
             echo "- Variable: \`INTENTPROOF_BOT_APP_ID\` (App ID)"
             echo "- Secret: \`INTENTPROOF_BOT_APP_PRIVATE_KEY\` (PEM from the app)"
           } >> "${GITHUB_STEP_SUMMARY}"

@@ -1,6 +1,6 @@
 # Contributing to `intentproof-spec`
 
-This repository is the **normative** source for JSON Schemas, golden oracles, semantics references, and the executable Vitest oracle (`scripts/run-conformance.sh`). SDK repositories (**Node**, **Python**, **Java**) consume it via pinned checkouts and shared contracts under **`sdk_contracts/`**.
+This repository is the **normative** source for JSON Schemas, golden oracles, semantics references, and the executable Vitest oracle (`scripts/run-conformance.sh`). SDK repositories (**Node**, **Python**, **Java**) and **`intentproof-api`** consume it via pinned checkouts and shared contracts under **`sdk_contracts/`** (API mirrors the Python SDK pin contract in **`pyproject.toml`**).
 
 ## Before you open a pull request
 
@@ -26,14 +26,14 @@ Configure these on the **IntentProof** org (or on **`intentproof-spec`** only, i
 
 ### SDK release train (`.github/workflows/sdk-release-train.yml`)
 
-Opens pin-bump PRs in the Node, Python, and Java SDK repos after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT.
+Opens pin-bump PRs in the Node, Python, and Java SDK repos and in **`intentproof-api`** after a **`spec-v*`** tag push or manual run. Uses a **GitHub App** installation token, not a personal PAT. For **`intentproof-api`**, the workflow updates **`[tool.intentproof]`** in **`pyproject.toml`** and regenerates **`app/generated/`** the same way maintainers would after a spec bump.
 
 | Kind | Name | Purpose |
 |------|------|---------|
 | **Organization variable** | `INTENTPROOF_BOT_APP_ID` | Numeric **App ID** from the GitHub App settings page. If unset, the workflow skips bump jobs and prints a setup note. |
 | **Organization secret** | `INTENTPROOF_BOT_APP_PRIVATE_KEY` | Full **PEM** private key generated for the app (`-----BEGIN …-----` through `-----END …-----`). Used by `actions/create-github-app-token`. |
 
-**GitHub App repository permissions** (for the three SDK repositories only): **Contents** read/write, **Pull requests** read/write. Install the app on the org and grant access to **`intentproof-sdk-node`**, **`intentproof-sdk-python`**, and **`intentproof-sdk-java`**.
+**GitHub App repository permissions**: **Contents** read/write, **Pull requests** read/write. Install the app on the org and grant access to **`intentproof-sdk-node`**, **`intentproof-sdk-python`**, **`intentproof-sdk-java`**, and **`intentproof-api`**.
 
 Remove any legacy **`INTENTPROOF_BOT_TOKEN`** org secret once everything uses the app.
 
