@@ -20,7 +20,11 @@ All notable changes to this specification repository are documented here. Versio
 
 ## Unreleased
 
-- **CI and tooling:** rename **`sdk-release-train.yml`** → **`release-train.yml`** (workflow display name **Release Train**; neutral job/matrix/env naming); introduce **`scripts/check-consumer-spec-pins.sh`** / **`read-consumer-spec-commit.sh`** / **`check-consumer-hardening.sh`** / **`check-consumer-no-handwritten-model-types.sh`** as canonical helpers (prior **`check-sdk-*`** names remain shims); rename **`cross-sdk-parity.yml`** → **`cross-consumer-parity.yml`** (**Consumer parity** workflow, **`matrix.consumer`**, **`pinned_commit`** outputs, neutral **`parity-meta.json`** keys with legacy fallbacks in summaries); **`check-consumer-hardening`** requires **`scripts/check-consumer-spec-pin.sh`** (SDK repos), **`check-spec-pin.sh`** (**`intentproof-api`**), or legacy **`check-sdk-spec-pin.sh`**; refresh README / CONTRIBUTING / **`sdk_contracts/`** / **`docs/`** / **`ci.yml`** accordingly.
+- None yet.
+
+## 2.0.2 — 2026-05-09
+
+- **CI and tooling:** rename **`sdk-release-train.yml`** → **`release-train.yml`** (workflow display name **Release Train**; neutral job/matrix/env naming); introduce **`scripts/check-consumer-spec-pins.sh`** / **`read-consumer-spec-commit.sh`** / **`check-consumer-hardening.sh`** / **`check-consumer-no-handwritten-model-types.sh`** as canonical helpers and remove legacy **`check-sdk-*`** shim scripts; rename **`cross-sdk-parity.yml`** → **`cross-consumer-parity.yml`** (**Consumer parity** workflow, **`matrix.consumer`**, **`pinned_commit`** outputs, neutral **`parity-meta.json`** keys with legacy fallbacks in summaries); **`check-consumer-hardening`** requires **`scripts/check-consumer-spec-pin.sh`** (SDK repos), **`check-spec-pin.sh`** (**`intentproof-api`**), or legacy **`check-sdk-spec-pin.sh`**; refresh README / CONTRIBUTING / **`sdk_contracts/`** / **`docs/`** / **`ci.yml`** accordingly.
 
 ## 2.0.1 — 2026-05-08
 
