@@ -147,12 +147,15 @@ jobs:
               text = text.replace(f'spec-version = "{old_v}"', f'spec-version = "{target_version}"')
               text = text.replace(f'spec-commit = "{old_c}"', f'spec-commit = "{target_commit}"')
               pyproject.write_text(text, encoding="utf-8")
-              if pin_target == "python":
-                  fp = root / "src/intentproof/generated/spec_fingerprint.json"
-                  if fp.exists():
-                      data = json.loads(fp.read_text(encoding="utf-8"))
-                      data["specVersion"] = target_version
-                      fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+              fp_paths = {
+                  "python": root / "src/intentproof/generated/spec_fingerprint.json",
+                  "api": root / "app/generated/spec_fingerprint.json",
+              }
+              fp = fp_paths.get(pin_target)
+              if fp and fp.exists():
+                  data = json.loads(fp.read_text(encoding="utf-8"))
+                  data["specVersion"] = target_version
+                  fp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
           elif pin_target == "java":
               props = root / "gradle.properties"
               out = []
