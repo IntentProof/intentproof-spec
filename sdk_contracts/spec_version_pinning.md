@@ -18,7 +18,7 @@ The **version** string MUST equal `spec.json.version`. The **commit** string MUS
 
 ## Canonical enforcement
 
-- **`scripts/check-consumer-spec-pins.sh`** in this repository validates both fields for a given consumer repository root + spec checkout root. Consumer repositories typically ship a thin wrapper (for example `scripts/check-*-spec-pin.sh`) that delegates to this script; **`scripts/check-sdk-spec-pins.sh`** remains as a compatibility shim that forwards to **`check-consumer-spec-pins.sh`**.
+- **`scripts/check-consumer-spec-pins.sh`** in this repository validates both fields for a given consumer repository root + spec checkout root. Consumer repositories typically ship a thin wrapper **`scripts/check-consumer-spec-pin.sh`** (or **`scripts/check-spec-pin.sh`** in **`intentproof-api`**) that delegates to this script; **`scripts/check-sdk-spec-pins.sh`** remains as a compatibility shim that forwards to **`check-consumer-spec-pins.sh`**.
 - **`scripts/read-consumer-spec-commit.sh`** prints only the declared **commit** SHA (for automation such as CI checkout `ref=`). **`scripts/read-sdk-spec-commit.sh`** remains as a compatibility shim.
 - **`scripts/check-consumer-hardening.sh`** audits consumer repos for drift controls and runs **`check-consumer-spec-pins.sh`** against the spec checkout next to it so audits fail closed when pins are missing or do not match `spec.json` / `HEAD`. **`scripts/check-sdk-hardening.sh`** remains as a compatibility shim.
 - Consumer CI SHOULD check out **`IntentProof/intentproof-spec` at the declared pin SHA** (not only `main`) so jobs stay green when `main` advances past the pin.

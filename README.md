@@ -99,7 +99,7 @@ Cross-SDK drift controls are spelled out in `sdk_contracts/drift_hardening_check
 
 | Theme | In this repo (`intentproof-spec`) | In consumer repositories |
 |-------|-----------------------------------|--------------------------|
-| **Pins** (`spec.json` version + immutable commit) | `scripts/check-consumer-spec-pins.sh`; `scripts/check-consumer-hardening.sh`; `scripts/read-consumer-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; each repo’s thin wrapper (often `scripts/check-*-spec-pin.sh`) delegates to the canonical spec script |
+| **Pins** (`spec.json` version + immutable commit) | `scripts/check-consumer-spec-pins.sh`; `scripts/check-consumer-hardening.sh`; `scripts/read-consumer-spec-commit.sh` | Pin fields in manifests (`package.json`, `pyproject.toml`, `gradle.properties`, …); CI checks out **declared SHA**; SDKs use **`scripts/check-consumer-spec-pin.sh`** ( **`intentproof-api`**: **`check-spec-pin.sh`**) to delegate to the canonical spec script |
 | **Signed normative schemas** | `npm run spec:integrity:verify` inside `scripts/run-conformance.sh`; manifest `artifacts/spec-integrity.v1.json` + signature; `scripts/verify-spec-integrity.sh` | Run the same verify/conformance against the **pinned** spec tree |
 | **No handwritten canonical wire models** | `scripts/check-consumer-no-handwritten-model-types.sh` | Thin bridges only; delegate script required by `check-consumer-hardening.sh` |
 | **Generated sources match regen** | Hardening requires drift scripts to exist | `verify-generated-types.sh` (Node/Python) / `verify-generated-pojos.sh` (Java): regen + `git diff --exit-code` |
