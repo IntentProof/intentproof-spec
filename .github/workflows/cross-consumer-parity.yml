@@ -38,7 +38,7 @@ jobs:
       target_version: ${{ steps.resolve.outputs.target_version }}
       require_full_adoption: ${{ steps.resolve.outputs.require_full_adoption }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # was `@v6`
         with:
           path: intentproof-spec
           fetch-depth: 0
@@ -98,19 +98,19 @@ jobs:
             conformance: scripts/spec-conformance.sh
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # was `@v6`
         with:
           path: intentproof-spec
           ref: ${{ needs.resolve-target.outputs.target_ref }}
           fetch-depth: 0
           fetch-tags: true
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # was `@v6`
         with:
           repository: ${{ matrix.consumer.repo }}
           path: ${{ matrix.consumer.path }}
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # was `@v6`
         with:
           node-version-file: intentproof-spec/.nvmrc
           cache: npm
@@ -148,7 +148,7 @@ jobs:
           JSON
 
       - name: Upload parity metadata artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # was `@v7`
         with:
           name: parity-meta-${{ matrix.consumer.id }}
           path: ${{ matrix.consumer.path }}/parity-meta.json
@@ -165,14 +165,14 @@ jobs:
 
       - name: Set up Java (parity verify)
         if: matrix.consumer.id == 'java' && steps.adoption.outputs.adopted == 'true'
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654  # was `@v5`
         with:
           distribution: temurin
           java-version: "21"
 
       - name: Set up Gradle (parity verify)
         if: matrix.consumer.id == 'java' && steps.adoption.outputs.adopted == 'true'
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e  # was `@v6`
 
       - name: Verify generated artifacts are up to date
         if: steps.adoption.outputs.adopted == 'true'
@@ -247,7 +247,7 @@ jobs:
 
       - name: Upload spec conformance artifacts
         if: steps.adoption.outputs.adopted == 'true'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # was `@v7`
         with:
           name: conformance-artifacts-${{ matrix.consumer.id }}
           path: |
@@ -257,7 +257,7 @@ jobs:
 
       - name: Upload parity stream artifact
         if: steps.adoption.outputs.adopted == 'true'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # was `@v7`
         with:
           name: parity-stream-${{ matrix.consumer.id }}
           path: ${{ matrix.consumer.path }}/parity-stream.jsonl
@@ -268,24 +268,24 @@ jobs:
     needs: [resolve-target, parity]
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # was `@v6`
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # was `@v6`
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --no-audit --no-fund
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # was `@v8`
         with:
           name: parity-stream-node
           path: parity-streams/node
           if-no-artifact-found: ignore
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # was `@v8`
         with:
           name: parity-stream-python
           path: parity-streams/python
           if-no-artifact-found: ignore
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # was `@v8`
         with:
           name: parity-stream-java
           path: parity-streams/java
@@ -324,7 +324,7 @@ jobs:
     needs: [resolve-target, parity]
     if: always()
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # was `@v8`
         with:
           pattern: parity-meta-*
           path: parity-meta
@@ -370,7 +370,7 @@ jobs:
     needs: [resolve-target, parity]
     if: needs.resolve-target.outputs.require_full_adoption == 'true'
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # was `@v8`
         with:
           pattern: parity-meta-*
           path: parity-meta
