@@ -1,0 +1,5 @@
+# Typos (https://github.com/crate-ci/typos) — spell check for prose in this repo.
+# CI: .github/workflows/typos.yml
+
+[files]
+extend-exclude = ["package-lock.json"]
