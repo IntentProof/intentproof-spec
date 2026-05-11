@@ -45,7 +45,7 @@
     "validate:conformance-certificate": "tsx tools/validate-conformance-certificate.ts"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.6.2",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "tsx": "^4.19.2",
