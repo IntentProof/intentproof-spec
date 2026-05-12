@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/run.v1.schema.json",
+  "title": "VerificationRun",
+  "type": "object",
+  "properties": {
+    "schema": { "type": "string", "const": "intentproof.run.v1" },
+    "run_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "flow_id": { "type": "string" },
+    "flow_merkle_root": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
+    "policy_id": { "type": "string" },
+    "policy_version": { "type": "integer" },
+    "policy_fingerprint": { "type": "string" },
+    "verifier_version": { "type": "string" },
+    "verifier_build_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
+    "attestation_set": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "merkle_root": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" }
+      },
+      "required": ["ids", "merkle_root"]
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["pass", "fail", "inconclusive"] },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "outcome_counts": {
+          "type": "object",
+          "properties": {
+            "pass": { "type": "integer", "minimum": 0 },
+            "fail": { "type": "integer", "minimum": 0 },
+            "inconclusive": { "type": "integer", "minimum": 0 }
+          },
+          "required": ["pass", "fail", "inconclusive"]
+        },
+        "severity_counts": {
+          "type": "object",
+          "properties": {
+            "critical": { "type": "integer", "minimum": 0 },
+            "high": { "type": "integer", "minimum": 0 },
+            "medium": { "type": "integer", "minimum": 0 },
+            "low": { "type": "integer", "minimum": 0 },
+            "info": { "type": "integer", "minimum": 0 }
+          },
+          "required": ["critical", "high", "medium", "low", "info"]
+        }
+      },
+      "required": ["outcome_counts", "severity_counts"]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "finding.v1.schema.json"
+      }
+    },
+    "run_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string", "const": "ed25519" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["alg", "key_id", "value"]
+    }
+  },
+  "required": [
+    "schema", "run_id", "tenant_id", "flow_id", "flow_merkle_root",
+    "policy_id", "policy_version", "policy_fingerprint",
+    "verifier_version", "verifier_build_hash", "attestation_set",
+    "started_at", "completed_at", "status", "summary", "findings",
+    "run_fingerprint", "signature"
+  ],
+  "additionalProperties": false
+}

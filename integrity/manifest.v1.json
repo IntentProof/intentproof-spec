@@ -1,0 +1,22 @@
+{
+  "files": {
+    "attestation.v1.schema.json": "sha256:86fcd5cbda66fb10c9f4024998e41b5c21a8ecd86c2bf16ab91e3d0a8369ba95",
+    "bundle-manifest.v1.schema.json": "sha256:2dfbd174d2ec76542543a05790b463de3b7aaf5744063ce7eb1f4a7edd8c259a",
+    "certificate.v1.schema.json": "sha256:a04dc064928461d60b25eb6f801ffb65a15604e69f0566d10557c6cc02172314",
+    "claim.v1.schema.json": "sha256:01ec630bd289772a1760e9db852b2ad3e8c4fab8b5eb04c67ba5a857df51f379",
+    "execution_event.v1.schema.json": "sha256:496407239e8e597ebfa73de0bcf7543f06cf4771d761a46ebd1208634c87ba02",
+    "finding.v1.schema.json": "sha256:d9a9931460a950ae41a9817437c2bef9f30212f176f7758a0139355aaa0e7041",
+    "flow.v1.schema.json": "sha256:bcd08a31ca95b02f726c3e73195032058af815e7f5444695f8e60a250f623ae0",
+    "policy.v1.schema.json": "sha256:7dd31b911280d8c58c981a1ec3df974a209197fbceac5dc967952fda5efe2872",
+    "run.v1.schema.json": "sha256:45819b66b8dbc939cd8c2abe4f06c5c6e3fb4c4a1f1d7512edde7d22728ca465",
+    "attestation_cases.jsonl": "sha256:34a81c7b9c3bcb2de2bb08eb76991233a5b333f1279fe66831f4aa5b0affa446",
+    "bundle-manifest_cases.jsonl": "sha256:c024a0043555471ffca38d104ec0b184fec2216035a22e9531d055c64cdcfdf9",
+    "certificate_cases.jsonl": "sha256:3b213bcdf88a047c7c0d960b97eb82a79ceebf149daa5020b3c58a853788179c",
+    "claim_cases.jsonl": "sha256:b07865f370a28fbbf4e0769d560a684b4ba6f0b28bdaa16c95bbf6e85b6edfb0",
+    "execution_event_cases.jsonl": "sha256:363490788809a9b74e6b7e3fe4ac0e73496586938a2db875f1ee3812c73020a4",
+    "finding_cases.jsonl": "sha256:3a5e7530981e966e7760861682a833f38600d432958bebc671a4158069d169c9",
+    "flow_cases.jsonl": "sha256:c2ad0a87f7e65f0b4c309f6d025c46e5e6c70326d47633f93d131f95611fd540",
+    "policy_cases.jsonl": "sha256:ad192392c58618d2838dd7d7f17ed47657d3e7c92725c83652061536577904b1",
+    "run_cases.jsonl": "sha256:7b7aa8eda123b37eccaa6f547c85ec57d1efbdfdeff3f468cc1e8c725af0a1a5"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/finding.v1.schema.json",
+  "title": "Finding",
+  "type": "object",
+  "properties": {
+    "rule_id": { "type": "string" },
+    "rule_category": { "type": "string" },
+    "outcome": { "type": "string", "enum": ["pass", "fail", "inconclusive"] },
+    "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+    "reason": { "type": "string" },
+    "evidence_event_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_attestation_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "remediation_hint": { "type": "string" },
+    "human_summary": { "type": "string" }
+  },
+  "required": [
+    "rule_id", "rule_category", "outcome", "severity", "reason", "evidence_event_ids"
+  ],
+  "additionalProperties": true
+}

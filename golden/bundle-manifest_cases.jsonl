@@ -1,0 +1,2 @@
+{"shouldValidate":true,"manifest":{"files":{"flow.json":"sha256:0000000000000000000000000000000000000000000000000000000000000000"}}}
+{"shouldValidate":false,"manifest":{"schema":"invalid"}}

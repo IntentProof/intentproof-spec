@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/attestation.v1.schema.json",
+  "title": "Attestation",
+  "type": "object",
+  "properties": {
+    "schema": { "type": "string", "const": "intentproof.attestation.v1" },
+    "attestation_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "source_id": { "type": "string" },
+    "received_at": { "type": "string", "format": "date-time" },
+    "source_emitted_at": { "type": "string", "format": "date-time" },
+    "subject": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "id": { "type": "string" },
+        "mapping_to": {
+          "type": "object",
+          "properties": {
+            "correlation_id": { "type": "string" }
+          },
+          "required": ["correlation_id"]
+        }
+      },
+      "required": ["type", "id"]
+    },
+    "claim": { "type": "string" },
+    "claim_value": {},
+    "source_payload_sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
+    "source_signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["alg", "key_id", "value"]
+    },
+    "platform_signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string", "const": "ed25519" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["alg", "key_id", "value"]
+    }
+  },
+  "required": [
+    "schema", "attestation_id", "tenant_id", "source_id", "received_at",
+    "source_emitted_at", "subject", "claim", "claim_value", "source_payload_sha256",
+    "source_signature", "platform_signature"
+  ],
+  "additionalProperties": false
+}

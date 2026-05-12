@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/certificate.v1.schema.json",
+  "title": "VerificationCertificate",
+  "type": "object",
+  "properties": {
+    "schema": { "type": "string", "const": "intentproof.certificate.v1" },
+    "certificate_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "claims": {
+      "type": "array",
+      "items": { "$ref": "claim.v1.schema.json" }
+    },
+    "run_id": { "type": "string" },
+    "run_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
+    "policy_id": { "type": "string" },
+    "policy_version": { "type": "integer" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "issuer": { "type": "string" },
+    "transparency_log": {
+      "type": "object",
+      "properties": {
+        "log_id": { "type": "string" },
+        "tree_size": { "type": "integer" },
+        "leaf_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
+        "inclusion_proof": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" }
+        },
+        "sct": { "type": "string" }
+      },
+      "required": ["log_id", "tree_size", "leaf_hash", "inclusion_proof", "sct"]
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string", "const": "ed25519" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["alg", "key_id", "value"]
+    }
+  },
+  "required": [
+    "schema", "certificate_id", "tenant_id", "claims", "run_id", "run_fingerprint",
+    "policy_id", "policy_version", "issued_at", "issuer", "transparency_log", "signature"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/execution_event.v1.schema.json",
+  "title": "ExecutionEvent",
+  "description": "The atom. Emitted by the SDK. Signed at emission.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "intentproof.event.v1"
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Globally unique ULID."
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "instance_id": {
+      "type": "string"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "prev_event_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]+$"
+    },
+    "chain_position": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "intent": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "inputs": {
+      "type": ["object", "array", "null"]
+    },
+    "output": {
+      "type": ["object", "string", "number", "boolean", "null"]
+    },
+    "error": {
+      "type": ["object", "null"]
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "number", "boolean"]
+      }
+    },
+    "redaction_summary": {
+      "type": "object",
+      "properties": {
+        "rules_applied": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "fields_redacted_count": { "type": "integer" },
+        "fields_redacted_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tenant_redaction_profile_id": { "type": "string" }
+      }
+    },
+    "spec_version": {
+      "type": "string"
+    },
+    "sdk_version": {
+      "type": "string"
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string", "const": "ed25519" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["alg", "key_id", "value"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema", "event_id", "tenant_id", "instance_id", "correlation_id",
+    "prev_event_hash", "chain_position", "intent", "action", "status",
+    "started_at", "completed_at", "duration_ms", "spec_version",
+    "sdk_version", "signature"
+  ],
+  "additionalProperties": false
+}

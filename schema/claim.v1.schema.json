@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/claim.v1.schema.json",
+  "title": "Claim",
+  "type": "object",
+  "properties": {
+    "schema": { "type": "string", "const": "intentproof.claim.v1" },
+    "claim_id": { "type": "string" },
+    "tenant_id": { "type": "string" },
+    "subject": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "id": { "type": "string" }
+      },
+      "required": ["type", "id"]
+    },
+    "predicate": { "type": "string" },
+    "object": {},
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "run_id": { "type": "string" },
+        "policy_id": { "type": "string" },
+        "policy_version": { "type": "integer" }
+      },
+      "required": ["run_id", "policy_id", "policy_version"]
+    },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "required": ["schema", "claim_id", "tenant_id", "subject", "predicate", "evidence", "issued_at"]
+}

@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/policy.v1.schema.json",
+  "title": "VerificationPolicy",
+  "type": "object",
+  "$defs": {
+    "AttributePredicate": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["ok", "error"] },
+        "attribute": { "type": "string", "minLength": 1 },
+        "equals": { "type": ["string", "number", "boolean", "null"] },
+        "in": {
+          "type": "array",
+          "items": { "type": ["string", "number", "boolean", "null"] },
+          "minItems": 1
+        }
+      },
+      "anyOf": [
+        { "required": ["status"] },
+        { "required": ["attribute"] }
+      ]
+    },
+    "RequiredRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "required" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "min": { "type": "integer", "minimum": 0 },
+            "max": { "type": "integer", "minimum": 0 },
+            "where": { "$ref": "#/$defs/AttributePredicate" }
+          },
+          "required": ["action"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "ForbiddenRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "forbidden" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "after": { "type": "string" },
+            "where_predecessor": { "$ref": "#/$defs/AttributePredicate" },
+            "where": { "$ref": "#/$defs/AttributePredicate" },
+            "without_predecessor": { "type": "string" }
+          },
+          "required": ["action"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "OrderingRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "ordering" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "before": { "type": "string" },
+            "after": { "type": "string" },
+            "scope": { "type": "string", "enum": ["first-occurrence", "all-occurrences"] },
+            "match_by_attribute": { "type": "string" }
+          },
+          "required": ["before", "after"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "CardinalityRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "cardinality" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "exactly": { "type": "integer", "minimum": 0 },
+            "min": { "type": "integer", "minimum": 0 },
+            "max": { "type": "integer", "minimum": 0 },
+            "count_basis": { "type": "string", "enum": ["logical", "raw"] },
+            "where": { "$ref": "#/$defs/AttributePredicate" }
+          },
+          "required": ["action"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "CompletionRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "completion" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "all_required_ok": { "type": "boolean" }
+          },
+          "required": ["all_required_ok"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "TemporalRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "temporal" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "object",
+              "properties": {
+                "action": { "type": "string" },
+                "anchor": { "type": "string", "enum": ["started_at", "completed_at"] }
+              },
+              "required": ["action"]
+            },
+            "to": {
+              "type": "object",
+              "properties": {
+                "action": { "type": "string" },
+                "anchor": { "type": "string", "enum": ["started_at", "completed_at"] }
+              },
+              "required": ["action"]
+            },
+            "min": { "type": "string" },
+            "max": { "type": "string" },
+            "clock_skew_tolerance": { "type": "string" }
+          },
+          "required": ["from", "to", "max"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "ConsensusRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "consensus" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "claim": { "type": "string" },
+            "expected_value": {},
+            "require_signed_sources": { "type": "boolean" },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": { "type": "string", "enum": ["intentproof_action", "external"] },
+                  "action": { "type": "string" },
+                  "where": { "$ref": "#/$defs/AttributePredicate" },
+                  "source_id": { "type": "string" },
+                  "channel": { "type": "string" }
+                },
+                "required": ["kind"]
+              },
+              "minItems": 1
+            },
+            "threshold": {
+              "type": "object",
+              "properties": {
+                "unanimous": { "type": "boolean" },
+                "majority": { "type": "boolean" },
+                "agree_at_least": { "type": "integer", "minimum": 1 }
+              }
+            }
+          },
+          "required": ["claim", "sources", "threshold"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    }
+  },
+  "properties": {
+    "schema": { "type": "string", "const": "intentproof.policy.v1" },
+    "policy_id": { "type": "string" },
+    "policy_version": { "type": "integer", "minimum": 1 },
+    "tenant_id": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "rfc_version": { "type": "string" },
+    "spec_version": { "type": "string" },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "any_event_action_in": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ignore_flows_with_no_match": { "type": "boolean" }
+      }
+    },
+    "instrumentation_requirement": {
+      "type": "string",
+      "enum": ["full", "operational", "minimal"]
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          { "$ref": "#/$defs/RequiredRule" },
+          { "$ref": "#/$defs/ForbiddenRule" },
+          { "$ref": "#/$defs/OrderingRule" },
+          { "$ref": "#/$defs/CardinalityRule" },
+          { "$ref": "#/$defs/CompletionRule" },
+          { "$ref": "#/$defs/TemporalRule" },
+          { "$ref": "#/$defs/ConsensusRule" }
+        ]
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "policy_fingerprint": { "type": "string" },
+    "signed_at": { "type": "string", "format": "date-time" },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      }
+    }
+  },
+  "required": [
+    "schema", "policy_id", "policy_version", "tenant_id", "spec_version", "scope", "rules", "policy_fingerprint"
+  ],
+  "additionalProperties": false
+}

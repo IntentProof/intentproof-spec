@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/flow.v1.schema.json",
+  "title": "ExecutionFlow",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "intentproof.flow.v1"
+    },
+    "flow_id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "window": {
+      "type": "object",
+      "properties": {
+        "opened_at": { "type": "string", "format": "date-time" },
+        "closed_at": { "type": "string", "format": "date-time" },
+        "closure_reason": { "type": "string" }
+      },
+      "required": ["opened_at", "closed_at", "closure_reason"],
+      "additionalProperties": false
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event_id": { "type": "string" },
+          "ordinal": { "type": "integer", "minimum": 0 },
+          "hash": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" }
+        },
+        "required": ["event_id", "ordinal", "hash"],
+        "additionalProperties": false
+      }
+    },
+    "instrumentation_mode": {
+      "type": "string",
+      "enum": ["full", "operational", "minimal"]
+    },
+    "flow_merkle_root": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]+$"
+    },
+    "snapshot_uri": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "required": [
+    "schema", "flow_id", "tenant_id", "correlation_id", "window",
+    "events", "instrumentation_mode", "flow_merkle_root", "snapshot_uri"
+  ],
+  "additionalProperties": false
+}

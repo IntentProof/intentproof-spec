@@ -1,0 +1,2 @@
+{"shouldValidate":true,"finding":{"rule_id":"consensus-stripe-ack","rule_category":"consensus","outcome":"fail","severity":"critical","reason":"fail.consensus.disagreement","evidence_event_ids":[],"evidence_attestation_ids":["att_01JMR"],"remediation_hint":"Stripe attests refund.acknowledged=true but no internal payments.stripe.refunds.create succeeded. Investigate webhook→ledger replication.","human_summary":"Stripe acknowledged a refund your application never executed."}}
+{"shouldValidate":false,"finding":{"schema":"invalid"}}

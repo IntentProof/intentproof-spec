@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/bundle-manifest.v1.schema.json",
+  "title": "BundleManifest",
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]+$"
+      }
+    }
+  },
+  "required": ["files"],
+  "additionalProperties": false
+}
