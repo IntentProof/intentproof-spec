@@ -1,0 +1,40 @@
+name: dco
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require Signed-off-by trailer on every commit
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          fail=0
+          for sha in $(git rev-list "$base".."$head"); do
+            body=$(git log -1 --format=%B "$sha")
+            author_email=$(git log -1 --format=%ae "$sha")
+            soby=$(echo "$body" | grep -oE '^Signed-off-by: .+ <.+@.+>$' || true)
+            if [ -z "$soby" ]; then
+              echo "Commit $sha is missing a Signed-off-by trailer." >&2
+              fail=1
+            else
+              soby_email=$(echo "$soby" | grep -oE '<.+@.+>' | tr -d '<>')
+              if [ "$soby_email" != "$author_email" ]; then
+                echo "Commit $sha: Signed-off-by email ($soby_email) does not match author email ($author_email)." >&2
+                fail=1
+              fi
+            fi
+          done
+          if [[ $fail -ne 0 ]]; then
+            echo "" >&2
+            echo "All commits in this PR must be signed off via the DCO." >&2
+            echo "See CONTRIBUTING.md. Use 'git commit -s' or amend with 'git commit --amend -s'." >&2
+            exit 1
+          fi
+          echo "PASS: all commits carry Signed-off-by trailers."
