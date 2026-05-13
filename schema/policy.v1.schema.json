@@ -100,18 +100,40 @@
       },
       "required": ["id", "category", "spec"]
     },
-    "CompletionRule": {
+    "ValueBoundRule": {
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "category": { "type": "string", "const": "completion" },
+        "category": { "type": "string", "const": "value_bound" },
         "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
         "spec": {
           "type": "object",
           "properties": {
-            "all_required_ok": { "type": "boolean" }
+            "claim": { "type": "string" },
+            "operator": { "type": "string", "enum": ["lt", "lte", "gt", "gte", "eq", "ne"] },
+            "value": { "type": "number" },
+            "source_id": { "type": "string" }
           },
-          "required": ["all_required_ok"]
+          "required": ["claim", "operator", "value"]
+        }
+      },
+      "required": ["id", "category", "spec"]
+    },
+    "ClaimMatchRule": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "const": "claim_match" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "claim": { "type": "string" },
+            "expected_value": {},
+            "source_id": { "type": "string" },
+            "require_signed": { "type": "boolean" }
+          },
+          "required": ["claim", "expected_value"]
         }
       },
       "required": ["id", "category", "spec"]
@@ -223,9 +245,10 @@
           { "$ref": "#/$defs/ForbiddenRule" },
           { "$ref": "#/$defs/OrderingRule" },
           { "$ref": "#/$defs/CardinalityRule" },
-          { "$ref": "#/$defs/CompletionRule" },
           { "$ref": "#/$defs/TemporalRule" },
-          { "$ref": "#/$defs/ConsensusRule" }
+          { "$ref": "#/$defs/ConsensusRule" },
+          { "$ref": "#/$defs/ValueBoundRule" },
+          { "$ref": "#/$defs/ClaimMatchRule" }
         ]
       }
     },

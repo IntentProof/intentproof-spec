@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ts-node conformance/runner.ts && ts-node conformance/jcs_test.ts && ts-node integrity/verify_manifest.ts"
   },
   "keywords": [],
   "author": "",
