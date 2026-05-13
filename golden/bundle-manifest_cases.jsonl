@@ -1,2 +1,2 @@
-{"shouldValidate":true,"manifest":{"files":{"flow.json":"sha256:0000000000000000000000000000000000000000000000000000000000000000"}}}
+{"shouldValidate":true,"manifest":{"schema":"intentproof.bundle.manifest.v1","bundle_id":"bnd_01JMR000000000000000000000","created_at":"2026-05-11T13:00:00.000Z","files":{"flow.json":"sha256:0000000000000000000000000000000000000000000000000000000000000000"},"key_id":"tnt_acme:k1","signature":{"alg":"ed25519","key_id":"tnt_acme:k1","value":"base64"}}}
 {"shouldValidate":false,"manifest":{"schema":"invalid"}}

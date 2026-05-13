@@ -4,14 +4,28 @@
   "title": "BundleManifest",
   "type": "object",
   "properties": {
+    "schema": { "type": "string", "const": "intentproof.bundle.manifest.v1" },
+    "bundle_id": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
     "files": {
       "type": "object",
       "additionalProperties": {
         "type": "string",
-        "pattern": "^sha256:[a-f0-9]+$"
+        "pattern": "^sha256:[a-f0-9]{64}$"
       }
+    },
+    "key_id": { "type": "string", "minLength": 1 },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string" },
+        "key_id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["alg", "key_id", "value"],
+      "additionalProperties": false
     }
   },
-  "required": ["files"],
+  "required": ["bundle_id", "created_at", "files", "key_id", "signature"],
   "additionalProperties": false
 }

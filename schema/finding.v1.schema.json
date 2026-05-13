@@ -5,7 +5,19 @@
   "type": "object",
   "properties": {
     "rule_id": { "type": "string" },
-    "rule_category": { "type": "string" },
+    "rule_category": {
+      "type": "string",
+      "enum": [
+        "required",
+        "forbidden",
+        "ordering",
+        "cardinality",
+        "temporal",
+        "consensus",
+        "value_bound",
+        "claim_match"
+      ]
+    },
     "outcome": { "type": "string", "enum": ["pass", "fail", "inconclusive"] },
     "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
     "reason": { "type": "string" },
@@ -23,5 +35,5 @@
   "required": [
     "rule_id", "rule_category", "outcome", "severity", "reason", "evidence_event_ids"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }
