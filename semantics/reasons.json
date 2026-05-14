@@ -1,0 +1,244 @@
+{
+  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. See plan-intentproof/05-verification-dsl.md for the rule grammar. This file is the source of truth for the reason vocabulary; the finding schema enum is intentionally maintained separately and may be wired up by a future remediation item.",
+  "version": "0.1.0",
+  "categories": [
+    "required",
+    "forbidden",
+    "ordering",
+    "cardinality",
+    "temporal",
+    "consensus",
+    "value_bound",
+    "claim_match"
+  ],
+  "reasons": [
+    {
+      "code": "pass.required.satisfied",
+      "category": "required",
+      "description": "Required action occurred within the configured min/max bounds.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.required.missing",
+      "category": "required",
+      "description": "Required action did not occur at all in the matched scope.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "fail.required.under_min",
+      "category": "required",
+      "description": "Required action occurred but fewer times than the configured minimum.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "fail.required.over_max",
+      "category": "required",
+      "description": "Required action occurred more times than the configured maximum.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "pass.forbidden.absent",
+      "category": "forbidden",
+      "description": "Forbidden action did not occur (or only occurred outside its gate).",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.forbidden.present",
+      "category": "forbidden",
+      "description": "Forbidden action occurred and no gating clause is configured.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "fail.forbidden.after_predecessor",
+      "category": "forbidden",
+      "description": "Forbidden action occurred after its configured predecessor action.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "fail.forbidden.without_predecessor",
+      "category": "forbidden",
+      "description": "Forbidden action occurred without the required predecessor action.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "pass.ordering.satisfied",
+      "category": "ordering",
+      "description": "All matched after-events were preceded by their before-event.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.ordering.out_of_order",
+      "category": "ordering",
+      "description": "An after-event occurred earlier than its paired before-event within scope.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "fail.ordering.unmatched_pair",
+      "category": "ordering",
+      "description": "Pair-scoped ordering rule saw an after-event with no matching before-event.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "fail.ordering.violated",
+      "category": "ordering",
+      "description": "Generic ordering violation when a more specific reason does not apply.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.ordering.before_missing",
+      "category": "ordering",
+      "description": "After-event is present but no before-event exists anywhere in the flow.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "pass.cardinality.satisfied",
+      "category": "cardinality",
+      "description": "Action count satisfies the configured exactly / min / max bounds.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.cardinality.not_exact",
+      "category": "cardinality",
+      "description": "Action count does not equal the configured exactly value.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "fail.cardinality.under_min",
+      "category": "cardinality",
+      "description": "Action count is below the configured minimum.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "fail.cardinality.over_max",
+      "category": "cardinality",
+      "description": "Action count exceeds the configured maximum.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "fail.cardinality.out_of_range",
+      "category": "cardinality",
+      "description": "Action count falls outside the configured range when min/max share a single specifier.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "pass.temporal.within_window",
+      "category": "temporal",
+      "description": "Interval between the configured anchors falls within the allowed window.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.temporal.negative_interval",
+      "category": "temporal",
+      "description": "to-anchor occurred before from-anchor beyond the clock-skew tolerance.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "fail.temporal.below_min",
+      "category": "temporal",
+      "description": "Interval is shorter than the configured minimum.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "fail.temporal.exceeded_max",
+      "category": "temporal",
+      "description": "Interval is longer than the configured maximum.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "fail.temporal.window_violated",
+      "category": "temporal",
+      "description": "Generic temporal-window violation when a more specific reason does not apply.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.temporal.missing_anchor",
+      "category": "temporal",
+      "description": "from-anchor or to-anchor event is absent from the flow.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.temporal.clock_skew_within_tolerance",
+      "category": "temporal",
+      "description": "Negative interval is within the configured clock-skew tolerance.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "pass.consensus.threshold_met",
+      "category": "consensus",
+      "description": "Configured consensus threshold met with no live disagreement.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.consensus.threshold_unmet",
+      "category": "consensus",
+      "description": "Insufficient agreeing sources to satisfy the configured threshold.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "fail.consensus.disagreement",
+      "category": "consensus",
+      "description": "Two or more live sources actively disagree on the claim value.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "fail.consensus.insufficient",
+      "category": "consensus",
+      "description": "Generic consensus shortfall when a more specific reason does not apply.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "inconclusive.consensus.external_unavailable",
+      "category": "consensus",
+      "description": "All external sources unavailable and no internal source exists.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "inconclusive.consensus.source_stale",
+      "category": "consensus",
+      "description": "Required signature missing or invalid while require_signed_sources is true.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "pass.value_bound.satisfied",
+      "category": "value_bound",
+      "description": "Claim value falls within the configured numeric bound.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.value_bound.out_of_range",
+      "category": "value_bound",
+      "description": "Claim value violates the configured numeric bound (lt/lte/gt/gte/eq/neq).",
+      "severity_hint": "high"
+    },
+    {
+      "code": "inconclusive.value_bound.claim_missing",
+      "category": "value_bound",
+      "description": "Configured claim was not emitted by the named source for the flow.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "pass.claim_match.matched",
+      "category": "claim_match",
+      "description": "Claim value equals the configured expected value.",
+      "severity_hint": "info"
+    },
+    {
+      "code": "fail.claim_match.mismatch",
+      "category": "claim_match",
+      "description": "Claim value differs from the configured expected value.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.claim_match.claim_missing",
+      "category": "claim_match",
+      "description": "Configured claim was not emitted by the named source for the flow.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.claim_match.source_unsigned",
+      "category": "claim_match",
+      "description": "Required source signature missing or invalid while require_signed is true.",
+      "severity_hint": "medium"
+    }
+  ]
+}
