@@ -4,6 +4,10 @@
   "title": "VerificationPolicy",
   "type": "object",
   "$defs": {
+    "Iso8601Duration": {
+      "type": "string",
+      "pattern": "^P(?=\\d|T)(?:\\d+Y)?(?:\\d+M)?(?:\\d+W)?(?:\\d+D)?(?:T(?=\\d)(?:\\d+H)?(?:\\d+M)?(?:\\d+(?:\\.\\d+)?S)?)?$"
+    },
     "AttributePredicate": {
       "type": "object",
       "properties": {
@@ -55,7 +59,27 @@
             "where": { "$ref": "#/$defs/AttributePredicate" },
             "without_predecessor": { "type": "string" }
           },
-          "required": ["action"]
+          "required": ["action"],
+          "allOf": [
+            {
+              "not": {
+                "required": ["where_predecessor", "without_predecessor"]
+              }
+            },
+            {
+              "anyOf": [
+                {
+                  "not": {
+                    "anyOf": [
+                      { "required": ["where_predecessor"] },
+                      { "required": ["without_predecessor"] }
+                    ]
+                  }
+                },
+                { "required": ["after"] }
+              ]
+            }
+          ]
         }
       },
       "required": ["id", "category", "spec"]
@@ -95,7 +119,25 @@
             "count_basis": { "type": "string", "enum": ["logical", "raw"] },
             "where": { "$ref": "#/$defs/AttributePredicate" }
           },
-          "required": ["action"]
+          "required": ["action"],
+          "oneOf": [
+            {
+              "required": ["exactly"],
+              "not": {
+                "anyOf": [
+                  { "required": ["min"] },
+                  { "required": ["max"] }
+                ]
+              }
+            },
+            {
+              "not": { "required": ["exactly"] },
+              "anyOf": [
+                { "required": ["min"] },
+                { "required": ["max"] }
+              ]
+            }
+          ]
         }
       },
       "required": ["id", "category", "spec"]
@@ -163,11 +205,15 @@
               },
               "required": ["action"]
             },
-            "min": { "type": "string" },
-            "max": { "type": "string" },
-            "clock_skew_tolerance": { "type": "string" }
+            "min": { "$ref": "#/$defs/Iso8601Duration" },
+            "max": { "$ref": "#/$defs/Iso8601Duration" },
+            "clock_skew_tolerance": { "$ref": "#/$defs/Iso8601Duration" }
           },
-          "required": ["from", "to", "max"]
+          "required": ["from", "to"],
+          "anyOf": [
+            { "required": ["min"] },
+            { "required": ["max"] }
+          ]
         }
       },
       "required": ["id", "category", "spec"]
@@ -254,9 +300,7 @@
     },
     "claims": {
       "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "items": { "$ref": "claim.v1.schema.json" }
     },
     "policy_fingerprint": { "type": "string" },
     "signed_at": { "type": "string", "format": "date-time" },
