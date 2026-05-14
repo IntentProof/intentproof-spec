@@ -1,5 +1,5 @@
 {
-  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. See plan-intentproof/05-verification-dsl.md for the rule grammar. This file is the source of truth for the reason vocabulary; the finding schema enum is intentionally maintained separately and may be wired up by a future remediation item.",
+  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. The canonical rule grammar lives in schema/policy.v1.schema.json. This file is the source of truth for the reason vocabulary; the finding schema enum is intentionally maintained separately and may be wired up later.",
   "version": "0.1.0",
   "categories": [
     "required",
