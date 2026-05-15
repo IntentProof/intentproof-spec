@@ -173,59 +173,61 @@ const findingSchemaPath = path.join(
   'finding.v1.schema.json',
 );
 let findingRaw = '';
+let findingSchemaReadOk = false;
 try {
   findingRaw = fs.readFileSync(findingSchemaPath, 'utf-8');
+  findingSchemaReadOk = true;
 } catch (e) {
   fail(`Unable to read ${findingSchemaPath}: ${(e as Error).message}`);
 }
-if (!hasError) {
-let findingDoc: unknown;
-try {
-  findingDoc = JSON.parse(findingRaw);
-} catch (e) {
-  fail(`finding.v1.schema.json is not valid JSON: ${(e as Error).message}`);
-}
-if (typeof findingDoc !== 'object' || findingDoc === null) {
-  fail('finding.v1.schema.json must be an object');
-} else {
-  const props = (findingDoc as Record<string, unknown>).properties;
-  if (typeof props !== 'object' || props === null) {
-    fail('finding.v1.schema.json missing properties');
+if (findingSchemaReadOk) {
+  let findingDoc: unknown;
+  try {
+    findingDoc = JSON.parse(findingRaw);
+  } catch (e) {
+    fail(`finding.v1.schema.json is not valid JSON: ${(e as Error).message}`);
+  }
+  if (typeof findingDoc !== 'object' || findingDoc === null) {
+    fail('finding.v1.schema.json must be an object');
   } else {
-    const reasonProp = (props as Record<string, unknown>).reason;
-    if (typeof reasonProp !== 'object' || reasonProp === null) {
-      fail('finding.v1.schema.json missing reason property');
+    const props = (findingDoc as Record<string, unknown>).properties;
+    if (typeof props !== 'object' || props === null) {
+      fail('finding.v1.schema.json missing properties');
     } else {
-      const en = (reasonProp as Record<string, unknown>).enum;
-      if (!Array.isArray(en)) {
-        fail('finding.v1.schema.json reason must have enum array');
+      const reasonProp = (props as Record<string, unknown>).reason;
+      if (typeof reasonProp !== 'object' || reasonProp === null) {
+        fail('finding.v1.schema.json missing reason property');
       } else {
-        const schemaCodes = new Set<string>();
-        for (const c of en) {
-          if (typeof c !== 'string') {
-            fail('finding reason enum contains non-string');
-          } else {
-            schemaCodes.add(c);
+        const en = (reasonProp as Record<string, unknown>).enum;
+        if (!Array.isArray(en)) {
+          fail('finding.v1.schema.json reason must have enum array');
+        } else {
+          const schemaCodes = new Set<string>();
+          for (const c of en) {
+            if (typeof c !== 'string') {
+              fail('finding reason enum contains non-string');
+            } else {
+              schemaCodes.add(c);
+            }
           }
-        }
-        for (const c of seenCodes) {
-          if (!schemaCodes.has(c)) {
-            fail(
-              `reason code '${c}' is in reasons.json but missing from finding.v1.schema.json enum`,
-            );
+          for (const c of seenCodes) {
+            if (!schemaCodes.has(c)) {
+              fail(
+                `reason code '${c}' is in reasons.json but missing from finding.v1.schema.json enum`,
+              );
+            }
           }
-        }
-        for (const c of schemaCodes) {
-          if (!seenCodes.has(c)) {
-            fail(
-              `reason code '${c}' is in finding.v1.schema.json enum but missing from reasons.json`,
-            );
+          for (const c of schemaCodes) {
+            if (!seenCodes.has(c)) {
+              fail(
+                `reason code '${c}' is in finding.v1.schema.json enum but missing from reasons.json`,
+              );
+            }
           }
         }
       }
     }
   }
-}
 }
 
 if (hasError) {
