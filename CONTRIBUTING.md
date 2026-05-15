@@ -1,14 +1,23 @@
 # Contributing to intentproof-spec
 
-Thanks for your interest in contributing to the IntentProof specification.
+Thanks for your interest in IntentProof.
+
+## Issues welcome
+
+Please report bugs, schema ambiguities, and conformance gaps via
+[GitHub Issues](https://github.com/IntentProof/intentproof-spec/issues).
+That is the primary way to help right now.
+
+We do **not** accept unsolicited pull requests from outside the
+maintainer team. If you are a customer or partner with a change that
+must land upstream, contact IntentProof, Inc. before opening a PR.
+
+Maintainer commits use the Developer Certificate of Origin (DCO) below.
 
 ## Developer Certificate of Origin (DCO)
 
-This repository accepts contributions under the
+Merged commits in this repository use the
 [Developer Certificate of Origin 1.1](https://developercertificate.org/).
-We deliberately use DCO instead of a Contributor License Agreement
-for the Apache repositories so the contribution path stays
-frictionless.
 
 Every commit must carry a `Signed-off-by:` trailer matching the
 author email. The easiest way to do this is to pass `-s` to `git
@@ -32,3 +41,8 @@ git push --force-with-lease
 
 Commits that do not include a valid `Signed-off-by` trailer will
 be rejected by CI.
+
+## License
+
+By contributing as a maintainer, you agree your commits are licensed
+under the Apache License 2.0 (see `LICENSE`).
