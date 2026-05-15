@@ -165,11 +165,74 @@ for (const code of goldenReasonCodes) {
   }
 }
 
+// Cross-check finding.v1.schema.json reason enum matches vocabulary exactly.
+const findingSchemaPath = path.join(
+  __dirname,
+  '..',
+  'schema',
+  'finding.v1.schema.json',
+);
+let findingRaw = '';
+try {
+  findingRaw = fs.readFileSync(findingSchemaPath, 'utf-8');
+} catch (e) {
+  fail(`Unable to read ${findingSchemaPath}: ${(e as Error).message}`);
+}
+if (!hasError) {
+let findingDoc: unknown;
+try {
+  findingDoc = JSON.parse(findingRaw);
+} catch (e) {
+  fail(`finding.v1.schema.json is not valid JSON: ${(e as Error).message}`);
+}
+if (typeof findingDoc !== 'object' || findingDoc === null) {
+  fail('finding.v1.schema.json must be an object');
+} else {
+  const props = (findingDoc as Record<string, unknown>).properties;
+  if (typeof props !== 'object' || props === null) {
+    fail('finding.v1.schema.json missing properties');
+  } else {
+    const reasonProp = (props as Record<string, unknown>).reason;
+    if (typeof reasonProp !== 'object' || reasonProp === null) {
+      fail('finding.v1.schema.json missing reason property');
+    } else {
+      const en = (reasonProp as Record<string, unknown>).enum;
+      if (!Array.isArray(en)) {
+        fail('finding.v1.schema.json reason must have enum array');
+      } else {
+        const schemaCodes = new Set<string>();
+        for (const c of en) {
+          if (typeof c !== 'string') {
+            fail('finding reason enum contains non-string');
+          } else {
+            schemaCodes.add(c);
+          }
+        }
+        for (const c of seenCodes) {
+          if (!schemaCodes.has(c)) {
+            fail(
+              `reason code '${c}' is in reasons.json but missing from finding.v1.schema.json enum`,
+            );
+          }
+        }
+        for (const c of schemaCodes) {
+          if (!seenCodes.has(c)) {
+            fail(
+              `reason code '${c}' is in finding.v1.schema.json enum but missing from reasons.json`,
+            );
+          }
+        }
+      }
+    }
+  }
+}
+}
+
 if (hasError) {
   console.error('reasons.json validation failed.');
   process.exit(1);
 }
 
 console.log(
-  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden references cross-checked.`,
+  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs; finding schema enum parity OK.`,
 );
