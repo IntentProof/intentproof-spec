@@ -163,6 +163,12 @@
       "severity_hint": "medium"
     },
     {
+      "code": "inconclusive.temporal.duration_invalid",
+      "category": "temporal",
+      "description": "Temporal max (or min) duration in the rule is missing or not parseable as an ISO-8601 duration, so the window cannot be evaluated.",
+      "severity_hint": "medium"
+    },
+    {
       "code": "pass.consensus.threshold_met",
       "category": "consensus",
       "description": "Configured consensus threshold met with no live disagreement.",
@@ -243,7 +249,7 @@
     {
       "code": "inconclusive.required.unsupported_rule_category",
       "category": "required",
-      "description": "Rule category is not supported by this verifier version.",
+      "description": "Rule category string is not a known DSL kind or is otherwise unevaluated by this verifier (defensive; prefer category-specific unsupported codes when applicable).",
       "severity_hint": "medium"
     },
     {
@@ -275,6 +281,18 @@
       "category": "claim_match",
       "description": "Claim match rule is missing expected_value in spec.",
       "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.claim_match.unsupported_rule_category",
+      "category": "claim_match",
+      "description": "claim_match rule was not evaluated because this verifier runtime has no handler for that category.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.value_bound.unsupported_rule_category",
+      "category": "value_bound",
+      "description": "value_bound rule was not evaluated because this verifier runtime has no handler for that category.",
+      "severity_hint": "high"
     }
   ]
 }
