@@ -1,5 +1,5 @@
 {
-  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. The canonical rule grammar lives in schema/policy.v1.schema.json. This file is the source of truth for the reason vocabulary; the finding schema enum is intentionally maintained separately and may be wired up later.",
+  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. The canonical rule grammar lives in schema/policy.v1.schema.json. This file is the source of truth for the reason vocabulary; schema/finding.v1.schema.json reason enum is checked by validate_reasons.ts to match this list exactly.",
   "version": "0.1.0",
   "categories": [
     "required",
@@ -238,6 +238,42 @@
       "code": "inconclusive.claim_match.source_unsigned",
       "category": "claim_match",
       "description": "Required source signature missing or invalid while require_signed is true.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.required.unsupported_rule_category",
+      "category": "required",
+      "description": "Rule category is not supported by this verifier version.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.ordering.after_missing",
+      "category": "ordering",
+      "description": "After-action from the rule was not found in the flow.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.consensus.claim_missing",
+      "category": "consensus",
+      "description": "Consensus rule is missing a claim identifier in spec.",
+      "severity_hint": "critical"
+    },
+    {
+      "code": "inconclusive.value_bound.operator_unsupported",
+      "category": "value_bound",
+      "description": "Value bound rule uses an operator this verifier does not implement.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "inconclusive.value_bound.bound_invalid",
+      "category": "value_bound",
+      "description": "Value bound rule has a non-numeric bound or otherwise invalid bound spec.",
+      "severity_hint": "high"
+    },
+    {
+      "code": "inconclusive.claim_match.expected_missing",
+      "category": "claim_match",
+      "description": "Claim match rule is missing expected_value in spec.",
       "severity_hint": "medium"
     }
   ]
