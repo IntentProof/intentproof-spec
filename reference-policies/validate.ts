@@ -1,9 +1,8 @@
-import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
-import { canonicalize } from 'json-canonicalize';
+import { computePolicyFingerprint } from '../conformance/policy_fingerprint';
 
 type FixtureManifest = {
   id: string;
@@ -47,35 +46,35 @@ const validatePolicySchema = policySchema;
 const validateFlowSchema = flowSchema;
 const validateRunSchema = runSchema;
 
-let hasError = false;
+let errorCount = 0;
 const referenceIDs = new Set<string>();
 
 function fail(message: string): void {
   console.error(`[FAIL] ${message}`);
-  hasError = true;
+  errorCount++;
 }
 
-function readJSON(filePath: string): unknown {
-  return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+function readJSON(filePath: string): unknown | undefined {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  } catch (err) {
+    fail(`${path.relative(root, filePath)} is not readable JSON: ${(err as Error).message}`);
+    return undefined;
+  }
 }
 
-function requireFile(packDir: string, relPath: string): string {
+function requireFile(packDir: string, relPath: string): string | undefined {
   const resolved = path.resolve(packDir, relPath);
-  if (!resolved.startsWith(path.resolve(packDir) + path.sep)) {
+  const packRoot = path.resolve(packDir);
+  if (!resolved.startsWith(packRoot + path.sep)) {
     fail(`path escapes pack directory: ${relPath}`);
+    return undefined;
   }
   if (!fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
     fail(`missing required file: ${path.relative(root, resolved)}`);
+    return undefined;
   }
   return resolved;
-}
-
-function computePolicyFingerprint(policy: Record<string, unknown>): string {
-  const copy = JSON.parse(JSON.stringify(policy)) as Record<string, unknown>;
-  delete copy.policy_fingerprint;
-  delete copy.signed_at;
-  delete copy.signature;
-  return 'sha256:' + crypto.createHash('sha256').update(canonicalize(copy)).digest('hex');
 }
 
 function validateAttestationsJSONL(filePath: string): void {
@@ -103,13 +102,17 @@ function validateSchema(
 }
 
 function validatePack(packDir: string, domain: string, name: string, versionDir: string): void {
+  const errorsBefore = errorCount;
   const manifestPath = path.join(packDir, 'pack.json');
   if (!fs.existsSync(manifestPath)) {
     fail(`missing pack.json in ${path.relative(root, packDir)}`);
     return;
   }
 
-  const manifest = readJSON(manifestPath) as PackManifest;
+  const manifest = readJSON(manifestPath) as PackManifest | undefined;
+  if (!manifest) {
+    return;
+  }
   const version = Number(versionDir.slice(1));
   const expectedID = `reference.${domain}.${name}.v${version}`;
 
@@ -132,7 +135,13 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
 
   requireFile(packDir, 'README.md');
   const policyPath = requireFile(packDir, manifest.policy);
+  if (!policyPath) {
+    return;
+  }
   const policy = readJSON(policyPath) as Record<string, unknown>;
+  if (!policy) {
+    return;
+  }
   validateSchema(`${expectedID} policy.json`, policy, validatePolicySchema);
   if (policy.policy_id !== expectedID || policy.policy_version !== version) {
     fail(`${expectedID}: policy_id and policy_version must match pack identity`);
@@ -167,9 +176,15 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
     const flowPath = requireFile(packDir, fixture.flow);
     const attestationsPath = requireFile(packDir, fixture.attestations);
     const expectedRunPath = requireFile(packDir, fixture.expected_run);
+    if (!flowPath || !attestationsPath || !expectedRunPath) {
+      continue;
+    }
 
-    const flow = readJSON(flowPath) as Record<string, unknown>;
-    const expectedRun = readJSON(expectedRunPath) as Record<string, unknown>;
+    const flow = readJSON(flowPath) as Record<string, unknown> | undefined;
+    const expectedRun = readJSON(expectedRunPath) as Record<string, unknown> | undefined;
+    if (!flow || !expectedRun) {
+      continue;
+    }
     validateSchema(`${expectedID}/${fixture.id} flow.json`, flow, validateFlowSchema);
     validateSchema(`${expectedID}/${fixture.id} expected-run.json`, expectedRun, validateRunSchema);
     validateAttestationsJSONL(attestationsPath);
@@ -184,7 +199,9 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
     }
   }
 
-  console.log(`[PASS] ${expectedID}`);
+  if (errorCount === errorsBefore) {
+    console.log(`[PASS] ${expectedID}`);
+  }
 }
 
 for (const domain of fs.readdirSync(root)) {
@@ -211,7 +228,7 @@ if (referenceIDs.size === 0) {
   fail('no reference policy packs found');
 }
 
-if (hasError) {
+if (errorCount > 0) {
   process.exit(1);
 }
 

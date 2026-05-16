@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as crypto from 'crypto';
 import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
-import { canonicalize } from 'json-canonicalize';
+import { computePolicyFingerprint } from './policy_fingerprint';
 
 const ajv = new Ajv({ strict: false, allowUnionTypes: true });
 addFormats(ajv);
@@ -76,12 +75,7 @@ for (const file of goldenFiles) {
         console.error(`[FAIL] ${file}:${i+1} policy_fingerprint is missing or empty`);
         hasError = true;
       } else {
-        const copy = JSON.parse(JSON.stringify(objectToValidate));
-        delete copy.policy_fingerprint;
-        delete copy.signed_at;
-        delete copy.signature;
-        const canonical = canonicalize(copy);
-        const expected = 'sha256:' + crypto.createHash('sha256').update(canonical).digest('hex');
+        const expected = computePolicyFingerprint(objectToValidate);
         if (objectToValidate.policy_fingerprint !== expected) {
           console.error(`[FAIL] ${file}:${i+1} Fingerprint mismatch: expected ${expected}, got ${objectToValidate.policy_fingerprint}`);
           hasError = true;
