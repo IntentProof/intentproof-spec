@@ -1,0 +1,27 @@
+{
+  "schema": "intentproof.flow.v1",
+  "flow_id": "flow_reference_etl_completeness_missing_reconciliation",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "correlation_id": "corr_reference_etl_completeness_missing_reconciliation",
+  "window": {
+    "opened_at": "2026-05-16T00:00:00.000Z",
+    "closed_at": "2026-05-16T00:15:00.000Z",
+    "closure_reason": "completed"
+  },
+  "events": [
+    {
+      "event_id": "evt_data_etl_extract_ok",
+      "ordinal": 1,
+      "hash": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    {
+      "event_id": "evt_data_etl_load_ok",
+      "ordinal": 2,
+      "hash": "sha256:7777777777777777777777777777777777777777777777777777777777777777"
+    }
+  ],
+  "instrumentation_mode": "operational",
+  "flow_merkle_root": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+  "snapshot_uri": "ipfs://reference/data/etl-completeness/v1/missing-reconciliation"
+}
