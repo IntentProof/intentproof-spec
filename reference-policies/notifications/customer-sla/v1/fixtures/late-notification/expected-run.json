@@ -1,0 +1,82 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_customer_sla_late_notification",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_customer_sla_late_notification",
+  "flow_merkle_root": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+  "policy_id": "reference.notifications.customer-sla.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:f85bb27728dc9fc01a17e706e7c584b9fbd2d314d0dfba9e9641b8639d8397ae",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:30:00.000Z",
+  "completed_at": "2026-05-16T00:30:00.000Z",
+  "status": "fail",
+  "summary": {
+    "outcome_counts": {
+      "pass": 2,
+      "fail": 1,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 2,
+      "high": 1,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-case-opened",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_notifications_customer_sla_open_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Customer-impacting case was opened."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-customer-notified",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "critical",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_notifications_customer_sla_notify_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Customer notification was sent."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "temporal-notify-within-sla",
+      "rule_category": "temporal",
+      "outcome": "fail",
+      "severity": "critical",
+      "reason": "fail.temporal.exceeded_max",
+      "evidence_event_ids": [
+        "evt_notifications_customer_sla_open_ok",
+        "evt_notifications_customer_sla_notify_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Customer notification was sent after the SLA window."
+    }
+  ],
+  "run_fingerprint": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-notifications",
+    "value": "base64"
+  }
+}

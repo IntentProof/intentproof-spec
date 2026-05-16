@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.notifications.customer-sla.v1",
+  "domain": "notifications",
+  "name": "customer-sla",
+  "version": 1,
+  "display_name": "Customer SLA",
+  "summary": "Requires customer-impacting cases to notify customers within the SLA window.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "within-sla",
+      "description": "Customer-impacting case opens and customer notification is sent within the SLA window.",
+      "flow": "fixtures/within-sla/flow.json",
+      "attestations": "fixtures/within-sla/attestations.jsonl",
+      "expected_run": "fixtures/within-sla/expected-run.json"
+    },
+    {
+      "id": "late-notification",
+      "description": "Customer notification is present, but outside the SLA window.",
+      "flow": "fixtures/late-notification/flow.json",
+      "attestations": "fixtures/late-notification/attestations.jsonl",
+      "expected_run": "fixtures/late-notification/expected-run.json"
+    }
+  ]
+}

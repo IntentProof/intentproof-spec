@@ -1,0 +1,68 @@
+{
+  "schema": "intentproof.policy.v1",
+  "policy_id": "reference.notifications.customer-sla.v1",
+  "policy_version": 1,
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "name": "Customer SLA",
+  "description": "Requires customer-impacting cases to notify customers within the SLA window.",
+  "spec_version": "1.0.0",
+  "scope": {
+    "any_event_action_in": [
+      "notifications.customer_sla.open",
+      "notifications.customer_sla.notify"
+    ],
+    "ignore_flows_with_no_match": false
+  },
+  "instrumentation_requirement": "operational",
+  "rules": [
+    {
+      "id": "required-case-opened",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "notifications.customer_sla.open",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-customer-notified",
+      "category": "required",
+      "severity": "critical",
+      "spec": {
+        "action": "notifications.customer_sla.notify",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "temporal-notify-within-sla",
+      "category": "temporal",
+      "severity": "critical",
+      "spec": {
+        "from": {
+          "action": "notifications.customer_sla.open",
+          "anchor": "completed_at"
+        },
+        "to": {
+          "action": "notifications.customer_sla.notify",
+          "anchor": "started_at"
+        },
+        "max": "PT15M",
+        "clock_skew_tolerance": "PT5S"
+      }
+    }
+  ],
+  "policy_fingerprint": "sha256:f85bb27728dc9fc01a17e706e7c584b9fbd2d314d0dfba9e9641b8639d8397ae",
+  "signed_at": "2026-05-16T00:00:00.000Z",
+  "signature": {
+    "alg": "none",
+    "key_id": "reference-notifications",
+    "value": ""
+  }
+}
