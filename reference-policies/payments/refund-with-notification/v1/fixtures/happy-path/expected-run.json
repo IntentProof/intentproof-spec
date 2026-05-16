@@ -1,0 +1,81 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_refund_notification_happy_path",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_refund_notification_happy_path",
+  "flow_merkle_root": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "policy_id": "reference.payments.refund-with-notification.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:b200fcfecaf9fcd4bb14c2fbeb92955bf397b1769554aba6b1b8a43e3abddda6",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:01:00.000Z",
+  "completed_at": "2026-05-16T00:01:00.000Z",
+  "status": "pass",
+  "summary": {
+    "outcome_counts": {
+      "pass": 3,
+      "fail": 0,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 0,
+      "high": 3,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-refund-executed",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_refund_execute_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "A successful refund execution was observed."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-ledger-recorded",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_ledger_refund_record_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "A successful ledger record was observed."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-customer-notified",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_customer_notify_refund_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "A successful customer notification was observed."
+    }
+  ],
+  "run_fingerprint": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-payments",
+    "value": "base64"
+  }
+}

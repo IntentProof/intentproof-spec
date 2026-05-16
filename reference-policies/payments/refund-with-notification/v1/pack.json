@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.payments.refund-with-notification.v1",
+  "domain": "payments",
+  "name": "refund-with-notification",
+  "version": 1,
+  "display_name": "Refund with notification",
+  "summary": "Requires successful refund execution, ledger recording, and customer notification events.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "Refund execution, ledger recording, and customer notification are present.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-notification",
+      "description": "Refund execution and ledger recording are present, but customer notification is absent.",
+      "flow": "fixtures/missing-notification/flow.json",
+      "attestations": "fixtures/missing-notification/attestations.jsonl",
+      "expected_run": "fixtures/missing-notification/expected-run.json"
+    }
+  ]
+}
