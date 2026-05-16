@@ -1,0 +1,51 @@
+{
+  "schema": "intentproof.policy.v1",
+  "policy_id": "reference.payments.capture-settlement.v1",
+  "policy_version": 1,
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "name": "Capture settlement",
+  "description": "Requires successful payment capture and settlement recording events.",
+  "spec_version": "1.0.0",
+  "scope": {
+    "any_event_action_in": [
+      "payments.capture.execute",
+      "settlement.capture.record"
+    ],
+    "ignore_flows_with_no_match": false
+  },
+  "instrumentation_requirement": "operational",
+  "rules": [
+    {
+      "id": "required-capture-executed",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "payments.capture.execute",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-settlement-recorded",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "settlement.capture.record",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    }
+  ],
+  "policy_fingerprint": "sha256:fc751703aba3cbdb81b9b23afcb9ed8e8c80b35ca4cb644c52f85f6ec5408f2f",
+  "signed_at": "2026-05-16T00:00:00.000Z",
+  "signature": {
+    "alg": "none",
+    "key_id": "reference-payments",
+    "value": ""
+  }
+}
