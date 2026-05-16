@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
+import { canonicalize } from 'json-canonicalize';
 import { parse as parseYAML } from 'yaml';
 import { computePolicyFingerprint } from '../conformance/policy_fingerprint';
 
@@ -75,7 +76,11 @@ function readYAML(filePath: string): unknown | undefined {
   }
 }
 
-function requireFile(packDir: string, relPath: string): string | undefined {
+function requireFile(packDir: string, relPath: unknown, label = 'file'): string | undefined {
+  if (typeof relPath !== 'string' || relPath.trim() === '') {
+    fail(`${path.relative(root, packDir)}: ${label} path is required`);
+    return undefined;
+  }
   const resolved = path.resolve(packDir, relPath);
   const packRoot = path.resolve(packDir);
   if (!resolved.startsWith(packRoot + path.sep)) {
@@ -145,10 +150,10 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
   }
   referenceIDs.add(manifest.reference_id);
 
-  requireFile(packDir, 'README.md');
-  const policyYAMLPath = requireFile(packDir, manifest.policy_yaml);
-  requireFile(packDir, manifest.migration_notes);
-  const policyPath = requireFile(packDir, manifest.policy);
+  requireFile(packDir, 'README.md', 'README');
+  const policyYAMLPath = requireFile(packDir, manifest.policy_yaml, 'policy_yaml');
+  requireFile(packDir, manifest.migration_notes, 'migration_notes');
+  const policyPath = requireFile(packDir, manifest.policy, 'policy');
   if (!policyPath) {
     return;
   }
@@ -158,7 +163,10 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
   }
   if (policyYAMLPath) {
     const policyYAML = readYAML(policyYAMLPath);
-    if (JSON.stringify(policyYAML) !== JSON.stringify(policy)) {
+    if (policyYAML === undefined) {
+      return;
+    }
+    if (canonicalize(policyYAML) !== canonicalize(policy)) {
       fail(`${expectedID}: policy_yaml must match policy.json`);
     }
   }
@@ -188,14 +196,14 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
 
     const expectedPrefix = `fixtures/${fixture.id}/`;
     for (const relPath of [fixture.flow, fixture.attestations, fixture.expected_run]) {
-      if (!relPath.startsWith(expectedPrefix)) {
+      if (typeof relPath !== 'string' || !relPath.startsWith(expectedPrefix)) {
         fail(`${expectedID}: fixture file ${relPath} must live under ${expectedPrefix}`);
       }
     }
 
-    const flowPath = requireFile(packDir, fixture.flow);
-    const attestationsPath = requireFile(packDir, fixture.attestations);
-    const expectedRunPath = requireFile(packDir, fixture.expected_run);
+    const flowPath = requireFile(packDir, fixture.flow, `${fixture.id} flow`);
+    const attestationsPath = requireFile(packDir, fixture.attestations, `${fixture.id} attestations`);
+    const expectedRunPath = requireFile(packDir, fixture.expected_run, `${fixture.id} expected_run`);
     if (!flowPath || !attestationsPath || !expectedRunPath) {
       continue;
     }
