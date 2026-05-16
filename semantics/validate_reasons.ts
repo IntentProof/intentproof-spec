@@ -253,6 +253,13 @@ if (findingSchemaReadOk) {
               );
             }
           }
+          for (const c of ruleCategorySchema) {
+            if (!vocabularyCategories.has(c)) {
+              fail(
+                `finding.v1.schema.json rule_category '${c}' is not used as a category on any reasons.json entry`,
+              );
+            }
+          }
         }
       }
     }
@@ -265,5 +272,5 @@ if (hasError) {
 }
 
 console.log(
-  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs; finding schema reason + rule_category parity OK.`,
+  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs; finding reason enum and rule_category enum each match vocabulary (bidirectional).`,
 );
