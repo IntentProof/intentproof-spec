@@ -7,6 +7,11 @@
     "schema": { "type": "string", "const": "intentproof.certificate.v1" },
     "certificate_id": { "type": "string" },
     "tenant_id": { "type": "string" },
+    "provenance_class": {
+      "type": "string",
+      "const": "platform_attested",
+      "default": "platform_attested"
+    },
     "claims": {
       "type": "array",
       "items": { "$ref": "claim.v1.schema.json" }
@@ -42,8 +47,9 @@
     }
   },
   "required": [
-    "schema", "certificate_id", "tenant_id", "claims", "run_id", "run_fingerprint",
-    "policy_id", "policy_version", "issued_at", "issuer", "transparency_log", "signature"
+    "schema", "certificate_id", "tenant_id", "provenance_class", "claims",
+    "run_id", "run_fingerprint", "policy_id", "policy_version", "issued_at",
+    "issuer", "transparency_log", "signature"
   ],
   "additionalProperties": false
 }

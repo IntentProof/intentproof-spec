@@ -7,6 +7,11 @@
     "schema": { "type": "string", "const": "intentproof.attestation.v1" },
     "attestation_id": { "type": "string" },
     "tenant_id": { "type": "string" },
+    "provenance_class": {
+      "type": "string",
+      "const": "source_attested",
+      "default": "source_attested"
+    },
     "source_id": { "type": "string" },
     "received_at": { "type": "string", "format": "date-time" },
     "source_emitted_at": { "type": "string", "format": "date-time" },
@@ -48,9 +53,9 @@
     }
   },
   "required": [
-    "schema", "attestation_id", "tenant_id", "source_id", "received_at",
-    "source_emitted_at", "subject", "claim", "claim_value", "source_payload_sha256",
-    "source_signature", "platform_signature"
+    "schema", "attestation_id", "tenant_id", "provenance_class", "source_id",
+    "received_at", "source_emitted_at", "subject", "claim", "claim_value",
+    "source_payload_sha256", "source_signature", "platform_signature"
   ],
   "additionalProperties": false
 }

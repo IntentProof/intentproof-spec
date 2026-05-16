@@ -4,6 +4,11 @@
   "title": "Finding",
   "type": "object",
   "properties": {
+    "provenance_class": {
+      "type": "string",
+      "const": "platform_attested",
+      "default": "platform_attested"
+    },
     "rule_id": { "type": "string" },
     "rule_category": {
       "type": "string",
@@ -87,7 +92,8 @@
     "human_summary": { "type": "string" }
   },
   "required": [
-    "rule_id", "rule_category", "outcome", "severity", "reason", "evidence_event_ids"
+    "provenance_class", "rule_id", "rule_category", "outcome", "severity",
+    "reason", "evidence_event_ids"
   ],
   "additionalProperties": false
 }

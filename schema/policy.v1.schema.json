@@ -265,6 +265,11 @@
     "policy_id": { "type": "string" },
     "policy_version": { "type": "integer", "minimum": 1 },
     "tenant_id": { "type": "string" },
+    "provenance_class": {
+      "type": "string",
+      "const": "platform_attested",
+      "default": "platform_attested"
+    },
     "name": { "type": "string" },
     "description": { "type": "string" },
     "rfc_version": { "type": "string" },
@@ -314,7 +319,8 @@
     }
   },
   "required": [
-    "schema", "policy_id", "policy_version", "tenant_id", "spec_version", "scope", "rules", "policy_fingerprint"
+    "schema", "policy_id", "policy_version", "tenant_id", "provenance_class",
+    "spec_version", "scope", "rules", "policy_fingerprint"
   ],
   "additionalProperties": false
 }
