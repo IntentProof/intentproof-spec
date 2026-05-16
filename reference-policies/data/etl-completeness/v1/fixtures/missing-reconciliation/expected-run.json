@@ -1,0 +1,79 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_etl_completeness_missing_reconciliation",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_etl_completeness_missing_reconciliation",
+  "flow_merkle_root": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+  "policy_id": "reference.data.etl-completeness.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:6f3bb2b90db6d1a99b4b442404eb88a43025e721e64de239b670168bee456acf",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:15:00.000Z",
+  "completed_at": "2026-05-16T00:15:00.000Z",
+  "status": "fail",
+  "summary": {
+    "outcome_counts": {
+      "pass": 2,
+      "fail": 1,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 1,
+      "high": 2,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-extract-completed",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_data_etl_extract_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "ETL batch extraction completed."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-load-completed",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_data_etl_load_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "ETL batch load completed."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-reconciliation-completed",
+      "rule_category": "required",
+      "outcome": "fail",
+      "severity": "critical",
+      "reason": "fail.required.missing",
+      "evidence_event_ids": [],
+      "evidence_attestation_ids": [],
+      "human_summary": "No ETL batch reconciliation completion was observed."
+    }
+  ],
+  "run_fingerprint": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-data",
+    "value": "base64"
+  }
+}

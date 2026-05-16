@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.data.etl-completeness.v1",
+  "domain": "data",
+  "name": "etl-completeness",
+  "version": 1,
+  "display_name": "ETL completeness",
+  "summary": "Requires extract, load, and reconciliation completion events for ETL batches.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "complete-batch",
+      "description": "Extract, load, and reconciliation completion are present.",
+      "flow": "fixtures/complete-batch/flow.json",
+      "attestations": "fixtures/complete-batch/attestations.jsonl",
+      "expected_run": "fixtures/complete-batch/expected-run.json"
+    },
+    {
+      "id": "missing-reconciliation",
+      "description": "Extract and load are present, but reconciliation completion is absent.",
+      "flow": "fixtures/missing-reconciliation/flow.json",
+      "attestations": "fixtures/missing-reconciliation/attestations.jsonl",
+      "expected_run": "fixtures/missing-reconciliation/expected-run.json"
+    }
+  ]
+}

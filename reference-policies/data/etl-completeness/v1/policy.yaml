@@ -1,0 +1,46 @@
+schema: intentproof.policy.v1
+policy_id: reference.data.etl-completeness.v1
+policy_version: 1
+tenant_id: reference
+provenance_class: platform_attested
+name: ETL completeness
+description: Requires extract, load, and reconciliation completion events for ETL batches.
+spec_version: 1.0.0
+scope:
+  any_event_action_in:
+    - data.etl.extract
+    - data.etl.load
+    - data.etl.reconcile
+  ignore_flows_with_no_match: false
+instrumentation_requirement: operational
+rules:
+  - id: required-extract-completed
+    category: required
+    severity: high
+    spec:
+      action: data.etl.extract
+      min: 1
+      where:
+        status: ok
+  - id: required-load-completed
+    category: required
+    severity: high
+    spec:
+      action: data.etl.load
+      min: 1
+      where:
+        status: ok
+  - id: required-reconciliation-completed
+    category: required
+    severity: critical
+    spec:
+      action: data.etl.reconcile
+      min: 1
+      where:
+        status: ok
+policy_fingerprint: sha256:6f3bb2b90db6d1a99b4b442404eb88a43025e721e64de239b670168bee456acf
+signed_at: "2026-05-16T00:00:00.000Z"
+signature:
+  alg: none
+  key_id: reference-data
+  value: ""
