@@ -1,0 +1,64 @@
+{
+  "schema": "intentproof.policy.v1",
+  "policy_id": "reference.ai-agent.budget-bounded.v1",
+  "policy_version": 1,
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "name": "Budget bounded",
+  "description": "Requires allocation, spend, and remaining-budget confirmation events for agent runs.",
+  "spec_version": "1.0.0",
+  "scope": {
+    "any_event_action_in": [
+      "ai.budget.allocate",
+      "ai.budget.spend",
+      "ai.budget.remaining"
+    ],
+    "ignore_flows_with_no_match": false
+  },
+  "instrumentation_requirement": "operational",
+  "rules": [
+    {
+      "id": "required-budget-allocated",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "ai.budget.allocate",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-budget-spent",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "ai.budget.spend",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-budget-remaining",
+      "category": "required",
+      "severity": "critical",
+      "spec": {
+        "action": "ai.budget.remaining",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    }
+  ],
+  "policy_fingerprint": "sha256:984998d95c75e6dd5dcb2d469786761fc2166e3fefddd3eda2d1490ed56f69df",
+  "signed_at": "2026-05-16T00:00:00.000Z",
+  "signature": {
+    "alg": "none",
+    "key_id": "reference-ai-agent",
+    "value": ""
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_budget_bounded_happy_path",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_budget_bounded_happy_path",
+  "flow_merkle_root": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "policy_id": "reference.ai-agent.budget-bounded.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:984998d95c75e6dd5dcb2d469786761fc2166e3fefddd3eda2d1490ed56f69df",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:01:00.000Z",
+  "completed_at": "2026-05-16T00:01:00.000Z",
+  "status": "pass",
+  "summary": {
+    "outcome_counts": {
+      "pass": 3,
+      "fail": 0,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 1,
+      "high": 2,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-budget-allocated",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_ai_budget_allocate_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "An agent budget was allocated."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-budget-spent",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_ai_budget_spend_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Agent budget spend was recorded."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-budget-remaining",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "critical",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_ai_budget_remaining_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Remaining agent budget was confirmed."
+    }
+  ],
+  "run_fingerprint": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-ai-agent",
+    "value": "base64"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.ai-agent.budget-bounded.v1",
+  "domain": "ai-agent",
+  "name": "budget-bounded",
+  "version": 1,
+  "display_name": "Budget bounded",
+  "summary": "Requires allocation, spend, and remaining-budget confirmation events for agent runs.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "Budget allocation, spend, and remaining-budget confirmation are present.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-remaining",
+      "description": "Budget allocation and spend are present, but remaining-budget confirmation is absent.",
+      "flow": "fixtures/missing-remaining/flow.json",
+      "attestations": "fixtures/missing-remaining/attestations.jsonl",
+      "expected_run": "fixtures/missing-remaining/expected-run.json"
+    }
+  ]
+}
