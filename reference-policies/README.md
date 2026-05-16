@@ -29,15 +29,18 @@ reference.templates.minimal-required.v1
 README.md
 pack.json
 policy.json
+policy.yaml
+MIGRATION.md
 fixtures/<fixture-id>/flow.json
 fixtures/<fixture-id>/attestations.jsonl
 fixtures/<fixture-id>/expected-run.json
 ```
 
-`pack.json` declares the pack identity, human-facing summary, and fixture
-catalog. `policy.json` is canonical policy JSON for the current schema. CLI
-forking commands may render YAML later, but this repository keeps canonical
-JSON fixtures so schema validation and fingerprint checks are deterministic.
+`pack.json` declares the pack identity, human-facing summary, policy files,
+migration notes, and fixture catalog. `policy.json` is canonical policy JSON
+for the current schema and deterministic fingerprint checks. `policy.yaml` is
+the author-facing policy form that future fork commands copy into a tenant
+workspace.
 
 ## Fixture Convention
 
@@ -59,5 +62,5 @@ npx ts-node reference-policies/validate.ts
 ```
 
 The validator enforces directory naming, required files, manifest consistency,
-policy schema validity, policy fingerprint correctness, and expected-run schema
-validity.
+YAML/JSON policy consistency, policy schema validity, policy fingerprint
+correctness, and expected-run schema validity.

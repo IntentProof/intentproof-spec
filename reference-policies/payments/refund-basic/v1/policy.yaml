@@ -1,0 +1,28 @@
+schema: intentproof.policy.v1
+policy_id: reference.payments.refund-basic.v1
+policy_version: 1
+tenant_id: reference
+provenance_class: platform_attested
+name: Refund basic
+description: Requires one successful refund execution event in a refund flow.
+spec_version: 1.0.0
+scope:
+  any_event_action_in:
+    - payments.refund.execute
+  ignore_flows_with_no_match: false
+instrumentation_requirement: operational
+rules:
+  - id: required-refund-executed
+    category: required
+    severity: high
+    spec:
+      action: payments.refund.execute
+      min: 1
+      where:
+        status: ok
+policy_fingerprint: sha256:e9ee16245bdb6c613a350cbd4f9ef32328c8d97ccd3079fa3b927ec338dba22e
+signed_at: "2026-05-16T00:00:00.000Z"
+signature:
+  alg: none
+  key_id: reference-payments
+  value: ""

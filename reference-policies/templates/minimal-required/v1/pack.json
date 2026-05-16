@@ -7,6 +7,8 @@
   "display_name": "Minimal required action",
   "summary": "Template pack showing the minimal required-action policy shape.",
   "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
   "fixtures": [
     {
       "id": "happy-path",

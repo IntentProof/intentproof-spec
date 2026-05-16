@@ -1,0 +1,16 @@
+{
+  "schema": "intentproof.flow.v1",
+  "flow_id": "flow_reference_refund_basic_missing_refund",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "correlation_id": "corr_reference_refund_basic_missing_refund",
+  "window": {
+    "opened_at": "2026-05-16T00:00:00.000Z",
+    "closed_at": "2026-05-16T00:01:00.000Z",
+    "closure_reason": "idle_timeout"
+  },
+  "events": [],
+  "instrumentation_mode": "operational",
+  "flow_merkle_root": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "snapshot_uri": "ipfs://reference/payments/refund-basic/v1/missing-refund"
+}
