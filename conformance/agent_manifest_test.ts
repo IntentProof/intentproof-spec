@@ -92,8 +92,8 @@ for (let i = 0; i < lines.length; i++) {
   const actual = fixture.agent_manifest;
   if (canonicalize(projected) !== canonicalize(actual)) {
     console.error(`[FAIL] agent-manifest_cases.jsonl:${i + 1} projection mismatch`);
-    console.error('expected:', canonicalize(projected));
-    console.error('actual:  ', canonicalize(actual));
+    console.error('expected:', canonicalize(actual));
+    console.error('actual:  ', canonicalize(projected));
     hasError = true;
   } else {
     console.log(`[PASS] agent-manifest_cases.jsonl:${i + 1} projection verified`);
