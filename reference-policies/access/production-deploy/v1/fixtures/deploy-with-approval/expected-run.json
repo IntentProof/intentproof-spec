@@ -1,0 +1,82 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_production_deploy_with_approval",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_production_deploy_with_approval",
+  "flow_merkle_root": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "policy_id": "reference.access.production-deploy.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:b0939970a1ea12283101ba52e446f47d6cb6ba531200c52876e52e36313f19f0",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:10:00.000Z",
+  "completed_at": "2026-05-16T00:10:00.000Z",
+  "status": "pass",
+  "summary": {
+    "outcome_counts": {
+      "pass": 3,
+      "fail": 0,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 2,
+      "high": 1,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-approval",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "critical",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_access_production_deploy_approve_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Production deployment approval was recorded."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-peer-review",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_access_production_deploy_peer_review_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Production deployment peer review was recorded."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "ordering-approval-before-merge",
+      "rule_category": "ordering",
+      "outcome": "pass",
+      "severity": "critical",
+      "reason": "pass.ordering.satisfied",
+      "evidence_event_ids": [
+        "evt_access_production_deploy_approve_ok",
+        "evt_access_production_deploy_merge_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Production deployment approval occurred before merge."
+    }
+  ],
+  "run_fingerprint": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-access",
+    "value": "base64"
+  }
+}
