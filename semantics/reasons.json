@@ -1,6 +1,6 @@
 {
-  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. The canonical rule grammar lives in schema/policy.v1.schema.json. This file is the source of truth for the reason vocabulary; schema/finding.v1.schema.json reason enum is checked by validate_reasons.ts to match this list exactly.",
-  "version": "0.1.0",
+  "$comment": "IntentProof rule reason vocabulary. Each entry maps a stable reason code to its rule category and a short human description. Codes follow the convention <outcome>.<category>.<specifier> where outcome is one of pass | fail | inconclusive. The canonical rule grammar lives in schema/policy.v1.schema.json. This file is the source of truth for the reason vocabulary; schema/finding.v1.schema.json reason enum is checked by validate_reasons.ts to match this list exactly. Entries optionally carry richer authored copy: title, typical_causes, typical_owners, remediation_template, documentation_url. Codes listed in demo_blocker_reasons must populate the full set; validate_reasons.ts enforces this so the no-signup demo cannot render bespoke prose that diverges from production finding copy.",
+  "version": "0.2.0",
   "categories": [
     "required",
     "forbidden",
@@ -11,6 +11,11 @@
     "value_bound",
     "claim_match",
     "unknown"
+  ],
+  "demo_blocker_reasons": [
+    "fail.required.missing",
+    "fail.consensus.disagreement",
+    "fail.forbidden.after_predecessor"
   ],
   "reasons": [
     {
@@ -23,7 +28,19 @@
       "code": "fail.required.missing",
       "category": "required",
       "description": "Required action did not occur at all in the matched scope.",
-      "severity_hint": "high"
+      "severity_hint": "high",
+      "title": "Required step was skipped",
+      "typical_causes": [
+        "The wrapped function for this step was never called on this code path.",
+        "The step ran but raised before recording its event (check upstream errors).",
+        "A correlation-id mismatch caused the event to be filed under a different flow.",
+        "The step is gated by a feature flag that was disabled in this environment."
+      ],
+      "typical_owners": [
+        "the team that owns the missing action"
+      ],
+      "remediation_template": "Verify that ${action} runs on every successful ${flow_kind} flow. Check the call site for early returns, ensure it is inside the same correlation-id context as the preceding steps, and confirm any feature flag gating the call. If the step is intentionally optional, mark it as such in the policy.",
+      "documentation_url": "https://docs.intentproof.io/reasons/fail.required.missing"
     },
     {
       "code": "fail.required.under_min",
@@ -53,7 +70,20 @@
       "code": "fail.forbidden.after_predecessor",
       "category": "forbidden",
       "description": "Forbidden action occurred after its configured predecessor action.",
-      "severity_hint": "critical"
+      "severity_hint": "critical",
+      "title": "Forbidden step ran after a step that should have terminated the flow",
+      "typical_causes": [
+        "A retry path re-ran ${action} after the predecessor had already completed.",
+        "Two concurrent workers picked up the same correlation and both reached ${action}.",
+        "An idempotency key was missing or ignored at the ${action} call site.",
+        "Upstream cancellation did not propagate before ${action} fired."
+      ],
+      "typical_owners": [
+        "the team that owns the forbidden action",
+        "the team that owns the predecessor action"
+      ],
+      "remediation_template": "Audit retries, concurrency, and idempotency around ${action}. Make ${action} reject calls that would follow ${predecessor_action} on the same correlation, or short-circuit before invoking ${action} when the predecessor has already settled. If the duplicate is operationally expected, refine the policy to scope the predecessor more precisely.",
+      "documentation_url": "https://docs.intentproof.io/reasons/fail.forbidden.after_predecessor"
     },
     {
       "code": "fail.forbidden.without_predecessor",
@@ -185,7 +215,20 @@
       "code": "fail.consensus.disagreement",
       "category": "consensus",
       "description": "Two or more live sources actively disagree on the claim value.",
-      "severity_hint": "critical"
+      "severity_hint": "critical",
+      "title": "Internal and external sources disagree about what happened",
+      "typical_causes": [
+        "An action was taken in ${external_source} (for example via that provider's own dashboard) without going through the wrapped code path, so the application never recorded an event.",
+        "The wrapped call succeeded but the corresponding event was dropped before reaching the platform (network loss, outbox eviction).",
+        "${external_source} delivered a stale or replayed webhook that no longer matches current state.",
+        "A correlation-id mismatch placed the external attestation under a different flow than the internal events."
+      ],
+      "typical_owners": [
+        "the team that owns ${claim}'s execution path",
+        "the operator responsible for ${external_source} access"
+      ],
+      "remediation_template": "Compare the internal evidence (${internal_evidence_ref}) with the external attestation (${external_evidence_ref}) for claim ${claim}. If the external action was taken out-of-band, document the operational reason and tighten access to ${external_source}; if the internal path failed silently, restore the missing event from logs and investigate why the wrapped call did not record it.",
+      "documentation_url": "https://docs.intentproof.io/reasons/fail.consensus.disagreement"
     },
     {
       "code": "fail.consensus.insufficient",
