@@ -7,6 +7,11 @@
     "schema": { "type": "string", "const": "intentproof.run.v1" },
     "run_id": { "type": "string" },
     "tenant_id": { "type": "string" },
+    "provenance_class": {
+      "type": "string",
+      "const": "platform_attested",
+      "default": "platform_attested"
+    },
     "flow_id": { "type": "string" },
     "flow_merkle_root": { "type": "string", "pattern": "^sha256:[a-f0-9]+$" },
     "policy_id": { "type": "string" },
@@ -72,8 +77,8 @@
     }
   },
   "required": [
-    "schema", "run_id", "tenant_id", "flow_id", "flow_merkle_root",
-    "policy_id", "policy_version", "policy_fingerprint",
+    "schema", "run_id", "tenant_id", "provenance_class", "flow_id",
+    "flow_merkle_root", "policy_id", "policy_version", "policy_fingerprint",
     "verifier_version", "verifier_build_hash", "attestation_set",
     "started_at", "completed_at", "status", "summary", "findings",
     "run_fingerprint", "signature"

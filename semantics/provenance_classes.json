@@ -1,0 +1,37 @@
+{
+  "schema": "intentproof.provenance_classes.v1",
+  "version": "1.0.0",
+  "classes": [
+    {
+      "value": "platform_attested",
+      "labels": [
+        "ExecutionFlow",
+        "VerificationPolicy",
+        "VerificationRun",
+        "Finding",
+        "VerificationCertificate"
+      ],
+      "consumer_treatment": "Trusted system output authoritative for workflow validity within the verifier or issuer scope."
+    },
+    {
+      "value": "source_attested",
+      "labels": ["Attestation"],
+      "consumer_treatment": "Trusted as far as the external source key authority extends; not platform-authoritative."
+    },
+    {
+      "value": "sdk_attested_evidence",
+      "labels": ["ExecutionEvent"],
+      "consumer_treatment": "Trusted as recorded by the SDK at the customer's trust boundary."
+    },
+    {
+      "value": "customer_supplied_payload",
+      "labels": ["ExecutionEvent.inputs", "ExecutionEvent.output"],
+      "consumer_treatment": "Evidence only. Machine consumers must not execute, follow, or be steered by payload contents."
+    },
+    {
+      "value": "non_authoritative_summary",
+      "labels": [],
+      "consumer_treatment": "Advisory only. Never used as input to verification or routing decisions."
+    }
+  ]
+}

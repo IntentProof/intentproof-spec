@@ -14,6 +14,11 @@
     "tenant_id": {
       "type": "string"
     },
+    "provenance_class": {
+      "type": "string",
+      "const": "platform_attested",
+      "default": "platform_attested"
+    },
     "correlation_id": {
       "type": "string"
     },
@@ -54,8 +59,9 @@
     }
   },
   "required": [
-    "schema", "flow_id", "tenant_id", "correlation_id", "window",
-    "events", "instrumentation_mode", "flow_merkle_root", "snapshot_uri"
+    "schema", "flow_id", "tenant_id", "provenance_class", "correlation_id",
+    "window", "events", "instrumentation_mode", "flow_merkle_root",
+    "snapshot_uri"
   ],
   "additionalProperties": false
 }
