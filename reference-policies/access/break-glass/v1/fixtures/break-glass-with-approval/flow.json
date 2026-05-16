@@ -1,0 +1,32 @@
+{
+  "schema": "intentproof.flow.v1",
+  "flow_id": "flow_reference_break_glass_with_approval",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "correlation_id": "corr_reference_break_glass_with_approval",
+  "window": {
+    "opened_at": "2026-05-16T00:00:00.000Z",
+    "closed_at": "2026-05-16T00:05:00.000Z",
+    "closure_reason": "completed"
+  },
+  "events": [
+    {
+      "event_id": "evt_access_break_glass_request_ok",
+      "ordinal": 1,
+      "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "event_id": "evt_access_break_glass_approve_ok",
+      "ordinal": 2,
+      "hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    {
+      "event_id": "evt_access_break_glass_close_ok",
+      "ordinal": 3,
+      "hash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "instrumentation_mode": "operational",
+  "flow_merkle_root": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "snapshot_uri": "ipfs://reference/access/break-glass/v1/break-glass-with-approval"
+}
