@@ -87,6 +87,7 @@ if (Array.isArray(declaredCategories)) {
 
 const seenCodes = new Set<string>();
 const codeToCategory = new Map<string, string>();
+const vocabularyCategories = new Set<string>();
 
 for (let i = 0; i < reasons.length; i++) {
   const entry = reasons[i];
@@ -115,6 +116,7 @@ for (let i = 0; i < reasons.length; i++) {
   if (!ALLOWED_CATEGORIES.has(category)) {
     fail(`${where}.category '${category}' not in closed set (code=${code})`);
   }
+  vocabularyCategories.add(category);
   if (seenCodes.has(code)) {
     fail(`duplicate reason code: ${code}`);
   } else {
@@ -228,6 +230,31 @@ if (findingSchemaReadOk) {
           }
         }
       }
+      const ruleCatProp = (props as Record<string, unknown>).rule_category;
+      if (typeof ruleCatProp !== 'object' || ruleCatProp === null) {
+        fail('finding.v1.schema.json missing rule_category property');
+      } else {
+        const rcEnum = (ruleCatProp as Record<string, unknown>).enum;
+        if (!Array.isArray(rcEnum)) {
+          fail('finding.v1.schema.json rule_category must have enum array');
+        } else {
+          const ruleCategorySchema = new Set<string>();
+          for (const c of rcEnum) {
+            if (typeof c !== 'string') {
+              fail('finding rule_category enum contains non-string');
+            } else {
+              ruleCategorySchema.add(c);
+            }
+          }
+          for (const c of vocabularyCategories) {
+            if (!ruleCategorySchema.has(c)) {
+              fail(
+                `reasons vocabulary category '${c}' missing from finding.v1.schema.json rule_category enum`,
+              );
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -238,5 +265,5 @@ if (hasError) {
 }
 
 console.log(
-  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs; finding schema enum parity OK.`,
+  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs; finding schema reason + rule_category parity OK.`,
 );

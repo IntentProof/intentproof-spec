@@ -7,6 +7,7 @@
     "rule_id": { "type": "string" },
     "rule_category": {
       "type": "string",
+      "description": "Policy rule kind for this finding. Use `unknown` when the policy carried a non-DSL category string and the evaluator normalized the finding (e.g. with `inconclusive.unknown.unsupported_rule_category`).",
       "enum": [
         "required",
         "forbidden",
@@ -15,7 +16,8 @@
         "temporal",
         "consensus",
         "value_bound",
-        "claim_match"
+        "claim_match",
+        "unknown"
       ]
     },
     "outcome": { "type": "string", "enum": ["pass", "fail", "inconclusive"] },
