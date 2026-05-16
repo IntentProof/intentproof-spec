@@ -1,0 +1,46 @@
+schema: intentproof.policy.v1
+policy_id: reference.access.break-glass.v1
+policy_version: 1
+tenant_id: reference
+provenance_class: platform_attested
+name: Break glass
+description: Requires request, approval, and closure events for emergency privileged access.
+spec_version: 1.0.0
+scope:
+  any_event_action_in:
+    - access.break_glass.request
+    - access.break_glass.approve
+    - access.break_glass.close
+  ignore_flows_with_no_match: false
+instrumentation_requirement: operational
+rules:
+  - id: required-break-glass-requested
+    category: required
+    severity: high
+    spec:
+      action: access.break_glass.request
+      min: 1
+      where:
+        status: ok
+  - id: required-break-glass-approved
+    category: required
+    severity: critical
+    spec:
+      action: access.break_glass.approve
+      min: 1
+      where:
+        status: ok
+  - id: required-break-glass-closed
+    category: required
+    severity: high
+    spec:
+      action: access.break_glass.close
+      min: 1
+      where:
+        status: ok
+policy_fingerprint: sha256:1dc4c27756810962210a6b5f2aa4ac8844b67b2aae62b5815d19d131809d2c78
+signed_at: "2026-05-16T00:00:00.000Z"
+signature:
+  alg: none
+  key_id: reference-access
+  value: ""

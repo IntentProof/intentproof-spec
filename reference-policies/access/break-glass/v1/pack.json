@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.access.break-glass.v1",
+  "domain": "access",
+  "name": "break-glass",
+  "version": 1,
+  "display_name": "Break glass",
+  "summary": "Requires request, approval, and closure events for emergency privileged access.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "break-glass-with-approval",
+      "description": "Emergency access request, approval, and closure are present.",
+      "flow": "fixtures/break-glass-with-approval/flow.json",
+      "attestations": "fixtures/break-glass-with-approval/attestations.jsonl",
+      "expected_run": "fixtures/break-glass-with-approval/expected-run.json"
+    },
+    {
+      "id": "break-glass-without-approval",
+      "description": "Emergency access request and closure are present, but approval is absent.",
+      "flow": "fixtures/break-glass-without-approval/flow.json",
+      "attestations": "fixtures/break-glass-without-approval/attestations.jsonl",
+      "expected_run": "fixtures/break-glass-without-approval/expected-run.json"
+    }
+  ]
+}
