@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
+import { parse as parseYAML } from 'yaml';
 import { computePolicyFingerprint } from '../conformance/policy_fingerprint';
 
 type FixtureManifest = {
@@ -21,6 +22,8 @@ type PackManifest = {
   display_name: string;
   summary: string;
   policy: string;
+  policy_yaml: string;
+  migration_notes: string;
   fixtures: FixtureManifest[];
 };
 
@@ -59,6 +62,15 @@ function readJSON(filePath: string): unknown | undefined {
     return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   } catch (err) {
     fail(`${path.relative(root, filePath)} is not readable JSON: ${(err as Error).message}`);
+    return undefined;
+  }
+}
+
+function readYAML(filePath: string): unknown | undefined {
+  try {
+    return parseYAML(fs.readFileSync(filePath, 'utf-8'));
+  } catch (err) {
+    fail(`${path.relative(root, filePath)} is not readable YAML: ${(err as Error).message}`);
     return undefined;
   }
 }
@@ -134,6 +146,8 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
   referenceIDs.add(manifest.reference_id);
 
   requireFile(packDir, 'README.md');
+  const policyYAMLPath = requireFile(packDir, manifest.policy_yaml);
+  requireFile(packDir, manifest.migration_notes);
   const policyPath = requireFile(packDir, manifest.policy);
   if (!policyPath) {
     return;
@@ -141,6 +155,12 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
   const policy = readJSON(policyPath) as Record<string, unknown> | undefined;
   if (!policy) {
     return;
+  }
+  if (policyYAMLPath) {
+    const policyYAML = readYAML(policyYAMLPath);
+    if (JSON.stringify(policyYAML) !== JSON.stringify(policy)) {
+      fail(`${expectedID}: policy_yaml must match policy.json`);
+    }
   }
   validateSchema(`${expectedID} policy.json`, policy, validatePolicySchema);
   if (policy.policy_id !== expectedID || policy.policy_version !== version) {

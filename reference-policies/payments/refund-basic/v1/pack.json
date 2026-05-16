@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.payments.refund-basic.v1",
+  "domain": "payments",
+  "name": "refund-basic",
+  "version": 1,
+  "display_name": "Refund basic",
+  "summary": "Requires one successful refund execution event in a refund flow.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "A successful refund execution is present and the policy passes.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-refund",
+      "description": "No refund execution is present and the required rule fails.",
+      "flow": "fixtures/missing-refund/flow.json",
+      "attestations": "fixtures/missing-refund/attestations.jsonl",
+      "expected_run": "fixtures/missing-refund/expected-run.json"
+    }
+  ]
+}
