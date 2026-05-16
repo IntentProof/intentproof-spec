@@ -1,0 +1,51 @@
+{
+  "schema": "intentproof.policy.v1",
+  "policy_id": "reference.payments.dispute-evidence.v1",
+  "policy_version": 1,
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "name": "Dispute evidence",
+  "description": "Requires dispute opening and evidence submission events.",
+  "spec_version": "1.0.0",
+  "scope": {
+    "any_event_action_in": [
+      "payments.dispute.open",
+      "payments.dispute.evidence.submit"
+    ],
+    "ignore_flows_with_no_match": false
+  },
+  "instrumentation_requirement": "operational",
+  "rules": [
+    {
+      "id": "required-dispute-opened",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "payments.dispute.open",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-evidence-submitted",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "payments.dispute.evidence.submit",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    }
+  ],
+  "policy_fingerprint": "sha256:57692642dba61923cce18385f8dcb3652063d0bdb6faa65ff9becc118fe2e532",
+  "signed_at": "2026-05-16T00:00:00.000Z",
+  "signature": {
+    "alg": "none",
+    "key_id": "reference-payments",
+    "value": ""
+  }
+}

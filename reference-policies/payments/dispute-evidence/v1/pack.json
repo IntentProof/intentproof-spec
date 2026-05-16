@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.payments.dispute-evidence.v1",
+  "domain": "payments",
+  "name": "dispute-evidence",
+  "version": 1,
+  "display_name": "Dispute evidence",
+  "summary": "Requires dispute opening and evidence submission events.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "Dispute opening and evidence submission are present.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-evidence",
+      "description": "Dispute opening is present, but evidence submission is absent.",
+      "flow": "fixtures/missing-evidence/flow.json",
+      "attestations": "fixtures/missing-evidence/attestations.jsonl",
+      "expected_run": "fixtures/missing-evidence/expected-run.json"
+    }
+  ]
+}

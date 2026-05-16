@@ -1,0 +1,68 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_dispute_evidence_happy_path",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_dispute_evidence_happy_path",
+  "flow_merkle_root": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "policy_id": "reference.payments.dispute-evidence.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:57692642dba61923cce18385f8dcb3652063d0bdb6faa65ff9becc118fe2e532",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:01:00.000Z",
+  "completed_at": "2026-05-16T00:01:00.000Z",
+  "status": "pass",
+  "summary": {
+    "outcome_counts": {
+      "pass": 2,
+      "fail": 0,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 0,
+      "high": 2,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-dispute-opened",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_dispute_open_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "A payment dispute was opened."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-evidence-submitted",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_dispute_evidence_submit_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "Dispute evidence was submitted."
+    }
+  ],
+  "run_fingerprint": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-payments",
+    "value": "base64"
+  }
+}
