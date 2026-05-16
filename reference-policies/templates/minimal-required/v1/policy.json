@@ -1,0 +1,38 @@
+{
+  "schema": "intentproof.policy.v1",
+  "policy_id": "reference.templates.minimal-required.v1",
+  "policy_version": 1,
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "name": "Minimal required action",
+  "description": "Template policy requiring one successful template action.",
+  "spec_version": "1.0.0",
+  "scope": {
+    "any_event_action_in": [
+      "template.action.complete"
+    ],
+    "ignore_flows_with_no_match": true
+  },
+  "instrumentation_requirement": "minimal",
+  "rules": [
+    {
+      "id": "required-template-action",
+      "category": "required",
+      "severity": "medium",
+      "spec": {
+        "action": "template.action.complete",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    }
+  ],
+  "policy_fingerprint": "sha256:fbd4b5c573a5a095fb95236890d4abef74eaa8a4890c90c388dae2eee2f6b5dd",
+  "signed_at": "2026-05-16T00:00:00.000Z",
+  "signature": {
+    "alg": "none",
+    "key_id": "reference-template",
+    "value": ""
+  }
+}

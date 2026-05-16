@@ -1,0 +1,19 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.templates.minimal-required.v1",
+  "domain": "templates",
+  "name": "minimal-required",
+  "version": 1,
+  "display_name": "Minimal required action",
+  "summary": "Template pack showing the minimal required-action policy shape.",
+  "policy": "policy.json",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "The required action is present and the policy passes.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    }
+  ]
+}
