@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/webhook-finding.v1.schema.json",
+  "title": "WebhookFindingEnvelope",
+  "description": "Signed machine-consumer envelope for finding webhook delivery.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "intentproof.webhook_finding.v1"
+    },
+    "delivery_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "finding.emitted",
+        "finding.superseded",
+        "run.completed",
+        "certificate.issued"
+      ]
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "emitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finding": {
+      "$ref": "finding.v1.schema.json"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "run_id": { "type": "string", "minLength": 1 },
+        "run_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "flow_id": { "type": "string", "minLength": 1 },
+        "correlation_id": { "type": "string", "minLength": 1 },
+        "policy_id": { "type": "string", "minLength": 1 },
+        "policy_version": { "type": "integer", "minimum": 1 },
+        "policy_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "verifier_version": { "type": "string", "minLength": 1 },
+        "verifier_build_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "reason_catalog_version": { "type": "string", "minLength": 1 }
+      },
+      "required": [
+        "run_id",
+        "run_fingerprint",
+        "flow_id",
+        "correlation_id",
+        "policy_id",
+        "policy_version",
+        "policy_fingerprint",
+        "verifier_version",
+        "verifier_build_hash",
+        "reason_catalog_version"
+      ],
+      "additionalProperties": false
+    },
+    "trust_labels": {
+      "type": "object",
+      "properties": {
+        "finding": { "type": "string", "const": "platform_attested" },
+        "context": { "type": "string", "const": "platform_attested" },
+        "evidence_event_ids": { "type": "string", "const": "sdk_attested_evidence" },
+        "evidence_attestation_ids": { "type": "string", "const": "source_attested" }
+      },
+      "required": [
+        "finding",
+        "context",
+        "evidence_event_ids",
+        "evidence_attestation_ids"
+      ],
+      "additionalProperties": false
+    },
+    "untrusted_payload": {
+      "type": "boolean"
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "finding_detail": { "type": "string", "format": "uri" },
+        "flow_detail": { "type": "string", "format": "uri" },
+        "bundle_export": { "type": "string", "format": "uri" }
+      },
+      "required": ["finding_detail", "flow_detail", "bundle_export"],
+      "additionalProperties": false
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": { "type": "string", "const": "ed25519" },
+        "key_id": { "type": "string", "const": "platform@webhook-signer-2026q2" },
+        "value": { "type": "string", "minLength": 1 }
+      },
+      "required": ["alg", "key_id", "value"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "delivery_id",
+    "event_type",
+    "tenant_id",
+    "emitted_at",
+    "finding",
+    "context",
+    "trust_labels",
+    "untrusted_payload",
+    "links",
+    "signature"
+  ],
+  "additionalProperties": false
+}
