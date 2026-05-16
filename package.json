@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-node conformance/runner.ts && ts-node conformance/jcs_test.ts && ts-node integrity/verify_manifest.ts && ts-node semantics/validate_reasons.ts && ts-node semantics/validate_provenance_classes.ts"
+    "test": "ts-node conformance/runner.ts && ts-node conformance/jcs_test.ts && ts-node conformance/agent_manifest_test.ts && ts-node integrity/verify_manifest.ts && ts-node semantics/validate_reasons.ts && ts-node semantics/validate_provenance_classes.ts"
   },
   "keywords": [],
   "author": "",

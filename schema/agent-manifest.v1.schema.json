@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentproof.dev/schema/agent-manifest.v1.schema.json",
+  "title": "AgentManifest",
+  "description": "Deterministic machine-consumer guide projected from proof bundle contents.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "intentproof.agent_manifest.v1"
+    },
+    "bundle_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "primary_question": {
+      "type": "string",
+      "pattern": "^Did flow [A-Za-z0-9_.:-]+ satisfy policy [A-Za-z0-9_.:-]+ v[1-9][0-9]*\\?$"
+    },
+    "verifier_decision": {
+      "type": "string",
+      "enum": ["pass", "fail", "inconclusive"]
+    },
+    "decision_basis_finding_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "recommended_read_order": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "certificate.json",
+          "run.json",
+          "policy.json",
+          "flow.json",
+          "events.jsonl",
+          "attestations.jsonl",
+          "subject-mappings.jsonl",
+          "transparency-log-proof.json"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "trust_labels_index": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "certificate.json",
+          "run.json",
+          "policy.json",
+          "flow.json",
+          "events.jsonl",
+          "attestations.jsonl",
+          "subject-mappings.jsonl",
+          "transparency-log-proof.json"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "platform_attested",
+          "source_attested",
+          "sdk_attested_evidence",
+          "customer_supplied_payload",
+          "non_authoritative_summary"
+        ]
+      }
+    },
+    "untrusted_payload_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^events\\.jsonl#\\$\\.(inputs|output)(\\.[A-Za-z0-9_.*-]+)*$"
+      },
+      "uniqueItems": true
+    },
+    "known_limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "attestations_not_included",
+          "certificate_not_included",
+          "subject_mappings_not_included",
+          "transparency_proof_not_included"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "verifier_authority_note": {
+      "type": "string",
+      "const": "Verification authority rests with the deterministic verifier identified by run.verifier_build_hash. Consumers ingest findings; they do not re-decide them."
+    }
+  },
+  "required": [
+    "schema",
+    "bundle_sha256",
+    "tenant_id",
+    "issued_at",
+    "primary_question",
+    "verifier_decision",
+    "decision_basis_finding_ids",
+    "recommended_read_order",
+    "trust_labels_index",
+    "untrusted_payload_fields",
+    "known_limitations",
+    "verifier_authority_note"
+  ],
+  "additionalProperties": false
+}
