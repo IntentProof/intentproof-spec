@@ -1,0 +1,66 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_refund_ledger_missing_ledger",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_refund_ledger_missing_ledger",
+  "flow_merkle_root": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+  "policy_id": "reference.payments.refund-with-ledger.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:503e8423cdef1c045dc9d0fd0e451645cd1a59b326df3ecad78e497a5a4da66d",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:01:00.000Z",
+  "completed_at": "2026-05-16T00:01:00.000Z",
+  "status": "fail",
+  "summary": {
+    "outcome_counts": {
+      "pass": 1,
+      "fail": 1,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 0,
+      "high": 2,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-refund-executed",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_refund_execute_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "A successful refund execution was observed."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-ledger-recorded",
+      "rule_category": "required",
+      "outcome": "fail",
+      "severity": "high",
+      "reason": "fail.required.missing",
+      "evidence_event_ids": [],
+      "evidence_attestation_ids": [],
+      "human_summary": "No successful ledger record was observed."
+    }
+  ],
+  "run_fingerprint": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-payments",
+    "value": "base64"
+  }
+}
