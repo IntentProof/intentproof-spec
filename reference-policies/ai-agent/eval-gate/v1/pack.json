@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.ai-agent.eval-gate.v1",
+  "domain": "ai-agent",
+  "name": "eval-gate",
+  "version": 1,
+  "display_name": "Eval gate",
+  "summary": "Requires evaluation run, passing result, and gate approval events.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "Evaluation run, passing result, and gate approval are present.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-pass",
+      "description": "Evaluation run is present, but pass result and gate approval are absent.",
+      "flow": "fixtures/missing-pass/flow.json",
+      "attestations": "fixtures/missing-pass/attestations.jsonl",
+      "expected_run": "fixtures/missing-pass/expected-run.json"
+    }
+  ]
+}
