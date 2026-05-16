@@ -1,0 +1,46 @@
+schema: intentproof.policy.v1
+policy_id: reference.ai-agent.high-stakes-tool-use.v1
+policy_version: 1
+tenant_id: reference
+provenance_class: platform_attested
+name: High-stakes tool use
+description: Requires request, approval, and execution events for high-stakes agent tool calls.
+spec_version: 1.0.0
+scope:
+  any_event_action_in:
+    - ai.tool.request
+    - ai.tool.approve
+    - ai.tool.execute
+  ignore_flows_with_no_match: false
+instrumentation_requirement: operational
+rules:
+  - id: required-tool-requested
+    category: required
+    severity: high
+    spec:
+      action: ai.tool.request
+      min: 1
+      where:
+        status: ok
+  - id: required-tool-approved
+    category: required
+    severity: critical
+    spec:
+      action: ai.tool.approve
+      min: 1
+      where:
+        status: ok
+  - id: required-tool-executed
+    category: required
+    severity: high
+    spec:
+      action: ai.tool.execute
+      min: 1
+      where:
+        status: ok
+policy_fingerprint: sha256:415a3275e90ec804d5ba2b77cfa22e9f79af92cc307b2665d978845d7dd30f53
+signed_at: "2026-05-16T00:00:00.000Z"
+signature:
+  alg: none
+  key_id: reference-ai-agent
+  value: ""
