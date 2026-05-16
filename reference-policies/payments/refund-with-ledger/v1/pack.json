@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.payments.refund-with-ledger.v1",
+  "domain": "payments",
+  "name": "refund-with-ledger",
+  "version": 1,
+  "display_name": "Refund with ledger",
+  "summary": "Requires successful refund execution and ledger recording events.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "Refund execution and ledger recording are present.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-ledger",
+      "description": "Refund execution is present, but ledger recording is absent.",
+      "flow": "fixtures/missing-ledger/flow.json",
+      "attestations": "fixtures/missing-ledger/attestations.jsonl",
+      "expected_run": "fixtures/missing-ledger/expected-run.json"
+    }
+  ]
+}
