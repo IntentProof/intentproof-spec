@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.payments.capture-settlement.v1",
+  "domain": "payments",
+  "name": "capture-settlement",
+  "version": 1,
+  "display_name": "Capture settlement",
+  "summary": "Requires successful payment capture and settlement recording events.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "happy-path",
+      "description": "Capture and settlement recording are present.",
+      "flow": "fixtures/happy-path/flow.json",
+      "attestations": "fixtures/happy-path/attestations.jsonl",
+      "expected_run": "fixtures/happy-path/expected-run.json"
+    },
+    {
+      "id": "missing-settlement",
+      "description": "Capture is present, but settlement recording is absent.",
+      "flow": "fixtures/missing-settlement/flow.json",
+      "attestations": "fixtures/missing-settlement/attestations.jsonl",
+      "expected_run": "fixtures/missing-settlement/expected-run.json"
+    }
+  ]
+}
