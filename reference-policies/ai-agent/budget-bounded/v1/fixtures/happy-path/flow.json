@@ -1,0 +1,32 @@
+{
+  "schema": "intentproof.flow.v1",
+  "flow_id": "flow_reference_budget_bounded_happy_path",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "correlation_id": "corr_reference_budget_bounded_happy_path",
+  "window": {
+    "opened_at": "2026-05-16T00:00:00.000Z",
+    "closed_at": "2026-05-16T00:01:00.000Z",
+    "closure_reason": "idle_timeout"
+  },
+  "events": [
+    {
+      "event_id": "evt_ai_budget_allocate_ok",
+      "ordinal": 1,
+      "hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "event_id": "evt_ai_budget_spend_ok",
+      "ordinal": 2,
+      "hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "event_id": "evt_ai_budget_remaining_ok",
+      "ordinal": 3,
+      "hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "instrumentation_mode": "operational",
+  "flow_merkle_root": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "snapshot_uri": "ipfs://reference/ai-agent/budget-bounded/v1/happy-path"
+}
