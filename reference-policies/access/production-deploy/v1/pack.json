@@ -1,0 +1,28 @@
+{
+  "schema": "intentproof.reference_policy_pack.v1",
+  "reference_id": "reference.access.production-deploy.v1",
+  "domain": "access",
+  "name": "production-deploy",
+  "version": 1,
+  "display_name": "Production deploy",
+  "summary": "Requires approval, peer review, and approval-before-merge ordering for production deploys.",
+  "policy": "policy.json",
+  "policy_yaml": "policy.yaml",
+  "migration_notes": "MIGRATION.md",
+  "fixtures": [
+    {
+      "id": "deploy-with-approval",
+      "description": "Deployment approval, peer review, and merge are present in order.",
+      "flow": "fixtures/deploy-with-approval/flow.json",
+      "attestations": "fixtures/deploy-with-approval/attestations.jsonl",
+      "expected_run": "fixtures/deploy-with-approval/expected-run.json"
+    },
+    {
+      "id": "deploy-without-approval",
+      "description": "Peer review and merge are present, but deployment approval is absent.",
+      "flow": "fixtures/deploy-without-approval/flow.json",
+      "attestations": "fixtures/deploy-without-approval/attestations.jsonl",
+      "expected_run": "fixtures/deploy-without-approval/expected-run.json"
+    }
+  ]
+}

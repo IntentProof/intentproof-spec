@@ -1,0 +1,45 @@
+schema: intentproof.policy.v1
+policy_id: reference.access.production-deploy.v1
+policy_version: 1
+tenant_id: reference
+provenance_class: platform_attested
+name: Production deploy
+description: Requires approval, peer review, and approval-before-merge ordering for production deploys.
+spec_version: 1.0.0
+scope:
+  any_event_action_in:
+    - access.production_deploy.approve
+    - access.production_deploy.peer_review
+    - access.production_deploy.merge
+  ignore_flows_with_no_match: false
+instrumentation_requirement: operational
+rules:
+  - id: required-approval
+    category: required
+    severity: critical
+    spec:
+      action: access.production_deploy.approve
+      min: 1
+      where:
+        status: ok
+  - id: required-peer-review
+    category: required
+    severity: high
+    spec:
+      action: access.production_deploy.peer_review
+      min: 1
+      where:
+        status: ok
+  - id: ordering-approval-before-merge
+    category: ordering
+    severity: critical
+    spec:
+      before: access.production_deploy.approve
+      after: access.production_deploy.merge
+      scope: first-occurrence
+policy_fingerprint: sha256:b0939970a1ea12283101ba52e446f47d6cb6ba531200c52876e52e36313f19f0
+signed_at: "2026-05-16T00:00:00.000Z"
+signature:
+  alg: none
+  key_id: reference-access
+  value: ""

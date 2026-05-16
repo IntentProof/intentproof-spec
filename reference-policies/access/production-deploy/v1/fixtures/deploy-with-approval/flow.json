@@ -1,0 +1,32 @@
+{
+  "schema": "intentproof.flow.v1",
+  "flow_id": "flow_reference_production_deploy_with_approval",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "correlation_id": "corr_reference_production_deploy_with_approval",
+  "window": {
+    "opened_at": "2026-05-16T00:00:00.000Z",
+    "closed_at": "2026-05-16T00:10:00.000Z",
+    "closure_reason": "completed"
+  },
+  "events": [
+    {
+      "event_id": "evt_access_production_deploy_approve_ok",
+      "ordinal": 1,
+      "hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "event_id": "evt_access_production_deploy_peer_review_ok",
+      "ordinal": 2,
+      "hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "event_id": "evt_access_production_deploy_merge_ok",
+      "ordinal": 3,
+      "hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "instrumentation_mode": "operational",
+  "flow_merkle_root": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "snapshot_uri": "ipfs://reference/access/production-deploy/v1/deploy-with-approval"
+}
