@@ -5,7 +5,7 @@
     "schema/certificate.v1.schema.json": "sha256:a04dc064928461d60b25eb6f801ffb65a15604e69f0566d10557c6cc02172314",
     "schema/claim.v1.schema.json": "sha256:01ec630bd289772a1760e9db852b2ad3e8c4fab8b5eb04c67ba5a857df51f379",
     "schema/execution_event.v1.schema.json": "sha256:496407239e8e597ebfa73de0bcf7543f06cf4771d761a46ebd1208634c87ba02",
-    "schema/finding.v1.schema.json": "sha256:0103e603a1cd1577bdfdd24eedf15a86b5407cc236e203c46f3c4d48ceef148e",
+    "schema/finding.v1.schema.json": "sha256:0157080079c349cb016f2f14f53427fc77e1b81727e1aa9a7a63d5587b53a99b",
     "schema/flow.v1.schema.json": "sha256:bcd08a31ca95b02f726c3e73195032058af815e7f5444695f8e60a250f623ae0",
     "schema/policy.v1.schema.json": "sha256:6a778960ac3c6c3246da2aae9c5a41fb3b3251d24aa6c28a3cc56a7fd82fb5ac",
     "schema/run.v1.schema.json": "sha256:45819b66b8dbc939cd8c2abe4f06c5c6e3fb4c4a1f1d7512edde7d22728ca465",

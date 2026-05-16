@@ -58,6 +58,7 @@
         "inconclusive.temporal.clock_skew_within_tolerance",
         "inconclusive.temporal.duration_invalid",
         "inconclusive.temporal.missing_anchor",
+        "inconclusive.unknown.unsupported_rule_category",
         "inconclusive.value_bound.bound_invalid",
         "inconclusive.value_bound.claim_missing",
         "inconclusive.value_bound.operator_unsupported",

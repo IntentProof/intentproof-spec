@@ -7,7 +7,8 @@ import * as path from 'path';
 //   1. The file parses as JSON.
 //   2. Every reason entry has the required fields (code, category,
 //      description).
-//   3. Every category is one of the eight closed rule kinds.
+//   3. Every category is one of the closed vocabulary kinds (DSL rule kinds
+//      plus evaluator-only buckets such as "unknown").
 //   4. Reason codes are unique.
 //   5. Reason codes start with "<outcome>." where outcome is one of
 //      pass | fail | inconclusive.
@@ -26,6 +27,7 @@ const ALLOWED_CATEGORIES = new Set([
   'consensus',
   'value_bound',
   'claim_match',
+  'unknown',
 ]);
 
 const ALLOWED_OUTCOMES = new Set(['pass', 'fail', 'inconclusive']);

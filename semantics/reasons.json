@@ -9,7 +9,8 @@
     "temporal",
     "consensus",
     "value_bound",
-    "claim_match"
+    "claim_match",
+    "unknown"
   ],
   "reasons": [
     {
@@ -249,7 +250,13 @@
     {
       "code": "inconclusive.required.unsupported_rule_category",
       "category": "required",
-      "description": "Rule category string is not a known DSL kind or is otherwise unevaluated by this verifier (defensive; prefer category-specific unsupported codes when applicable).",
+      "description": "Legacy reserved code; verifiers should use inconclusive.unknown.unsupported_rule_category for unrecognized rule category strings.",
+      "severity_hint": "medium"
+    },
+    {
+      "code": "inconclusive.unknown.unsupported_rule_category",
+      "category": "unknown",
+      "description": "Rule category is not a known policy DSL kind (malformed policy or verifier mismatch); see rule_category on the finding.",
       "severity_hint": "medium"
     },
     {
