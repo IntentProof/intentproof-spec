@@ -1,0 +1,64 @@
+{
+  "schema": "intentproof.policy.v1",
+  "policy_id": "reference.ai-agent.eval-gate.v1",
+  "policy_version": 1,
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "name": "Eval gate",
+  "description": "Requires evaluation run, passing result, and gate approval events.",
+  "spec_version": "1.0.0",
+  "scope": {
+    "any_event_action_in": [
+      "ai.eval.run",
+      "ai.eval.result",
+      "ai.eval.gate.approve"
+    ],
+    "ignore_flows_with_no_match": false
+  },
+  "instrumentation_requirement": "operational",
+  "rules": [
+    {
+      "id": "required-eval-run",
+      "category": "required",
+      "severity": "high",
+      "spec": {
+        "action": "ai.eval.run",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-eval-passed",
+      "category": "required",
+      "severity": "critical",
+      "spec": {
+        "action": "ai.eval.result",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "id": "required-gate-approved",
+      "category": "required",
+      "severity": "critical",
+      "spec": {
+        "action": "ai.eval.gate.approve",
+        "min": 1,
+        "where": {
+          "status": "ok"
+        }
+      }
+    }
+  ],
+  "policy_fingerprint": "sha256:20069577ecd3b14edc0c71ecfbc9018504b1ac7d5426891166daf6ae4b7a6d19",
+  "signed_at": "2026-05-16T00:00:00.000Z",
+  "signature": {
+    "alg": "none",
+    "key_id": "reference-ai-agent",
+    "value": ""
+  }
+}

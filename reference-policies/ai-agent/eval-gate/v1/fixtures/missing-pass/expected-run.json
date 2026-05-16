@@ -1,0 +1,77 @@
+{
+  "schema": "intentproof.run.v1",
+  "run_id": "run_reference_eval_gate_missing_pass",
+  "tenant_id": "reference",
+  "provenance_class": "platform_attested",
+  "flow_id": "flow_reference_eval_gate_missing_pass",
+  "flow_merkle_root": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+  "policy_id": "reference.ai-agent.eval-gate.v1",
+  "policy_version": 1,
+  "policy_fingerprint": "sha256:20069577ecd3b14edc0c71ecfbc9018504b1ac7d5426891166daf6ae4b7a6d19",
+  "verifier_version": "1.0.0",
+  "verifier_build_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "attestation_set": {
+    "ids": [],
+    "merkle_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_at": "2026-05-16T00:01:00.000Z",
+  "completed_at": "2026-05-16T00:01:00.000Z",
+  "status": "fail",
+  "summary": {
+    "outcome_counts": {
+      "pass": 1,
+      "fail": 2,
+      "inconclusive": 0
+    },
+    "severity_counts": {
+      "critical": 2,
+      "high": 1,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "findings": [
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-eval-run",
+      "rule_category": "required",
+      "outcome": "pass",
+      "severity": "high",
+      "reason": "pass.required.satisfied",
+      "evidence_event_ids": [
+        "evt_ai_eval_run_ok"
+      ],
+      "evidence_attestation_ids": [],
+      "human_summary": "An evaluation run was recorded."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-eval-passed",
+      "rule_category": "required",
+      "outcome": "fail",
+      "severity": "critical",
+      "reason": "fail.required.missing",
+      "evidence_event_ids": [],
+      "evidence_attestation_ids": [],
+      "human_summary": "No passing evaluation result was observed."
+    },
+    {
+      "provenance_class": "platform_attested",
+      "rule_id": "required-gate-approved",
+      "rule_category": "required",
+      "outcome": "fail",
+      "severity": "critical",
+      "reason": "fail.required.missing",
+      "evidence_event_ids": [],
+      "evidence_attestation_ids": [],
+      "human_summary": "No evaluation gate approval was observed."
+    }
+  ],
+  "run_fingerprint": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "reference-ai-agent",
+    "value": "base64"
+  }
+}
