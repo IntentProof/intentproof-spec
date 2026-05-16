@@ -138,7 +138,7 @@ function validatePack(packDir: string, domain: string, name: string, versionDir:
   if (!policyPath) {
     return;
   }
-  const policy = readJSON(policyPath) as Record<string, unknown>;
+  const policy = readJSON(policyPath) as Record<string, unknown> | undefined;
   if (!policy) {
     return;
   }
