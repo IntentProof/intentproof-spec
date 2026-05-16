@@ -14,6 +14,13 @@ import * as path from 'path';
 //      pass | fail | inconclusive.
 //   6. Every reason code used in golden/*.jsonl fixtures appears in
 //      the vocabulary.
+//   7. Optional rich fields (title, typical_causes, typical_owners,
+//      remediation_template, documentation_url), when present on any
+//      entry, have valid types.
+//   8. Every code listed in top-level demo_blocker_reasons[] has the
+//      full rich field set populated (no empty values). This protects
+//      the no-signup demo from rendering bespoke prose that would
+//      diverge from production finding copy.
 //
 // This script is invoked from `npm test` so the vocabulary cannot
 // drift from goldens without CI noticing.
@@ -87,7 +94,62 @@ if (Array.isArray(declaredCategories)) {
 
 const seenCodes = new Set<string>();
 const codeToCategory = new Map<string, string>();
+const codeToEntry = new Map<string, Record<string, unknown>>();
 const vocabularyCategories = new Set<string>();
+
+const demoBlockerCodes = new Set<string>();
+const rawBlockers = rec.demo_blocker_reasons;
+if (rawBlockers !== undefined) {
+  if (!Array.isArray(rawBlockers)) {
+    fail('demo_blocker_reasons must be an array if present');
+  } else {
+    for (const c of rawBlockers) {
+      if (typeof c !== 'string' || c.length === 0) {
+        fail(`demo_blocker_reasons contains non-string entry: ${String(c)}`);
+        continue;
+      }
+      if (demoBlockerCodes.has(c)) {
+        fail(`demo_blocker_reasons has duplicate entry: ${c}`);
+      }
+      demoBlockerCodes.add(c);
+    }
+  }
+}
+
+function checkOptionalString(
+  where: string,
+  field: string,
+  value: unknown,
+): void {
+  if (value === undefined) {
+    return;
+  }
+  if (typeof value !== 'string' || value.length === 0) {
+    fail(`${where}.${field} must be a non-empty string when present`);
+  }
+}
+
+function checkOptionalStringArray(
+  where: string,
+  field: string,
+  value: unknown,
+): void {
+  if (value === undefined) {
+    return;
+  }
+  if (!Array.isArray(value) || value.length === 0) {
+    fail(
+      `${where}.${field} must be a non-empty string array when present`,
+    );
+    return;
+  }
+  for (let j = 0; j < value.length; j++) {
+    const item = value[j];
+    if (typeof item !== 'string' || item.length === 0) {
+      fail(`${where}.${field}[${j}] must be a non-empty string`);
+    }
+  }
+}
 
 for (let i = 0; i < reasons.length; i++) {
   const entry = reasons[i];
@@ -122,7 +184,14 @@ for (let i = 0; i < reasons.length; i++) {
   } else {
     seenCodes.add(code);
     codeToCategory.set(code, category);
+    codeToEntry.set(code, e);
   }
+
+  checkOptionalString(where, 'title', e.title);
+  checkOptionalStringArray(where, 'typical_causes', e.typical_causes);
+  checkOptionalStringArray(where, 'typical_owners', e.typical_owners);
+  checkOptionalString(where, 'remediation_template', e.remediation_template);
+  checkOptionalString(where, 'documentation_url', e.documentation_url);
 
   const prefix = code.split('.')[0];
   if (!ALLOWED_OUTCOMES.has(prefix)) {
@@ -144,6 +213,48 @@ for (let i = 0; i < reasons.length; i++) {
       !ALLOWED_SEVERITIES.has(severityHint)
     ) {
       fail(`${where}.severity_hint '${String(severityHint)}' is not valid`);
+    }
+  }
+}
+
+// Demo-blocker completeness: every code in demo_blocker_reasons must
+// populate the full authored copy set (title, typical_causes,
+// typical_owners, remediation_template, documentation_url). The no-signup
+// demo renders these directly; missing copy would force per-demo prose,
+// which P9 and P12 forbid.
+const REQUIRED_DEMO_FIELDS_STRING: Array<
+  'title' | 'remediation_template' | 'documentation_url'
+> = ['title', 'remediation_template', 'documentation_url'];
+const REQUIRED_DEMO_FIELDS_ARRAY: Array<'typical_causes' | 'typical_owners'> = [
+  'typical_causes',
+  'typical_owners',
+];
+
+for (const code of demoBlockerCodes) {
+  if (!seenCodes.has(code)) {
+    fail(
+      `demo_blocker_reasons references unknown reason code '${code}'`,
+    );
+    continue;
+  }
+  const entry = codeToEntry.get(code);
+  if (!entry) {
+    continue;
+  }
+  for (const f of REQUIRED_DEMO_FIELDS_STRING) {
+    const v = entry[f];
+    if (typeof v !== 'string' || v.length === 0) {
+      fail(
+        `demo-blocker reason '${code}' requires non-empty ${f}; demo would fall back to bespoke prose otherwise`,
+      );
+    }
+  }
+  for (const f of REQUIRED_DEMO_FIELDS_ARRAY) {
+    const v = entry[f];
+    if (!Array.isArray(v) || v.length === 0) {
+      fail(
+        `demo-blocker reason '${code}' requires non-empty ${f} array; demo would fall back to bespoke prose otherwise`,
+      );
     }
   }
 }
@@ -272,5 +383,5 @@ if (hasError) {
 }
 
 console.log(
-  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs; finding reason enum and rule_category enum each match vocabulary (bidirectional).`,
+  `reasons.json: ${reasons.length} entries, ${seenCodes.size} unique codes, ${goldenReasonCodes.size} golden refs, ${demoBlockerCodes.size} demo-blocker codes (fully populated); finding reason enum and rule_category enum each match vocabulary (bidirectional).`,
 );
