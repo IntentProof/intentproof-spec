@@ -61,7 +61,7 @@ jobs:
 
   sign-spec-bundle:
     needs: build-spec-bundle
-    uses: IntentProof/intentproof-tools/.github/workflows/release-build-sign.yml@main
+    uses: IntentProof/intentproof-tools/.github/workflows/release-build-sign.yml@317387a9724787e4ac484f39de46d7e559b6c98d
     with:
       artifact_kind: generic
       subject_name: intentproof-spec-dryrun
