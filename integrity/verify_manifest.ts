@@ -6,9 +6,12 @@ function main() {
   const manifestPath = path.join(__dirname, 'manifest.v1.json');
   const sigPath = path.join(__dirname, 'manifest.v1.json.sig');
   const pubKeyPath = path.join(__dirname, '../well-known-keys/spec-integrity.pem');
-  const schemaDir = path.join(__dirname, '../schema');
-  const goldenDir = path.join(__dirname, '../golden');
   const projectRoot = path.join(__dirname, '..');
+  const manifestDirs = [
+    path.join(projectRoot, 'schema'),
+    path.join(projectRoot, 'golden'),
+    path.join(projectRoot, 'compatibility'),
+  ];
 
   if (!fs.existsSync(manifestPath)) {
     console.error('[FAIL] Manifest file not found:', manifestPath);
@@ -45,7 +48,7 @@ function main() {
   }
 
   let hasError = false;
-  for (const dir of [schemaDir, goldenDir]) {
+  for (const dir of manifestDirs) {
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') || f.endsWith('.jsonl'));
     for (const f of files) {
       const filePath = path.join(dir, f);

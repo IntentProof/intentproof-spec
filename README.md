@@ -6,6 +6,7 @@ Canonical schemas, fixtures, and conformance tooling for IntentProof.
 
 - JSON Schemas in `schema/`
 - Golden fixtures in `golden/`
+- Cross-repository compatibility matrix in `compatibility/`
 - Conformance runner in `conformance/runner.ts`
 - Integrity manifest/signature tooling in `integrity/`
 
@@ -13,7 +14,8 @@ Canonical schemas, fixtures, and conformance tooling for IntentProof.
 
 1. Install deps: `npm install`
 2. Run conformance: `npx ts-node conformance/runner.ts`
-3. Regenerate integrity artifacts when needed.
+3. Verify compatibility matrix updates: `make compatibility-matrix-verify`
+4. Regenerate integrity artifacts when needed.
 
 ## License
 

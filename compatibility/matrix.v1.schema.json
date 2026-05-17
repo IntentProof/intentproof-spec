@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.intentproof.io/compatibility/matrix.v1.schema.json",
+  "title": "IntentProof Compatibility Matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "generated_at", "entries"],
+  "properties": {
+    "schema": {
+      "const": "intentproof.compatibility.matrix.v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spec_version",
+        "tools_version",
+        "core_version",
+        "sdk_node_version",
+        "sdk_python_version",
+        "dashboard_version",
+        "verified_at",
+        "ci_run",
+        "release_status",
+        "notes"
+      ],
+      "properties": {
+        "spec_version": {
+          "$ref": "#/$defs/component"
+        },
+        "tools_version": {
+          "$ref": "#/$defs/component"
+        },
+        "core_version": {
+          "$ref": "#/$defs/component"
+        },
+        "sdk_node_version": {
+          "$ref": "#/$defs/component"
+        },
+        "sdk_python_version": {
+          "$ref": "#/$defs/component"
+        },
+        "dashboard_version": {
+          "$ref": "#/$defs/component"
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ci_run": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["system", "id", "url"],
+          "properties": {
+            "system": {
+              "enum": ["github-actions", "local"]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "release_status": {
+          "enum": ["source-verified", "released"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "version", "source_ref"],
+      "properties": {
+        "repo": {
+          "enum": [
+            "intentproof-spec",
+            "intentproof-tools",
+            "intentproof-core",
+            "intentproof-sdk-node",
+            "intentproof-sdk-python",
+            "intentproof-dashboard"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v?[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+        },
+        "source_ref": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{12,40}$"
+        },
+        "release_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    }
+  }
+}
