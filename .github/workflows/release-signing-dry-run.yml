@@ -1,0 +1,73 @@
+name: release signing dry run
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: SemVer version to place in dry-run attestations.
+        required: true
+        default: 0.0.0-dryrun
+        type: string
+      release_ref:
+        description: Git ref to check out for the dry run.
+        required: true
+        default: refs/heads/main
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+
+jobs:
+  build-spec-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ inputs.release_ref }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run spec verification
+        run: npm test
+
+      - name: Build dry-run spec release bundle
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          tar \
+            --sort=name \
+            --mtime='UTC 1970-01-01' \
+            --owner=0 \
+            --group=0 \
+            --numeric-owner \
+            -czf dist/intentproof-spec-dryrun.tar.gz \
+            schema \
+            golden \
+            integrity/manifest.v1.json \
+            integrity/manifest.v1.json.sig \
+            well-known-keys/spec-integrity.pem
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: spec-release-dry-run
+          path: dist/intentproof-spec-dryrun.tar.gz
+
+  sign-spec-bundle:
+    needs: build-spec-bundle
+    uses: IntentProof/intentproof-tools/.github/workflows/release-build-sign.yml@main
+    with:
+      artifact_kind: generic
+      subject_name: intentproof-spec-dryrun
+      release_version: ${{ inputs.release_version }}
+      release_ref: ${{ inputs.release_ref }}
+      artifact_paths: dist/intentproof-spec-dryrun.tar.gz
+      artifact_download_name: spec-release-dry-run
+      artifact_download_path: dist
+      attest_to_rekor: false
