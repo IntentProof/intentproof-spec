@@ -51,6 +51,7 @@ jobs:
             -czf dist/intentproof-spec-dryrun.tar.gz \
             schema \
             golden \
+            compatibility \
             integrity/manifest.v1.json \
             integrity/manifest.v1.json.sig \
             well-known-keys/spec-integrity.pem

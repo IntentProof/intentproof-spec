@@ -21,6 +21,8 @@
     "golden/flow_cases.jsonl": "sha256:b9841ea5411e24afd23ce412f8c85593ea0c9eddced732f0d67aa30437b49a26",
     "golden/policy_cases.jsonl": "sha256:a748ee05a0cf4116b8591f3a8cebd7540278c1f0d9e84de72c54412a75d88099",
     "golden/run_cases.jsonl": "sha256:33dde126a85a5ad7fb0f14bad86044d1deb76fecb7c8d02b7fa2045a4ba0835f",
-    "golden/webhook-finding_cases.jsonl": "sha256:3ffa79e99dc24102e401358293dc758c0110b2842f236421c221922bf44eb808"
+    "golden/webhook-finding_cases.jsonl": "sha256:3ffa79e99dc24102e401358293dc758c0110b2842f236421c221922bf44eb808",
+    "compatibility/matrix.v1.json": "sha256:a8dfcfd137fd2a5cc004582a7be27bfd606710057b01e95f9cbc4a37a307ace5",
+    "compatibility/matrix.v1.schema.json": "sha256:5b82f7b9c9f3291952d7acdb144b1d5e861fb7915e40602a73c91ff28f335495"
   }
 }

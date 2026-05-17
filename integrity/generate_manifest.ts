@@ -39,11 +39,14 @@ function main() {
     }
 
     const manifest: any = { files: {} };
-    const schemaDir = path.join(__dirname, '../schema');
-    const goldenDir = path.join(__dirname, '../golden');
     const projectRoot = path.join(__dirname, '..');
+    const manifestDirs = [
+        path.join(projectRoot, 'schema'),
+        path.join(projectRoot, 'golden'),
+        path.join(projectRoot, 'compatibility'),
+    ];
     
-    for (const dir of [schemaDir, goldenDir]) {
+    for (const dir of manifestDirs) {
         const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') || f.endsWith('.jsonl'));
         for (const f of files) {
             const filePath = path.join(dir, f);

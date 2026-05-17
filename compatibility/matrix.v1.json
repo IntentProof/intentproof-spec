@@ -1,0 +1,46 @@
+{
+  "schema": "intentproof.compatibility.matrix.v1",
+  "generated_at": "2026-05-17T14:15:00Z",
+  "entries": [
+    {
+      "spec_version": {
+        "repo": "intentproof-spec",
+        "version": "v1.0.0-bootstrap.1",
+        "source_ref": "9b30bbd3110b"
+      },
+      "tools_version": {
+        "repo": "intentproof-tools",
+        "version": "v0.0.0-bootstrap.1",
+        "source_ref": "b16c847be697"
+      },
+      "core_version": {
+        "repo": "intentproof-core",
+        "version": "v0.0.0-bootstrap.1",
+        "source_ref": "c2e5cdf612bf"
+      },
+      "sdk_node_version": {
+        "repo": "intentproof-sdk-node",
+        "version": "v1.0.0-bootstrap.1",
+        "source_ref": "8cf96470fe70"
+      },
+      "sdk_python_version": {
+        "repo": "intentproof-sdk-python",
+        "version": "v0.1.0-bootstrap.1",
+        "source_ref": "89a0a2ab746f"
+      },
+      "dashboard_version": {
+        "repo": "intentproof-dashboard",
+        "version": "v1.0.0-bootstrap.1",
+        "source_ref": "8e949d9671fe"
+      },
+      "verified_at": "2026-05-17T14:15:00Z",
+      "ci_run": {
+        "system": "local",
+        "id": "bootstrap-2026-05-17",
+        "url": "https://github.com/IntentProof/intentproof-spec/actions"
+      },
+      "release_status": "source-verified",
+      "notes": "Bootstrap row for current source-compatible repositories before the first public GitHub Releases exist. Change release_status to released only after every component version in the row is published as a GitHub Release."
+    }
+  ]
+}
