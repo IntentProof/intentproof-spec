@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   build-spec-bundle:
+    name: "IntentProof Release: Build Spec Bundle"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -60,6 +61,7 @@ jobs:
           path: dist/intentproof-spec-dryrun.tar.gz
 
   sign-spec-bundle:
+    name: "IntentProof Release: Sign Spec Bundle"
     needs: build-spec-bundle
     uses: IntentProof/intentproof-tools/.github/workflows/release-build-sign.yml@317387a9724787e4ac484f39de46d7e559b6c98d
     with:
