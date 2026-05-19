@@ -1,1 +1,3 @@
-import './webhook_findings';
+import { runWebhookFindingsCli } from './webhook_findings';
+
+process.exit(runWebhookFindingsCli());

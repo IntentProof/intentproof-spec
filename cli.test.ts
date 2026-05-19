@@ -46,8 +46,10 @@ afterEach(() => {
 describe('CLI entrypoints', () => {
   it('runs conformance and validation scripts successfully', () => {
     expect(runTsScript('conformance/runner.ts')).toContain('All conformance checks passed');
+    expect(runTsScript('conformance/jcs_test.ts')).toContain('All JCS conformance checks passed');
     expect(runTsScript('conformance/jcs_conformance.ts')).toContain('All JCS conformance checks passed');
     expect(runTsScript('conformance/agent_manifest_test.ts')).toContain('All agent manifest projection checks passed');
+    expect(runTsScript('conformance/webhook_finding_test.ts')).toContain('All webhook finding signature checks passed');
     expect(runTsScript('conformance/webhook_findings.ts')).toContain('All webhook finding signature checks passed');
     expect(runTsScript('integrity/verify_manifest.ts')).toContain('All integrity checks passed');
     expect(runTsScript('compatibility/verify_matrix.ts')).toContain('Compatibility matrix schema validated');

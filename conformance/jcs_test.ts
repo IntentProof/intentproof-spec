@@ -1,1 +1,3 @@
-import './jcs_conformance';
+import { runJcsConformanceCli } from './jcs_conformance';
+
+process.exit(runJcsConformanceCli());
