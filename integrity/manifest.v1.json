@@ -19,7 +19,7 @@
     "schema/bundle-manifest.v1.schema.json": "sha256:bf0bf1e7d0aa542abc5d3d771a1df385b499b8189412244b0c3961d1bce4e49d",
     "schema/certificate.v1.schema.json": "sha256:00a632e4a0b4a480de7a0be21b1015640249752592cf073ef08712bf2d000ede",
     "schema/claim.v1.schema.json": "sha256:01ec630bd289772a1760e9db852b2ad3e8c4fab8b5eb04c67ba5a857df51f379",
-    "schema/execution_event.v1.schema.json": "sha256:5701dc13afcf355f4f95f22a20755c50425d85f70d4694d39e7d6814fef3ca67",
+    "schema/execution_event.v1.schema.json": "sha256:bf76e978ff1fea20e8498c78bf80877f6b431c21c8abad661c9ab8cf0650963d",
     "schema/finding.v1.schema.json": "sha256:2cf0fa3f9db7dfd0e5191916a26a11d43afaf8bba4821a212c66c63c345b036c",
     "schema/flow.v1.schema.json": "sha256:f4b125481071dc7f9b1a4ca8cd13af473084f00f97f89e0e7e817f4ac3ffc444",
     "schema/policy.v1.schema.json": "sha256:383c1582592f92911c85806e1e9b812aad82b4ffa58a0322fda2f6710f31fe92",

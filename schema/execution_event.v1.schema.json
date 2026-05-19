@@ -101,7 +101,7 @@
         }
       },
       "additionalProperties": {
-        "type": ["string", "number", "boolean", "integer"]
+        "type": ["string", "number", "boolean"]
       }
     },
     "redaction_summary": {
