@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { listManifestFiles } from './manifest_files';
 
 function main() {
     const keyPath = path.join(__dirname, '../well-known-keys/spec-integrity.pem');
@@ -38,22 +39,13 @@ function main() {
         fs.writeFileSync(keyPath, publicKey.export({ type: 'spki', format: 'pem' }));
     }
 
-    const manifest: any = { files: {} };
+    const manifest: { files: Record<string, string> } = { files: {} };
     const projectRoot = path.join(__dirname, '..');
-    const manifestDirs = [
-        path.join(projectRoot, 'schema'),
-        path.join(projectRoot, 'golden'),
-        path.join(projectRoot, 'compatibility'),
-    ];
-    
-    for (const dir of manifestDirs) {
-        const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') || f.endsWith('.jsonl'));
-        for (const f of files) {
-            const filePath = path.join(dir, f);
-            const content = fs.readFileSync(filePath);
-            const relativeKey = path.relative(projectRoot, filePath).split(path.sep).join('/');
-            manifest.files[relativeKey] = `sha256:${crypto.createHash('sha256').update(content).digest('hex')}`;
-        }
+
+    for (const filePath of listManifestFiles(projectRoot)) {
+        const content = fs.readFileSync(filePath);
+        const relativeKey = path.relative(projectRoot, filePath).split(path.sep).join('/');
+        manifest.files[relativeKey] = `sha256:${crypto.createHash('sha256').update(content).digest('hex')}`;
     }
 
     const manifestContent = Buffer.from(JSON.stringify(manifest, null, 2));

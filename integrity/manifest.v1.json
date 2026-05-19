@@ -1,16 +1,7 @@
 {
   "files": {
-    "schema/agent-manifest.v1.schema.json": "sha256:79706b6efb3a959a5ae288ff36ea5c0b15005f64bd886cb75ead056b5b2e0cf7",
-    "schema/attestation.v1.schema.json": "sha256:d95eff8e3adb7ba77bc3ed4d31483c8c269f39d9a9044ae5f2008386a80a6066",
-    "schema/bundle-manifest.v1.schema.json": "sha256:bf0bf1e7d0aa542abc5d3d771a1df385b499b8189412244b0c3961d1bce4e49d",
-    "schema/certificate.v1.schema.json": "sha256:00a632e4a0b4a480de7a0be21b1015640249752592cf073ef08712bf2d000ede",
-    "schema/claim.v1.schema.json": "sha256:01ec630bd289772a1760e9db852b2ad3e8c4fab8b5eb04c67ba5a857df51f379",
-    "schema/execution_event.v1.schema.json": "sha256:c04d2bc66ed7be7a4f8be3cdc49b4179f1c69ecffba5acabb3d104881616965b",
-    "schema/finding.v1.schema.json": "sha256:2cf0fa3f9db7dfd0e5191916a26a11d43afaf8bba4821a212c66c63c345b036c",
-    "schema/flow.v1.schema.json": "sha256:f4b125481071dc7f9b1a4ca8cd13af473084f00f97f89e0e7e817f4ac3ffc444",
-    "schema/policy.v1.schema.json": "sha256:383c1582592f92911c85806e1e9b812aad82b4ffa58a0322fda2f6710f31fe92",
-    "schema/run.v1.schema.json": "sha256:828a8378a07ddc3f519e4f2f81908695755089f9793a5de293e5c77b821f8d38",
-    "schema/webhook-finding.v1.schema.json": "sha256:e1f8e3890668da1a371d28bef541548cda11330e56dc1cb299485d905ea0aff3",
+    "compatibility/matrix.v1.json": "sha256:a8dfcfd137fd2a5cc004582a7be27bfd606710057b01e95f9cbc4a37a307ace5",
+    "compatibility/matrix.v1.schema.json": "sha256:5b82f7b9c9f3291952d7acdb144b1d5e861fb7915e40602a73c91ff28f335495",
     "golden/agent-manifest_cases.jsonl": "sha256:cd6f44a0e97a522e8c93f8b1e55c9065a8b4f1764f35c2ad13e2a2fe9813afa2",
     "golden/attestation_cases.jsonl": "sha256:1736ff3e2660a88dfa704bf8a1be8cdaccd3be86583860426c026b295d8e5314",
     "golden/bundle-manifest_cases.jsonl": "sha256:eba3cc9b023b2b57d3de1a834a1ad147a5649abdf676cfabf60a7eb9c5b906d2",
@@ -19,10 +10,20 @@
     "golden/execution_event_cases.jsonl": "sha256:5530c119160f75f7f69641c412f938155652631b629eba04d4eecd8e220eae26",
     "golden/finding_cases.jsonl": "sha256:ccd73ea8d6131dfb4cd5ddf8b0329f5619421461acf47e3bb9e61d12f3125b6f",
     "golden/flow_cases.jsonl": "sha256:b9841ea5411e24afd23ce412f8c85593ea0c9eddced732f0d67aa30437b49a26",
+    "golden/multi-agent/execution_event_cases.jsonl": "sha256:e4a482ad7f6519fea9da8f9b424a67480f4d9642c9bec213d86489accd873844",
     "golden/policy_cases.jsonl": "sha256:a748ee05a0cf4116b8591f3a8cebd7540278c1f0d9e84de72c54412a75d88099",
     "golden/run_cases.jsonl": "sha256:33dde126a85a5ad7fb0f14bad86044d1deb76fecb7c8d02b7fa2045a4ba0835f",
     "golden/webhook-finding_cases.jsonl": "sha256:3ffa79e99dc24102e401358293dc758c0110b2842f236421c221922bf44eb808",
-    "compatibility/matrix.v1.json": "sha256:a8dfcfd137fd2a5cc004582a7be27bfd606710057b01e95f9cbc4a37a307ace5",
-    "compatibility/matrix.v1.schema.json": "sha256:5b82f7b9c9f3291952d7acdb144b1d5e861fb7915e40602a73c91ff28f335495"
+    "schema/agent-manifest.v1.schema.json": "sha256:79706b6efb3a959a5ae288ff36ea5c0b15005f64bd886cb75ead056b5b2e0cf7",
+    "schema/attestation.v1.schema.json": "sha256:d95eff8e3adb7ba77bc3ed4d31483c8c269f39d9a9044ae5f2008386a80a6066",
+    "schema/bundle-manifest.v1.schema.json": "sha256:bf0bf1e7d0aa542abc5d3d771a1df385b499b8189412244b0c3961d1bce4e49d",
+    "schema/certificate.v1.schema.json": "sha256:00a632e4a0b4a480de7a0be21b1015640249752592cf073ef08712bf2d000ede",
+    "schema/claim.v1.schema.json": "sha256:01ec630bd289772a1760e9db852b2ad3e8c4fab8b5eb04c67ba5a857df51f379",
+    "schema/execution_event.v1.schema.json": "sha256:5701dc13afcf355f4f95f22a20755c50425d85f70d4694d39e7d6814fef3ca67",
+    "schema/finding.v1.schema.json": "sha256:2cf0fa3f9db7dfd0e5191916a26a11d43afaf8bba4821a212c66c63c345b036c",
+    "schema/flow.v1.schema.json": "sha256:f4b125481071dc7f9b1a4ca8cd13af473084f00f97f89e0e7e817f4ac3ffc444",
+    "schema/policy.v1.schema.json": "sha256:383c1582592f92911c85806e1e9b812aad82b4ffa58a0322fda2f6710f31fe92",
+    "schema/run.v1.schema.json": "sha256:828a8378a07ddc3f519e4f2f81908695755089f9793a5de293e5c77b821f8d38",
+    "schema/webhook-finding.v1.schema.json": "sha256:e1f8e3890668da1a371d28bef541548cda11330e56dc1cb299485d905ea0aff3"
   }
 }

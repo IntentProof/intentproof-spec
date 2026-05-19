@@ -1,17 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { listManifestFiles } from './manifest_files';
 
 function main() {
   const manifestPath = path.join(__dirname, 'manifest.v1.json');
   const sigPath = path.join(__dirname, 'manifest.v1.json.sig');
   const pubKeyPath = path.join(__dirname, '../well-known-keys/spec-integrity.pem');
   const projectRoot = path.join(__dirname, '..');
-  const manifestDirs = [
-    path.join(projectRoot, 'schema'),
-    path.join(projectRoot, 'golden'),
-    path.join(projectRoot, 'compatibility'),
-  ];
 
   if (!fs.existsSync(manifestPath)) {
     console.error('[FAIL] Manifest file not found:', manifestPath);
@@ -48,27 +44,23 @@ function main() {
   }
 
   let hasError = false;
-  for (const dir of manifestDirs) {
-    const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') || f.endsWith('.jsonl'));
-    for (const f of files) {
-      const filePath = path.join(dir, f);
-      const content = fs.readFileSync(filePath);
-      const expectedHash = `sha256:${crypto.createHash('sha256').update(content).digest('hex')}`;
-      const relativeKey = path.relative(projectRoot, filePath).split(path.sep).join('/');
-      const manifestHash = manifest.files[relativeKey];
+  for (const filePath of listManifestFiles(projectRoot)) {
+    const content = fs.readFileSync(filePath);
+    const expectedHash = `sha256:${crypto.createHash('sha256').update(content).digest('hex')}`;
+    const relativeKey = path.relative(projectRoot, filePath).split(path.sep).join('/');
+    const manifestHash = manifest.files[relativeKey];
 
-      if (!manifestHash) {
-        console.error(`[FAIL] File ${relativeKey} not found in manifest`);
-        hasError = true;
-        continue;
-      }
+    if (!manifestHash) {
+      console.error(`[FAIL] File ${relativeKey} not found in manifest`);
+      hasError = true;
+      continue;
+    }
 
-      if (manifestHash !== expectedHash) {
-        console.error(`[FAIL] File ${relativeKey} hash mismatch: manifest=${manifestHash}, actual=${expectedHash}`);
-        hasError = true;
-      } else {
-        console.log(`[PASS] File ${relativeKey} hash verified`);
-      }
+    if (manifestHash !== expectedHash) {
+      console.error(`[FAIL] File ${relativeKey} hash mismatch: manifest=${manifestHash}, actual=${expectedHash}`);
+      hasError = true;
+    } else {
+      console.log(`[PASS] File ${relativeKey} hash verified`);
     }
   }
 
