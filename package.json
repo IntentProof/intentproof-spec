@@ -7,7 +7,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:coverage:check": "npm run test:coverage && bash scripts/check-coverage.sh coverage/coverage-final.json 95",
-    "test:legacy": "ts-node conformance/runner.ts && ts-node conformance/jcs_test.ts && ts-node conformance/agent_manifest_test.ts && ts-node conformance/webhook_finding_test.ts && ts-node integrity/verify_manifest.ts && ts-node compatibility/verify_matrix.ts && ts-node semantics/validate_reasons.ts && ts-node semantics/validate_provenance_classes.ts && ts-node reference-policies/validate.ts",
+    "test:legacy": "ts-node conformance/runner.ts && ts-node conformance/jcs_conformance.ts && ts-node conformance/agent_manifest_test.ts && ts-node conformance/webhook_findings.ts && ts-node integrity/verify_manifest.ts && ts-node compatibility/verify_matrix.ts && ts-node semantics/validate_reasons.ts && ts-node semantics/validate_provenance_classes.ts && ts-node reference-policies/validate.ts",
     "compatibility-matrix-verify": "ts-node compatibility/verify_matrix.ts"
   },
   "keywords": [],
