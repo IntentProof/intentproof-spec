@@ -11,6 +11,6 @@ export default defineConfig({
     include: ['**/*.ts'],
     exclude: ['**/*.test.ts', 'node_modules/**', 'vitest.config.ts'],
     reportsDirectory: 'coverage',
-    reporter: ['text', 'json-summary', 'lcov'],
+    reporter: ['text', 'json', 'json-summary', 'lcov'],
   },
 });
