@@ -2,3 +2,5 @@ node_modules/
 dist/
 *.log
 secrets/
+coverage/
+.nyc_output/

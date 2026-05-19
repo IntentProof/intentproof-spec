@@ -3,47 +3,56 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { listManifestFiles } from './manifest_files';
 
-function main() {
-  const manifestPath = path.join(__dirname, 'manifest.v1.json');
-  const sigPath = path.join(__dirname, 'manifest.v1.json.sig');
-  const pubKeyPath = path.join(__dirname, '../well-known-keys/spec-integrity.pem');
-  const projectRoot = path.join(__dirname, '..');
+export type VerifyManifestResult = {
+  ok: boolean;
+  messages: string[];
+};
+
+export function verifyManifest(projectRoot: string): VerifyManifestResult {
+  const messages: string[] = [];
+  let hasError = false;
+  const fail = (msg: string): void => {
+    messages.push(`[FAIL] ${msg}`);
+    hasError = true;
+  };
+
+  const manifestPath = path.join(projectRoot, 'integrity', 'manifest.v1.json');
+  const sigPath = path.join(projectRoot, 'integrity', 'manifest.v1.json.sig');
+  const pubKeyPath = path.join(projectRoot, 'well-known-keys', 'spec-integrity.pem');
 
   if (!fs.existsSync(manifestPath)) {
-    console.error('[FAIL] Manifest file not found:', manifestPath);
-    process.exit(1);
+    fail(`Manifest file not found: ${manifestPath}`);
+    return { ok: false, messages };
   }
   if (!fs.existsSync(sigPath)) {
-    console.error('[FAIL] Signature file not found:', sigPath);
-    process.exit(1);
+    fail(`Signature file not found: ${sigPath}`);
+    return { ok: false, messages };
   }
   if (!fs.existsSync(pubKeyPath)) {
-    console.error('[FAIL] Public key file not found:', pubKeyPath);
-    process.exit(1);
+    fail(`Public key file not found: ${pubKeyPath}`);
+    return { ok: false, messages };
   }
 
   const manifestContent = fs.readFileSync(manifestPath);
   const sig = fs.readFileSync(sigPath);
   const pubKeyPem = fs.readFileSync(pubKeyPath, 'utf-8');
-
   const pubKey = crypto.createPublicKey(pubKeyPem);
 
-  // Verify manifest signature.
   const isVerified = crypto.verify(null, manifestContent, pubKey, sig);
   if (!isVerified) {
-    console.error('[FAIL] Manifest signature verification failed');
-    process.exit(1);
+    fail('Manifest signature verification failed');
+    return { ok: false, messages };
   }
-  console.log('[PASS] Manifest signature verified');
+  messages.push('[PASS] Manifest signature verified');
 
-  // Verify file hashes.
-  const manifest = JSON.parse(manifestContent.toString('utf-8'));
+  const manifest = JSON.parse(manifestContent.toString('utf-8')) as {
+    files?: Record<string, string>;
+  };
   if (!manifest.files || typeof manifest.files !== 'object') {
-    console.error('[FAIL] Manifest missing files object');
-    process.exit(1);
+    fail('Manifest missing files object');
+    return { ok: false, messages };
   }
 
-  let hasError = false;
   for (const filePath of listManifestFiles(projectRoot)) {
     const content = fs.readFileSync(filePath);
     const expectedHash = `sha256:${crypto.createHash('sha256').update(content).digest('hex')}`;
@@ -51,34 +60,44 @@ function main() {
     const manifestHash = manifest.files[relativeKey];
 
     if (!manifestHash) {
-      console.error(`[FAIL] File ${relativeKey} not found in manifest`);
-      hasError = true;
+      fail(`File ${relativeKey} not found in manifest`);
       continue;
     }
 
     if (manifestHash !== expectedHash) {
-      console.error(`[FAIL] File ${relativeKey} hash mismatch: manifest=${manifestHash}, actual=${expectedHash}`);
-      hasError = true;
+      fail(`File ${relativeKey} hash mismatch: manifest=${manifestHash}, actual=${expectedHash}`);
     } else {
-      console.log(`[PASS] File ${relativeKey} hash verified`);
+      messages.push(`[PASS] File ${relativeKey} hash verified`);
     }
   }
 
-  // Check for extra files in manifest not on disk.
   for (const f of Object.keys(manifest.files)) {
     const fullPath = path.join(projectRoot, f);
     if (!fs.existsSync(fullPath)) {
-      console.error(`[FAIL] Manifest references missing file: ${f}`);
-      hasError = true;
+      fail(`Manifest references missing file: ${f}`);
     }
   }
 
   if (hasError) {
-    console.error('[FAIL] Integrity verification completed with errors');
-    process.exit(1);
+    messages.push('[FAIL] Integrity verification completed with errors');
+    return { ok: false, messages };
   }
 
-  console.log('[PASS] All integrity checks passed');
+  messages.push('[PASS] All integrity checks passed');
+  return { ok: true, messages };
 }
 
-main();
+export function runVerifyManifestCli(): number {
+  const projectRoot = path.join(__dirname, '..');
+  const result = verifyManifest(projectRoot);
+  for (const msg of result.messages) {
+    console.log(msg);
+  }
+  return result.ok ? 0 : 1;
+}
+
+/* v8 ignore start */
+if (require.main === module) {
+  process.exit(runVerifyManifestCli());
+}
+/* v8 ignore stop */
