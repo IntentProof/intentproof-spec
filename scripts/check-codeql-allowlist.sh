@@ -28,7 +28,7 @@ entries = []
 current = None
 for line in text.splitlines():
     stripped = line.strip()
-    if stripped.startswith("- ") and "rule_id:" in stripped:
+    if stripped.startswith("- "):
         if current:
             entries.append(current)
         current = {}

@@ -20,9 +20,8 @@ paths = [
   '''golden/''',
   '''fixtures/''',
 ]
-
-[allowlist.regexTarget]
 # Example test vectors and documentation placeholders only.
+regexTarget = "line"
 regexes = [
   '''EXAMPLE|PLACEHOLDER|REDACTED|xxxxxxxx''',
 ]

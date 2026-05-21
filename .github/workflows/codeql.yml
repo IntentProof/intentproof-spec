@@ -24,10 +24,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      - name: Install gitleaks
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
+          GITLEAKS_VERSION: v8.24.2
+        run: |
+          curl -sSfL \
+            "https://github.com/gitleaks/gitleaks/releases/download/${GITLEAKS_VERSION}/gitleaks_8.24.2_linux_x64.tar.gz" \
+            | tar -xzf - gitleaks
+          sudo install -m 755 gitleaks /usr/local/bin/gitleaks
+      - name: Run gitleaks
+        run: gitleaks detect --source . --config .gitleaks.toml
   analyze:
     name: "IntentProof Security: CodeQL (${{ matrix.language }})"
     needs: allowlist-expiry
