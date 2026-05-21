@@ -1,7 +1,11 @@
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { listManifestFiles } from './manifest_files';
+
+export const COSIGN_SIG_SUFFIX = '.cosign.sig';
+export const COSIGN_BUNDLE_SUFFIX = '.cosign.sigstore.json';
 
 export type GenerateManifestOptions = {
   projectRoot: string;
@@ -78,15 +82,39 @@ export function generateManifest(options: GenerateManifestOptions): GenerateMani
   return { ok: true, messages, verified };
 }
 
+function resolvePrivateKeyPath(projectRoot: string): { path: string; isTemp: boolean } {
+  const envKey = process.env.SPEC_INTEGRITY_PRIVATE_KEY?.trim();
+  if (envKey) {
+    const keyPath = path.join(os.tmpdir(), `spec-integrity-private-${process.pid}.pem`);
+    fs.writeFileSync(keyPath, `${envKey}\n`, { mode: 0o600 });
+    return { path: keyPath, isTemp: true };
+  }
+  return {
+    path: path.join(projectRoot, 'secrets', 'spec-integrity-private.pem'),
+    isTemp: false,
+  };
+}
+
 export function runGenerateManifestCli(): GenerateManifestResult {
   const projectRoot = path.join(__dirname, '..');
-  return generateManifest({
-    projectRoot,
-    publicKeyPath: path.join(projectRoot, 'well-known-keys', 'spec-integrity.pem'),
-    privateKeyPath: path.join(__dirname, '../secrets/spec-integrity-private.pem'),
-    manifestPath: path.join(__dirname, 'manifest.v1.json'),
-    sigPath: path.join(__dirname, 'manifest.v1.json.sig'),
-  });
+  const { path: privateKeyPath, isTemp } = resolvePrivateKeyPath(projectRoot);
+  try {
+    return generateManifest({
+      projectRoot,
+      publicKeyPath: path.join(projectRoot, 'well-known-keys', 'spec-integrity.pem'),
+      privateKeyPath,
+      manifestPath: path.join(__dirname, 'manifest.v1.json'),
+      sigPath: path.join(__dirname, 'manifest.v1.json.sig'),
+    });
+  } finally {
+    if (isTemp) {
+      try {
+        fs.unlinkSync(privateKeyPath);
+      } catch {
+        // ignore missing file
+      }
+    }
+  }
 }
 
 /* v8 ignore start */
