@@ -180,6 +180,28 @@ describe('integrity branches', () => {
     const result = runGenerateManifestCli();
     expect(result.ok).toBe(true);
   });
+
+  it('uses SPEC_INTEGRITY_PRIVATE_KEY env for CI-style generation', () => {
+    const dir = tmpDir('ip-gen-env-');
+    fs.mkdirSync(path.join(dir, 'schema'));
+    fs.writeFileSync(path.join(dir, 'schema/a.json'), '{}');
+    const { privateKey } = crypto.generateKeyPairSync('ed25519');
+    const pem = privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+    const previous = process.env.SPEC_INTEGRITY_PRIVATE_KEY;
+    process.env.SPEC_INTEGRITY_PRIVATE_KEY = pem.trim();
+    try {
+      const result = runGenerateManifestCli(dir);
+      expect(result.ok).toBe(true);
+      expect(result.verified).toBe(true);
+      expect(fs.existsSync(path.join(dir, 'integrity/manifest.v1.json'))).toBe(true);
+    } finally {
+      if (previous === undefined) {
+        delete process.env.SPEC_INTEGRITY_PRIVATE_KEY;
+      } else {
+        process.env.SPEC_INTEGRITY_PRIVATE_KEY = previous;
+      }
+    }
+  });
 });
 
 describe('runner additional branches', () => {

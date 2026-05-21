@@ -95,16 +95,16 @@ function resolvePrivateKeyPath(projectRoot: string): { path: string; isTemp: boo
   };
 }
 
-export function runGenerateManifestCli(): GenerateManifestResult {
-  const projectRoot = path.join(__dirname, '..');
-  const { path: privateKeyPath, isTemp } = resolvePrivateKeyPath(projectRoot);
+export function runGenerateManifestCli(projectRoot?: string): GenerateManifestResult {
+  const root = projectRoot ?? path.join(__dirname, '..');
+  const { path: privateKeyPath, isTemp } = resolvePrivateKeyPath(root);
   try {
     return generateManifest({
-      projectRoot,
-      publicKeyPath: path.join(projectRoot, 'well-known-keys', 'spec-integrity.pem'),
+      projectRoot: root,
+      publicKeyPath: path.join(root, 'well-known-keys', 'spec-integrity.pem'),
       privateKeyPath,
-      manifestPath: path.join(__dirname, 'manifest.v1.json'),
-      sigPath: path.join(__dirname, 'manifest.v1.json.sig'),
+      manifestPath: path.join(root, 'integrity', 'manifest.v1.json'),
+      sigPath: path.join(root, 'integrity', 'manifest.v1.json.sig'),
     });
   } finally {
     if (isTemp) {
