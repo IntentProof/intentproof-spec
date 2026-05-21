@@ -10,18 +10,14 @@ useDefault = true
 description = "Global allowlist paths for false positives"
 paths = [
   '''\.git/''',
-  '''coverage\.out''',
-  '''\.coverage''',
+  '''coverage/''',
   '''package-lock\.json''',
-  '''go\.sum''',
-  '''codeql-pack\.lock\.yml''',
-  '''keys/intentproof-security\.asc''',
-  '''keys/intentproof-security\.fingerprint\.json''',
   '''golden/''',
   '''fixtures/''',
+  '''reference-policies/''',
 ]
-# Example test vectors and documentation placeholders only.
-regexTarget = "line"
+
+[allowlist.regexTarget]
 regexes = [
   '''EXAMPLE|PLACEHOLDER|REDACTED|xxxxxxxx''',
 ]
