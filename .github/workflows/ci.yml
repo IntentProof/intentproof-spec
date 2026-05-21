@@ -36,7 +36,7 @@ jobs:
           repository: IntentProof/intentproof-tools
           path: intentproof-tools
 
-      - uses: actions/setup-go@40b3466c64957d331b6193b26c7cd62c6e411fd6
+      - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b
         with:
           go-version-file: intentproof-tools/go.mod
 
