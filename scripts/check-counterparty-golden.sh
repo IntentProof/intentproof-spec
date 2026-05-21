@@ -23,8 +23,27 @@ fi
 
 (
   cd "$TOOLS_DIR"
-  INTENTPROOF_SPEC_DIR="$ROOT" \
-    go test ./cmd/intentproof-verify -run TestGoldenCounterpartyVerifyStdout -count=1
+  output="$(
+    INTENTPROOF_SPEC_DIR="$ROOT" \
+      go test ./cmd/intentproof-verify -run '^TestGoldenCounterpartyVerifyStdout$' -count=1 -v 2>&1
+  )" || {
+    echo "$output" >&2
+    exit 1
+  }
+  if echo "$output" | grep -qE 'testing: warning: no tests to run|no tests to run'; then
+    echo "counterparty golden test missing in intentproof-tools checkout" >&2
+    exit 1
+  fi
+  if echo "$output" | grep -q '^--- SKIP: TestGoldenCounterpartyVerifyStdout'; then
+    echo "counterparty golden test skipped; check bundle path and INTENTPROOF_SPEC_DIR" >&2
+    echo "$output" >&2
+    exit 1
+  fi
+  if ! echo "$output" | grep -q '^--- PASS: TestGoldenCounterpartyVerifyStdout'; then
+    echo "counterparty golden verify test did not pass" >&2
+    echo "$output" >&2
+    exit 1
+  fi
 )
 
 echo "PASS: counterparty golden verify stdout matches expected sha256."
