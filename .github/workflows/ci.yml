@@ -24,3 +24,23 @@ jobs:
         run: |
           npm run test:coverage
           bash scripts/check-coverage.sh coverage/coverage-final.json 95
+
+  counterparty-golden:
+    name: "IntentProof CI: Counterparty Golden"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: IntentProof/intentproof-tools
+          path: intentproof-tools
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: intentproof-tools/go.mod
+
+      - name: Verify counterparty golden bundle stdout
+        env:
+          INTENTPROOF_TOOLS_DIR: intentproof-tools
+        run: bash scripts/check-counterparty-golden.sh .
