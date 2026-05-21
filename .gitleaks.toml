@@ -1,0 +1,28 @@
+# IntentProof gitleaks configuration.
+# See https://github.com/gitleaks/gitleaks for rule documentation.
+
+title = "IntentProof gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlist paths for false positives"
+paths = [
+  '''\.git/''',
+  '''coverage\.out''',
+  '''\.coverage''',
+  '''package-lock\.json''',
+  '''go\.sum''',
+  '''codeql-pack\.lock\.yml''',
+  '''keys/intentproof-security\.asc''',
+  '''keys/intentproof-security\.fingerprint\.json''',
+  '''golden/''',
+  '''fixtures/''',
+]
+
+[allowlist.regexTarget]
+# Example test vectors and documentation placeholders only.
+regexes = [
+  '''EXAMPLE|PLACEHOLDER|REDACTED|xxxxxxxx''',
+]
