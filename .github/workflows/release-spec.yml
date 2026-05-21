@@ -183,7 +183,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: spec-integrity-cosign
-          path: .
+          path: integrity
 
       - name: Build reproducible spec tarball
         env:
@@ -231,7 +231,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: spec-integrity-cosign
-          path: release-artifacts
+          path: release-artifacts/integrity
 
       - uses: actions/download-artifact@v4
         with:
