@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ROOT="${1:-.}"
+ROOT="$(cd "$ROOT" && pwd)"
 BUNDLE="${ROOT}/golden/counterparty/counterparty-refund.proof.tar.zst"
 EXPECTED="${ROOT}/golden/counterparty/expected-verify-stdout-sha256.txt"
 TOOLS_DIR="${INTENTPROOF_TOOLS_DIR:-../intentproof-tools}"
@@ -20,18 +21,10 @@ if [[ ! -d "$TOOLS_DIR" ]]; then
   exit 1
 fi
 
-mapfile -t want < "$EXPECTED"
-if [[ ${#want[@]} -ne 1 ]]; then
-  echo "Expected exactly one hash line in $EXPECTED" >&2
-  exit 1
-fi
+(
+  cd "$TOOLS_DIR"
+  INTENTPROOF_SPEC_DIR="$ROOT" \
+    go test ./cmd/intentproof-verify -run TestGoldenCounterpartyVerifyStdout -count=1
+)
 
-stdout="$(
-  cd "$TOOLS_DIR" && go run ./cmd/intentproof-verify "$BUNDLE"
-)"
-got="$(printf '%s' "$stdout" | sha256sum | awk '{print $1}')"
-if [[ "$got" != "${want[0]}" ]]; then
-  echo "counterparty golden stdout drift: got $got want ${want[0]}" >&2
-  exit 1
-fi
 echo "PASS: counterparty golden verify stdout matches expected sha256."
