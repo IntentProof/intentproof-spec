@@ -82,27 +82,39 @@ export function generateManifest(options: GenerateManifestOptions): GenerateMani
   return { ok: true, messages, verified };
 }
 
-function resolvePrivateKeyPath(projectRoot: string): string {
+function resolvePrivateKeyPath(projectRoot: string): { path: string; isTemp: boolean } {
   const envKey = process.env.SPEC_INTEGRITY_PRIVATE_KEY?.trim();
   if (envKey) {
     const keyPath = path.join(os.tmpdir(), `spec-integrity-private-${process.pid}.pem`);
-    fs.writeFileSync(keyPath, envKey.endsWith('\n') ? envKey : `${envKey}\n`, {
-      mode: 0o600,
-    });
-    return keyPath;
+    fs.writeFileSync(keyPath, `${envKey}\n`, { mode: 0o600 });
+    return { path: keyPath, isTemp: true };
   }
-  return path.join(projectRoot, 'secrets', 'spec-integrity-private.pem');
+  return {
+    path: path.join(projectRoot, 'secrets', 'spec-integrity-private.pem'),
+    isTemp: false,
+  };
 }
 
 export function runGenerateManifestCli(): GenerateManifestResult {
   const projectRoot = path.join(__dirname, '..');
-  return generateManifest({
-    projectRoot,
-    publicKeyPath: path.join(projectRoot, 'well-known-keys', 'spec-integrity.pem'),
-    privateKeyPath: resolvePrivateKeyPath(projectRoot),
-    manifestPath: path.join(__dirname, 'manifest.v1.json'),
-    sigPath: path.join(__dirname, 'manifest.v1.json.sig'),
-  });
+  const { path: privateKeyPath, isTemp } = resolvePrivateKeyPath(projectRoot);
+  try {
+    return generateManifest({
+      projectRoot,
+      publicKeyPath: path.join(projectRoot, 'well-known-keys', 'spec-integrity.pem'),
+      privateKeyPath,
+      manifestPath: path.join(__dirname, 'manifest.v1.json'),
+      sigPath: path.join(__dirname, 'manifest.v1.json.sig'),
+    });
+  } finally {
+    if (isTemp) {
+      try {
+        fs.unlinkSync(privateKeyPath);
+      } catch {
+        // ignore missing file
+      }
+    }
+  }
 }
 
 /* v8 ignore start */
