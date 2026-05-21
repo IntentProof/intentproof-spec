@@ -19,6 +19,9 @@ Canonical schemas, fixtures, and conformance tooling for IntentProof.
    `npx ts-node integrity/generate_manifest.ts` (requires
    `secrets/spec-integrity-private.pem`).
 
+See [`integrity/README.md`](integrity/README.md) for dual-trust-root
+verification (Ed25519 spec key and Cosign + Rekor).
+
 Reserved multi-agent delegation attributes on execution events are documented
 in `golden/multi-agent/README.md` (`intentproof.delegation.*` on
 `attributes`). Flow grouping and approval policies will consume them in later
