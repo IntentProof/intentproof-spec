@@ -5,8 +5,11 @@ set -euo pipefail
 
 ROOT="${1:-.}"
 CONFIG="${2:-.osv-scanner.toml}"
-shift 2 2>/dev/null || true
-EXTRA_LOCKFILES=("$@")
+if (( $# > 2 )); then
+  EXTRA_LOCKFILES=("${@:3}")
+else
+  EXTRA_LOCKFILES=()
+fi
 OSV_VERSION="${OSV_SCANNER_VERSION:-v2.2.2}"
 
 if ! command -v osv-scanner >/dev/null 2>&1; then
