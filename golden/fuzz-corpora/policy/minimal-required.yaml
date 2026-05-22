@@ -1,0 +1,12 @@
+policy_id: tnt.test.minimal
+tenant_id: tnt
+spec_version: 1.0.0
+scope:
+  match_action: demo.action
+rules:
+  - id: required-demo
+    type: required
+    action: demo.action
+    min: 1
+    where:
+      status: ok

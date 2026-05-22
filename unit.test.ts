@@ -30,12 +30,18 @@ import { validateProvenanceClasses } from './semantics/validate_provenance_class
 import { validateReferencePolicies } from './reference-policies/validate';
 
 describe('manifest_files', () => {
-  it('lists schema, golden, and compatibility json files', () => {
+  it('lists schema, golden, and compatibility inventoried files', () => {
     const root = path.join(__dirname);
     const files = listManifestFiles(root);
     expect(files.some((f) => f.endsWith('schema/policy.v1.schema.json'))).toBe(true);
     expect(files.some((f) => f.endsWith('golden/policy_cases.jsonl'))).toBe(true);
     expect(files.some((f) => f.endsWith('compatibility/matrix.v1.json'))).toBe(true);
+    expect(files.some((f) => f.endsWith('golden/fuzz-corpora/policy/minimal-required.yaml'))).toBe(
+      true,
+    );
+    expect(files.some((f) => f.endsWith('golden/fuzz-corpora/bundle/empty-input.bin'))).toBe(
+      true,
+    );
   });
 
   it('ignores missing subdirectories', () => {

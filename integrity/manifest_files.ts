@@ -3,9 +3,15 @@ import * as path from 'path';
 
 const MANIFEST_SUBDIRS = ['schema', 'golden', 'compatibility'] as const;
 
+const MANIFEST_EXTENSIONS = ['.json', '.jsonl', '.yaml', '.yml', '.bin'] as const;
+
+function isManifestFile(name: string): boolean {
+  return MANIFEST_EXTENSIONS.some((ext) => name.endsWith(ext));
+}
+
 /**
- * Lists all .json / .jsonl files under schema/, golden/ (recursive), and
- * compatibility/ for integrity manifest hashing.
+ * Lists inventoried golden, schema, and compatibility files for integrity
+ * manifest hashing (.json, .jsonl, .yaml, .yml, .bin).
  */
 export function listManifestFiles(projectRoot: string): string[] {
   const files: string[] = [];
@@ -16,7 +22,7 @@ export function listManifestFiles(projectRoot: string): string[] {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(full);
-      } else if (entry.name.endsWith('.json') || entry.name.endsWith('.jsonl')) {
+      } else if (isManifestFile(entry.name)) {
         files.push(full);
       }
     }
