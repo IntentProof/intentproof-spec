@@ -13,10 +13,12 @@ native fuzz tests.
 | `verifier/` | `FuzzVerify` (evaluator inputs) | `intentproof-tools/pkg/verifier` |
 | `bundle/` | `FuzzBundleVerify` (`.proof.tar.zst` bytes) | `intentproof-tools/pkg/bundle` |
 | `policy/` | `FuzzCompile` (YAML policy source) | `intentproof-tools/pkg/policy` |
+| `ingest/` | `FuzzParseExecutionEvent` (execution event JSON bodies) | `intentproof-core/pkg/ingest` |
 
 ## File format
 
 - `canon/` and `verifier/`: JSON documents (verifier cases wrap `flow`, `policy`, and `attestations`).
+- `ingest/`: JSON execution event bodies accepted by the hosted ingest parser.
 - `bundle/`: raw binary inputs (`.bin`).
 - `policy/`: YAML policy documents (`.yaml` / `.yml`).
 
