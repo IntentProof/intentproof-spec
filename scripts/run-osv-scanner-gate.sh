@@ -40,14 +40,17 @@ else
   args+=(--recursive "$ROOT")
 fi
 
+output_file="$(mktemp)"
+trap 'rm -f "$output_file"' EXIT
+
 set +e
-output="$(osv-scanner "${args[@]}" 2>&1)"
+osv-scanner "${args[@]}" >"$output_file" 2>&1
 status=$?
 set -e
 
-printf '%s\n' "$output"
+cat "$output_file"
 
-if [[ "$status" -eq 128 ]] && grep -q "No package sources found" <<<"$output"; then
+if [[ "$status" -eq 128 ]] && grep -q "No package sources found" "$output_file"; then
   echo "PASS: no scannable dependency manifests (OSV skipped)"
   exit 0
 fi
@@ -57,11 +60,12 @@ if [[ "$status" -gt 1 ]]; then
   exit "$status"
 fi
 
-python3 - "$output" <<'PY'
+python3 - "$output_file" <<'PY'
 import re
 import sys
 
-text = sys.argv[1]
+with open(sys.argv[1], encoding="utf-8") as fh:
+    text = fh.read()
 
 if "No issues found" in text:
     print("PASS: no OSV findings")
