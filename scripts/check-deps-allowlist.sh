@@ -29,14 +29,19 @@ current = None
 for line in text.splitlines():
     stripped = line.strip()
     if stripped.startswith("- "):
-        if current:
+        if current is not None:
             entries.append(current)
         current = {}
         item = stripped[2:].strip()
-        for field in ("id", "rule_id", "cve_id"):
-            m = re.search(rf"{field}:\s*(\S+)", item)
-            if m:
-                current["id"] = m.group(1)
+        m = re.search(r"(?:^|\s)id:\s*(\S+)", item)
+        if m:
+            current["id"] = m.group(1)
+        m = re.search(r"rule_id:\s*(\S+)", item)
+        if m:
+            current["id"] = m.group(1)
+        m = re.search(r"cve_id:\s*(\S+)", item)
+        if m:
+            current["id"] = m.group(1)
         m = re.search(r"expires:\s*(\S+)", item)
         if m:
             current["expires"] = m.group(1)
@@ -46,11 +51,16 @@ for line in text.splitlines():
     m = re.match(r"expires:\s*(\S+)", stripped)
     if m:
         current["expires"] = m.group(1)
-    for field in ("id", "rule_id", "cve_id"):
-        m = re.match(rf"{field}:\s*(\S+)", stripped)
-        if m:
-            current["id"] = m.group(1)
-if current:
+    m = re.match(r"(?:^|\s)id:\s*(\S+)", stripped)
+    if m:
+        current["id"] = m.group(1)
+    m = re.match(r"rule_id:\s*(\S+)", stripped)
+    if m:
+        current["id"] = m.group(1)
+    m = re.match(r"cve_id:\s*(\S+)", stripped)
+    if m:
+        current["id"] = m.group(1)
+if current is not None:
     entries.append(current)
 
 today = datetime.date.today()
