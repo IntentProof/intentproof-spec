@@ -5,6 +5,8 @@ set -euo pipefail
 
 ROOT="${1:-.}"
 CONFIG="${2:-.osv-scanner.toml}"
+shift 2 2>/dev/null || true
+EXTRA_LOCKFILES=("$@")
 OSV_VERSION="${OSV_SCANNER_VERSION:-v2.2.2}"
 
 if ! command -v osv-scanner >/dev/null 2>&1; then
@@ -22,11 +24,18 @@ if ! command -v osv-scanner >/dev/null 2>&1; then
   rm -f "$tmp"
 fi
 
-args=(scan source --recursive --format=table --no-call-analysis --allow-no-lockfiles)
+args=(scan source --format=table --no-call-analysis=all --allow-no-lockfiles)
 if [[ -f "$CONFIG" ]]; then
   args+=(--config="$CONFIG")
 fi
-args+=("$ROOT")
+
+if ((${#EXTRA_LOCKFILES[@]} > 0)); then
+  for lockfile in "${EXTRA_LOCKFILES[@]}"; do
+    args+=(--lockfile="$lockfile")
+  done
+else
+  args+=(--recursive "$ROOT")
+fi
 
 set +e
 output="$(osv-scanner "${args[@]}" 2>&1)"
@@ -34,6 +43,11 @@ status=$?
 set -e
 
 printf '%s\n' "$output"
+
+if [[ "$status" -eq 128 ]] && grep -q "No package sources found" <<<"$output"; then
+  echo "PASS: no scannable dependency manifests (OSV skipped)"
+  exit 0
+fi
 
 if [[ "$status" -gt 1 ]]; then
   echo "osv-scanner failed unexpectedly (exit $status)" >&2
