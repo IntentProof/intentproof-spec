@@ -1,7 +1,8 @@
 # Spec integrity manifest
 
-The integrity manifest hashes every schema and golden fixture file in
-`schema/`, `golden/`, and `compatibility/`. Each release ships:
+The integrity manifest hashes inventoried files under `schema/`, `golden/`,
+and `compatibility/` (`.json`, `.jsonl`, `.yaml`, `.yml`, and `.bin`).
+Each release ships:
 
 | Artifact | Trust root |
 |----------|------------|
