@@ -13,13 +13,16 @@ if ! command -v osv-scanner >/dev/null 2>&1; then
     aarch64 | arm64) arch=linux_arm64 ;;
     x86_64 | amd64) arch=linux_amd64 ;;
   esac
+  tmp="$(mktemp)"
   curl -sSfL \
-    "https://github.com/google/osv-scanner/releases/download/${OSV_VERSION}/osv-scanner_${OSV_VERSION#v}_${arch}.tar.gz" \
-    | tar -xz
-  sudo install -m 755 osv-scanner /usr/local/bin/osv-scanner
+    "https://github.com/google/osv-scanner/releases/download/${OSV_VERSION}/osv-scanner_${arch}" \
+    -o "$tmp"
+  chmod +x "$tmp"
+  sudo install -m 755 "$tmp" /usr/local/bin/osv-scanner
+  rm -f "$tmp"
 fi
 
-args=(scan source --recursive --format=table --no-call-analysis)
+args=(scan source --recursive --format=table --no-call-analysis --allow-no-lockfiles)
 if [[ -f "$CONFIG" ]]; then
   args+=(--config="$CONFIG")
 fi
