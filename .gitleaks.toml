@@ -8,7 +8,7 @@ useDefault = true
 
 [allowlist]
 description = "Global allowlist paths for false positives"
-regexTarget = "match"
+regexTarget = "secret"
 paths = [
   '''\.git/''',
   '''coverage/''',

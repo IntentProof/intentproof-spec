@@ -29,7 +29,7 @@ current = None
 for line in text.splitlines():
     stripped = line.strip()
     if stripped.startswith("- "):
-        if current:
+        if current is not None:
             entries.append(current)
         current = {}
         item = stripped[2:].strip()
@@ -48,7 +48,7 @@ for line in text.splitlines():
     m = re.match(r"rule_id:\s*(\S+)", stripped)
     if m:
         current["rule_id"] = m.group(1)
-if current:
+if current is not None:
     entries.append(current)
 
 today = datetime.date.today()
