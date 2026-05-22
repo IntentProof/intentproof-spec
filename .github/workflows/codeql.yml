@@ -18,7 +18,7 @@ jobs:
     name: "IntentProof Security: CodeQL Allowlist"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Validate allowlist expiry dates
         run: bash ./scripts/check-codeql-allowlist.sh
@@ -27,7 +27,7 @@ jobs:
     name: "IntentProof Security: Secret Scan"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -50,10 +50,10 @@ jobs:
       matrix:
         language: [javascript-typescript]
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Checkout intentproof-tools for custom query pack
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: IntentProof/intentproof-tools
           ref: b4c7cb147404238c59388c9fc7de963d69bc2bb3
@@ -62,7 +62,7 @@ jobs:
             codeql/intentproof-extra-javascript
           sparse-checkout-cone-mode: true
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: "20"
           cache: npm
@@ -71,12 +71,12 @@ jobs:
         run: npm ci
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@78ed0c7291d93e40c51b085850dc669a4c3ab73b
+        uses: github/codeql-action/init@458d36d7d4f47d0dd16ca424c1d3cda0060f1360
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality,./intentproof-tools/codeql/intentproof-extra-javascript
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@78ed0c7291d93e40c51b085850dc669a4c3ab73b
+        uses: github/codeql-action/analyze@458d36d7d4f47d0dd16ca424c1d3cda0060f1360
         with:
           category: "/language:${{ matrix.language }}"

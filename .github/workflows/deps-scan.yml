@@ -16,7 +16,7 @@ jobs:
     name: "IntentProof Security: Deps Allowlist"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Validate dependency allowlist expiry dates
         run: bash ./scripts/check-deps-allowlist.sh
@@ -26,9 +26,9 @@ jobs:
     needs: allowlist-expiry
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: npm
@@ -44,7 +44,7 @@ jobs:
     needs: allowlist-expiry
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run OSV-Scanner gate
         run: bash ./scripts/run-osv-scanner-gate.sh
