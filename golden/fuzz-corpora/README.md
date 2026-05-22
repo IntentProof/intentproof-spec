@@ -18,7 +18,7 @@ native fuzz tests.
 ## File format
 
 - `canon/` and `verifier/`: JSON documents (verifier cases wrap `flow`, `policy`, and `attestations`).
-- `ingest/`: JSON execution event bodies accepted by the hosted ingest parser.
+- `ingest/`: JSON execution event bodies conforming to `execution_event.v1.schema.json`.
 - `bundle/`: raw binary inputs (`.bin`).
 - `policy/`: YAML policy documents (`.yaml` / `.yml`).
 

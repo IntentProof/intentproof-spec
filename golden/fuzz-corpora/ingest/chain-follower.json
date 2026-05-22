@@ -4,17 +4,21 @@
   "tenant_id": "tnt_acme",
   "instance_id": "inst_1",
   "correlation_id": "corr_1",
+  "provenance_class": "sdk_attested_evidence",
   "prev_event_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
   "chain_position": 2,
+  "intent": "payments.refund.execute",
   "action": "payments.refund.execute",
   "status": "ok",
   "started_at": "2026-05-12T00:00:02Z",
   "completed_at": "2026-05-12T00:00:03Z",
   "duration_ms": 1000,
+  "untrusted_payload": false,
   "spec_version": "1.0.0",
+  "sdk_version": "1.0.0",
   "signature": {
     "alg": "ed25519",
     "key_id": "inst_1:k1",
-    "value": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=="
+    "value": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=="
   }
 }
