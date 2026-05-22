@@ -1,0 +1,30 @@
+{
+  "flow": {
+    "flow_id": "f1",
+    "tenant_id": "tnt",
+    "flow_merkle_root": "sha256:0000",
+    "events": [
+      {
+        "event_id": "e1",
+        "action": "pay",
+        "status": "ok",
+        "started_at": "2026-05-12T00:00:00Z",
+        "completed_at": "2026-05-12T00:00:01Z"
+      }
+    ]
+  },
+  "policy": {
+    "policy_id": "p1",
+    "tenant_id": "tnt",
+    "policy_version": 1,
+    "rules": [
+      {
+        "id": "r1",
+        "category": "required",
+        "severity": "medium",
+        "spec": { "action": "pay", "min": 1 }
+      }
+    ]
+  },
+  "attestations": null
+}
