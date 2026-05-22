@@ -1,0 +1,4 @@
+# IntentProof OSV-Scanner configuration.
+# CRITICAL and HIGH findings fail CI via deps-scan workflow severity filter.
+# Time-bounded HIGH allowlist entries live in .github/deps-allowlist.yml and
+# must be mirrored here under [[IgnoredVulns]] with matching ignoreUntil dates.
