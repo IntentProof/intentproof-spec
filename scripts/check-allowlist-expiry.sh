@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 # Validate allowlist YAML expiry dates (minimal parser, no PyYAML).
-# Usage: check-allowlist-expiry.sh [file] [id-field...]
+# Usage: check-allowlist-expiry.sh <allowlist-file> [id-field...]
 set -euo pipefail
 
-ALLOWLIST_FILE="${1:-.github/codeql-allowlist.yml}"
-shift || true
+if [[ $# -lt 1 || -z "${1:-}" ]]; then
+  echo "usage: check-allowlist-expiry.sh <allowlist-file> [id-field...]" >&2
+  exit 1
+fi
+
+ALLOWLIST_FILE="$1"
+shift
 ID_FIELDS=("$@")
 if ((${#ID_FIELDS[@]} == 0)); then
   ID_FIELDS=(rule_id)
