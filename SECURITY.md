@@ -18,9 +18,9 @@ Please include:
 ## Response Process
 
 IntentProof follows the coordinated security-release process published in
-[`IntentProof/intentproof-infra`](https://github.com/IntentProof/intentproof-infra/blob/main/SECURITY-PROCESS.md).
-That process defines severity tiers, SLAs, embargo handling, patch release
-steps, customer notification, and post-mortem requirements.
+[`IntentProof/intentproof-infra`](https://github.com/IntentProof/intentproof-infra/blob/main/SECURITY-POLICY.md).
+That policy defines severity tiers, SLAs, embargo handling, public disclosure,
+and dependency-scanning rules.
 
 Do not report security vulnerabilities through public GitHub Issues unless the
 issue is already public and contains no sensitive exploitation detail.
