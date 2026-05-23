@@ -1,0 +1,25 @@
+name: security-advisory-publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      ghsa_id:
+        description: Published GHSA id (GHSA-xxxx-xxxx-xxxx)
+        required: true
+        type: string
+      cve_id:
+        description: Optional CVE id assigned via GitHub-as-CNA
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  security-events: read
+
+jobs:
+  verify-osv-mirror:
+    uses: IntentProof/intentproof-infra/.github/workflows/security-advisory-publish.yml@064f4a1fb91998960343fb14cb912cbbd6c4cd82
+    with:
+      ghsa_id: ${{ inputs.ghsa_id }}
+      cve_id: ${{ inputs.cve_id }}
+    secrets: inherit
