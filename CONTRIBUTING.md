@@ -42,6 +42,12 @@ git push --force-with-lease
 Commits that do not include a valid `Signed-off-by` trailer will
 be rejected by CI.
 
+## Trademark
+
+"IntentProof" and "Verified by IntentProof" are trademarks of
+IntentProof, Inc. Apache 2.0 grants a copyright license; it does not grant a
+trademark license. See [`TRADEMARK.md`](TRADEMARK.md).
+
 ## License
 
 By contributing as a maintainer, you agree your commits are licensed
