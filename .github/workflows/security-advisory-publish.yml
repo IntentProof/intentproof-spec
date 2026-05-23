@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   verify-osv-mirror:
-    uses: IntentProof/intentproof-infra/.github/workflows/security-advisory-publish.yml@bba7e1e
+    uses: IntentProof/intentproof-infra/.github/workflows/security-advisory-publish.yml@064f4a1fb91998960343fb14cb912cbbd6c4cd82
     with:
       ghsa_id: ${{ inputs.ghsa_id }}
       cve_id: ${{ inputs.cve_id }}
