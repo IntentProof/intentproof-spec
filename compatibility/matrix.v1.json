@@ -1,19 +1,19 @@
 {
   "schema": "intentproof.compatibility.matrix.v1",
-  "generated_at": "2026-05-30T19:00:00Z",
+  "generated_at": "2026-05-30T20:10:00Z",
   "entries": [
     {
-      "tuple_id": "head-source-verified-2026-05-30",
+      "tuple_id": "head-source-verified-2026-05-30-phase4",
       "current": true,
       "spec_version": {
         "repo": "intentproof-spec",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "660526e20f9bd7d0912570620b49826e2b834781"
+        "source_ref": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
       },
       "tools_version": {
         "repo": "intentproof-tools",
         "version": "v0.0.0-release-dryrun.9",
-        "source_ref": "6eff6bfe1805b49513fab6197ceb4902473a47f9"
+        "source_ref": "e6d44a2968d10cd6803c5cb323938b6d11846770"
       },
       "core_version": {
         "repo": "intentproof-core",
@@ -40,14 +40,14 @@
         "version": "v0.0.0-source-verified.1",
         "source_ref": "6acd60b1d939a9bf21cc0b4174f6a73a5883f365"
       },
-      "verified_at": "2026-05-30T19:00:00Z",
+      "verified_at": "2026-05-30T20:10:00Z",
       "ci_run": {
         "system": "github-actions",
         "id": "26690264582",
         "url": "https://github.com/IntentProof/intentproof-spec/actions/runs/26690264582"
       },
       "release_status": "source-verified",
-      "notes": "Rolling HEAD tuple for ecosystem drift Phase 4. Supported bundle verification_profile verifier_version values: dev (pre-release builds) and the intentproof-verify release version stamped at export. Component versions without GitHub Releases use source-verified semver labels; change release_status to released only after every component version is published."
+      "notes": "Phase 4 merge tuple (adapter conformance + bundle verification profile). Supported bundle verification_profile verifier_version values: dev (pre-release builds) and the intentproof-verify release version stamped at export. Component versions without GitHub Releases use source-verified semver labels; change release_status to released only after every component version is published."
     }
   ]
 }

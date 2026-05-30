@@ -40,9 +40,6 @@ jobs:
           ref: main
           path: intentproof-tools
 
-      - name: Prefer tools bundle profile branch when gate not on main
-        run: bash scripts/prefer-tools-bundle-profile-ref.sh intentproof-tools
-
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b
         with:
           go-version-file: intentproof-tools/go.mod
@@ -82,9 +79,6 @@ jobs:
         env:
           PR_SIBLING_BRANCH: ${{ github.head_ref }}
         run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "$PR_SIBLING_BRANCH"
-
-      - name: Prefer tools bundle profile branch when gate not on main
-        run: bash scripts/prefer-tools-bundle-profile-ref.sh intentproof-tools
 
       - name: Verify ecosystem pin alignment
         env:
