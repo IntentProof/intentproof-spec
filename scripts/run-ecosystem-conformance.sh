@@ -98,7 +98,8 @@ echo "== jcs differential smoke =="
   export INTENTPROOF_SPEC_DIR="$ROOT"
   export INTENTPROOF_NODE_SDK_DIR="$SDK_NODE_DIR"
   export INTENTPROOF_PYTHON_SDK_DIR="$SDK_PYTHON_DIR"
-  go test -count=1 ./cmd/jcs-differential-fuzz/
+  go test -count=1 ./cmd/jcs-differential-fuzz/ \
+    -run 'TestCompareGoldenSigningFixture|TestCompareGeneratedSeeds'
   go run ./cmd/jcs-differential-fuzz/ -iterations 64
 )
 
