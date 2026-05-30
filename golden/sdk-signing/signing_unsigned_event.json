@@ -1,0 +1,25 @@
+{
+  "schema": "intentproof.event.v1",
+  "event_id": "01JMR9F0X4M9V0K2YH8M0X3D9N",
+  "tenant_id": "tnt_golden",
+  "instance_id": "inst_golden_test",
+  "correlation_id": "corr_golden_wrap",
+  "provenance_class": "sdk_attested_evidence",
+  "prev_event_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "chain_position": 1,
+  "intent": "Golden wrap fixture",
+  "action": "test.golden.wrap",
+  "status": "ok",
+  "started_at": "2026-05-11T14:32:17.421Z",
+  "completed_at": "2026-05-11T14:32:17.422Z",
+  "duration_ms": 1,
+  "inputs": [
+    5
+  ],
+  "output": 10,
+  "error": null,
+  "attributes": {},
+  "untrusted_payload": true,
+  "spec_version": "1.0.0",
+  "sdk_version": "python@0.1.0"
+}
