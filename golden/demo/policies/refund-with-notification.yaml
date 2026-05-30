@@ -1,0 +1,25 @@
+policy_id: demo.refund_with_notification
+policy_version: 1
+tenant_id: tnt_local
+spec_version: "1.0.0"
+scope:
+  any_event_action_in:
+    - payments.refund.execute
+    - ledger.entry.write
+    - customer.notify
+rules:
+  - id: require-refund
+    type: required
+    severity: medium
+    action: payments.refund.execute
+    min: 1
+  - id: require-ledger
+    type: required
+    severity: medium
+    action: ledger.entry.write
+    min: 1
+  - id: require-notify
+    type: required
+    severity: high
+    action: customer.notify
+    min: 1

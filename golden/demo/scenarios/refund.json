@@ -1,0 +1,22 @@
+{
+  "schema": "intentproof.golden_demo.scenario.v1",
+  "scenario": "refund",
+  "happy_path": {
+    "correlation_id": "corr_demo_refund_ok",
+    "actions": [
+      "payments.refund.execute",
+      "ledger.entry.write",
+      "customer.notify"
+    ],
+    "stripe_demo": true
+  },
+  "divergent_path": {
+    "correlation_id": "corr_demo_refund_missing_notify",
+    "actions": [
+      "payments.refund.execute",
+      "ledger.entry.write"
+    ],
+    "stripe_demo": true,
+    "expected_reason": "fail.required.missing"
+  }
+}
