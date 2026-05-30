@@ -223,6 +223,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v8
         with:
           name: spec-integrity-manifest
@@ -241,12 +246,13 @@ jobs:
       - name: Upload artifacts to GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           mapfile -t files < <(find release-artifacts -type f | sort)
           test "${#files[@]}" -gt 0
-          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release create "$RELEASE_TAG" --generate-notes
+          if ! gh release view "$RELEASE_TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --repo "$GH_REPO" --generate-notes
           fi
-          gh release upload "$RELEASE_TAG" "${files[@]}" --clobber
+          gh release upload "$RELEASE_TAG" --repo "$GH_REPO" "${files[@]}" --clobber
