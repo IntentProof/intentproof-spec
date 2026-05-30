@@ -10,13 +10,13 @@ resolve_repo_dir() {
   local sibling="$2"
   local ref_file="$3"
   local env_val="${!env_name:-}"
-  if [[ -n "$env_val" && -f "$env_val/$ref_file" ]]; then
+  if [[ -n "$env_val" && -d "$env_val" ]]; then
     printf '%s\n' "$(cd "$env_val" && pwd)"
     return 0
   fi
   local candidate
   for candidate in "$ROOT/../$sibling" "$ROOT/$sibling"; do
-    if [[ -f "$candidate/$ref_file" ]]; then
+    if [[ -d "$candidate/.git" ]]; then
       printf '%s\n' "$(cd "$candidate" && pwd)"
       return 0
     fi

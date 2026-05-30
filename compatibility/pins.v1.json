@@ -11,17 +11,17 @@
     {
       "repo": "intentproof-sdk-node",
       "ref_kind": "source_ref",
-      "sha": "ebf1c7f7585f6a8ce4993100ce66c42517b8106d"
+      "sha": "33798ee5d9ca16445cd2cd98259eadc4c0d1aab2"
     },
     {
       "repo": "intentproof-sdk-python",
       "ref_kind": "source_ref",
-      "sha": "62dc0738053fdab8d8a9178e0c7f674369599632"
+      "sha": "a964a3808bdd6047aa99dd069d83d8ce8ef983bf"
     },
     {
       "repo": "intentproof-sdk-go",
       "ref_kind": "source_ref",
-      "sha": "4ef01d2cc3d3dfc8f531d97b8cdae67adfe3a68e"
+      "sha": "04c56b2ee3973c14bdf0bce703d10a3c4a4d5dbe"
     }
   ]
 }

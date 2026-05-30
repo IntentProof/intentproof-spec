@@ -354,7 +354,7 @@ describe('compatibility pins', () => {
     expect(result.ok).toBe(false);
   });
 
-  it('fails when sdk SOURCE_REF drifts from manifest', () => {
+  it('fails when sdk checkout HEAD drifts from manifest', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-sdk-pins-'));
     fs.mkdirSync(path.join(dir, 'compatibility'));
     fs.mkdirSync(path.join(dir, 'integrity'));
@@ -380,7 +380,13 @@ describe('compatibility pins', () => {
       }),
     );
     const sdkDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-sdk-node-'));
-    fs.writeFileSync(path.join(sdkDir, 'SOURCE_REF'), '0000000000000000000000000000000000000000\n');
+    const { execSync } = require('child_process') as typeof import('child_process');
+    execSync('git init', { cwd: sdkDir });
+    execSync('git config user.email test@example.com', { cwd: sdkDir });
+    execSync('git config user.name test', { cwd: sdkDir });
+    fs.writeFileSync(path.join(sdkDir, 'README.md'), 'sdk\n');
+    execSync('git add README.md', { cwd: sdkDir });
+    execSync('git commit -m test', { cwd: sdkDir });
     const result = verifyCompatibilityPins({ root: dir, sdkNodeDir: sdkDir });
     expect(result.ok).toBe(false);
   });

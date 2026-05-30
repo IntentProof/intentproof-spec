@@ -18,17 +18,17 @@
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",
         "version": "v0.2.0",
-        "source_ref": "ebf1c7f7585f6a8ce4993100ce66c42517b8106d"
+        "source_ref": "33798ee5d9ca16445cd2cd98259eadc4c0d1aab2"
       },
       "sdk_python_version": {
         "repo": "intentproof-sdk-python",
         "version": "v0.2.0",
-        "source_ref": "62dc0738053fdab8d8a9178e0c7f674369599632"
+        "source_ref": "a964a3808bdd6047aa99dd069d83d8ce8ef983bf"
       },
       "sdk_go_version": {
         "repo": "intentproof-sdk-go",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "4ef01d2cc3d3dfc8f531d97b8cdae67adfe3a68e"
+        "source_ref": "04c56b2ee3973c14bdf0bce703d10a3c4a4d5dbe"
       },
       "verified_at": "2026-05-30T23:08:36Z",
       "ci_run": {

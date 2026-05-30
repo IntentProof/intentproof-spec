@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import Ajv2020 from 'ajv/dist/2020';
@@ -162,11 +163,33 @@ function verifySdkSourceRefs(
       fail(`Missing pins manifest entry for ${repo}`);
       continue;
     }
-    const actual = readSourceRefFile(dir);
-    if (actual !== expected.sha) {
-      fail(`${repo} SOURCE_REF ${actual} does not match pins manifest ${expected.sha}`);
-    } else {
-      messages.push(`[PASS] ${repo} SOURCE_REF matches pins manifest`);
+    let headSha: string;
+    try {
+      headSha = normalizeSha(
+        execSync('git rev-parse HEAD', { cwd: dir, encoding: 'utf-8' }),
+      );
+    } catch {
+      fail(`${repo} checkout is not a git repository: ${dir}`);
+      continue;
+    }
+    if (headSha !== expected.sha) {
+      fail(
+        `${repo} checkout HEAD ${headSha} does not match pins manifest ${expected.sha}`,
+      );
+      continue;
+    }
+    messages.push(`[PASS] ${repo} checkout HEAD matches pins manifest`);
+
+    const sourceRefPath = path.join(dir, SOURCE_REF_FILE);
+    if (fs.existsSync(sourceRefPath)) {
+      const actual = readSourceRefFile(dir);
+      if (actual !== expected.sha) {
+        fail(
+          `${repo} SOURCE_REF ${actual} does not match pins manifest ${expected.sha}`,
+        );
+      } else {
+        messages.push(`[PASS] ${repo} SOURCE_REF matches pins manifest`);
+      }
     }
   }
 }

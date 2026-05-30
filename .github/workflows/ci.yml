@@ -35,22 +35,47 @@ jobs:
           ref: main
           path: intentproof-tools
 
+      - name: Resolve pinned SDK source_ref SHAs
+        id: ecosystem_pins
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const pins = require('./compatibility/pins.v1.json');
+          const sha = (repo) => {
+            const entry = pins.entries.find(
+              (e) => e.repo === repo && e.ref_kind === 'source_ref',
+            );
+            if (!entry?.sha) {
+              console.error(`Missing source_ref pin for ${repo}`);
+              process.exit(1);
+            }
+            return entry.sha;
+          };
+          const out = process.env.GITHUB_OUTPUT;
+          const write = (key, value) => {
+            fs.appendFileSync(out, `${key}=${value}\n`);
+          };
+          write('sdk_node_ref', sha('intentproof-sdk-node'));
+          write('sdk_python_ref', sha('intentproof-sdk-python'));
+          write('sdk_go_ref', sha('intentproof-sdk-go'));
+          NODE
+
       - uses: actions/checkout@v6
         with:
           repository: IntentProof/intentproof-sdk-node
-          ref: main
+          ref: ${{ steps.ecosystem_pins.outputs.sdk_node_ref }}
           path: intentproof-sdk-node
 
       - uses: actions/checkout@v6
         with:
           repository: IntentProof/intentproof-sdk-python
-          ref: main
+          ref: ${{ steps.ecosystem_pins.outputs.sdk_python_ref }}
           path: intentproof-sdk-python
 
       - uses: actions/checkout@v6
         with:
           repository: IntentProof/intentproof-sdk-go
-          ref: main
+          ref: ${{ steps.ecosystem_pins.outputs.sdk_go_ref }}
           path: intentproof-sdk-go
 
       - uses: actions/setup-node@v6
