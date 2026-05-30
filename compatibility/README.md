@@ -42,6 +42,8 @@ make compatibility-matrix-verify
 
 The verifier validates `matrix.v1.json` against
 `matrix.v1.schema.json`. Each component `source_ref` must be a full 40-character
-git SHA. For rows with `release_status: "released"`, it also
+git SHA. The current matrix row (`"current": true`) must match pinned
+spec/tools/core SHAs recorded in [`pins.v1.json`](pins.v1.json); see
+`verify_pins.ts`. For rows with `release_status: "released"`, it also
 confirms that each referenced component version exists as a GitHub Release in
 the corresponding `IntentProof/*` repository.

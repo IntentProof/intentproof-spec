@@ -25,6 +25,9 @@ jobs:
           npm run test:coverage
           bash scripts/check-coverage.sh
 
+      - name: Verify compatibility tuple alignment
+        run: npm run compatibility-pins-verify
+
   counterparty-golden:
     name: "IntentProof CI: Counterparty Golden"
     runs-on: ubuntu-latest

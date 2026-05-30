@@ -335,6 +335,10 @@ describe('compatibility pins', () => {
       path.join(__dirname, 'compatibility/pins.v1.json'),
       path.join(dir, 'compatibility/pins.v1.json'),
     );
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/matrix.v1.json'),
+      path.join(dir, 'compatibility/matrix.v1.json'),
+    );
     fs.writeFileSync(
       path.join(dir, 'integrity', 'manifest.v1.json'),
       JSON.stringify({
@@ -357,6 +361,39 @@ describe('compatibility pins', () => {
     );
     const result = verifyCompatibilityPins({ root: dir, toolsDir });
     expect(result.ok).toBe(false);
+  });
+
+  it('fails when current matrix row drifts from pins manifest', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-matrix-pins-'));
+    fs.mkdirSync(path.join(dir, 'compatibility'));
+    fs.mkdirSync(path.join(dir, 'integrity'));
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/pins.v1.schema.json'),
+      path.join(dir, 'compatibility/pins.v1.schema.json'),
+    );
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/pins.v1.json'),
+      path.join(dir, 'compatibility/pins.v1.json'),
+    );
+    const matrix = JSON.parse(
+      fs.readFileSync(path.join(__dirname, 'compatibility/matrix.v1.json'), 'utf-8'),
+    ) as { entries: Array<Record<string, unknown>> };
+    const entry = matrix.entries[0] as Record<string, unknown>;
+    const spec = entry.spec_version as Record<string, string>;
+    spec.source_ref = '0000000000000000000000000000000000000000';
+    fs.writeFileSync(path.join(dir, 'compatibility/matrix.v1.json'), JSON.stringify(matrix));
+    fs.writeFileSync(
+      path.join(dir, 'integrity/manifest.v1.json'),
+      JSON.stringify({
+        files: {
+          'compatibility/pins.v1.json': 'sha256:abc',
+          'compatibility/pins.v1.schema.json': 'sha256:abc',
+        },
+      }),
+    );
+    const result = verifyCompatibilityPins({ root: dir });
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/Matrix spec_version source_ref/);
   });
 });
 
