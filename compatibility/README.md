@@ -13,6 +13,23 @@ conformance runners.
 At most one row sets `"current": true`. CI checks that row against
 `pins.v1.json` where configured.
 
+## Drift protection (CI)
+
+Cross-repo drift is blocked in GitHub Actions:
+
+| Repo | Gate |
+|------|------|
+| `intentproof-spec` | `scripts/check-ecosystem-pins.sh` — `pins.spec_ref` matches `HEAD`, tools `SPEC_REF` matches pins, matrix schema |
+| `intentproof-tools` | Checkout spec at `SPEC_REF`; `scripts/check-spec-conformance.sh` after `go test` |
+| SDK repos | Checkout spec at `intentproof-tools` `SPEC_REF` (not floating `main`); `check-sdk-signing-fixtures-sync.sh` |
+
+Local parity:
+
+```bash
+# From intentproof-spec (sibling intentproof-tools required)
+bash scripts/check-ecosystem-pins.sh
+```
+
 ## Update (source-verified)
 
 1. Merge the driving change (usually spec fixtures/schemas first).
