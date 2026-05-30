@@ -3,7 +3,7 @@ import * as path from 'path';
 
 const MANIFEST_SUBDIRS = ['schema', 'golden', 'compatibility'] as const;
 
-const MANIFEST_EXTENSIONS = ['.json', '.jsonl', '.yaml', '.yml', '.bin'] as const;
+const MANIFEST_EXTENSIONS = ['.json', '.jsonl', '.yaml', '.yml', '.bin', '.bytes', '.txt'] as const;
 
 function isManifestFile(name: string): boolean {
   return MANIFEST_EXTENSIONS.some((ext) => name.endsWith(ext));
@@ -11,7 +11,7 @@ function isManifestFile(name: string): boolean {
 
 /**
  * Lists inventoried golden, schema, and compatibility files for integrity
- * manifest hashing (.json, .jsonl, .yaml, .yml, .bin).
+ * manifest hashing (.json, .jsonl, .yaml, .yml, .bin, .bytes, and .txt).
  */
 export function listManifestFiles(projectRoot: string): string[] {
   const files: string[] = [];

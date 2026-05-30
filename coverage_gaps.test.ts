@@ -22,6 +22,11 @@ import {
   runValidateProvenanceClassesCli,
 } from './semantics/validate_provenance_classes';
 import { validateReferencePolicies, runValidateReferencePoliciesCli } from './reference-policies/validate';
+import {
+  runStripeDemoFixtureTests,
+  runStripeDemoFixturesCli,
+  verifyStripeDemoSignature,
+} from './conformance/stripe_demo_fixtures';
 
 function tmpDir(prefix: string): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -502,5 +507,62 @@ describe('generateManifest CLI failure path', () => {
       generateIfMissing: false,
     });
     expect(result.ok).toBe(false);
+  });
+});
+
+describe('stripe demo fixture failure branches', () => {
+  it('reports sha256 mismatch', () => {
+    const dir = tmpDir('ip-stripe-demo-');
+    fs.writeFileSync(path.join(dir, 'refund-created.bytes'), '{"id":"evt_x","type":"refund.updated"}');
+    fs.writeFileSync(path.join(dir, 'refund-created.headers.json'), '{"stripe-signature":"t=1,v1=ab"}');
+    fs.writeFileSync(path.join(dir, 'refund-created.sha256.txt'), 'deadbeef');
+    const result = runStripeDemoFixtureTests(dir);
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/sha256 mismatch/);
+  });
+
+  it('reports invalid JSON body', () => {
+    const dir = tmpDir('ip-stripe-demo-');
+    const body = Buffer.from('not-json');
+    fs.writeFileSync(path.join(dir, 'refund-created.bytes'), body);
+    fs.writeFileSync(path.join(dir, 'refund-created.headers.json'), '{}');
+    fs.writeFileSync(path.join(dir, 'refund-created.sha256.txt'), crypto.createHash('sha256').update(body).digest('hex'));
+    const result = runStripeDemoFixtureTests(dir);
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/not valid JSON/);
+  });
+
+  it('reports missing stripe event fields', () => {
+    const dir = tmpDir('ip-stripe-demo-');
+    const body = Buffer.from('{"foo":1}');
+    fs.writeFileSync(path.join(dir, 'refund-created.bytes'), body);
+    fs.writeFileSync(path.join(dir, 'refund-created.headers.json'), '{"stripe-signature":"t=1,v1=ab"}');
+    fs.writeFileSync(path.join(dir, 'refund-created.sha256.txt'), crypto.createHash('sha256').update(body).digest('hex'));
+    const result = runStripeDemoFixtureTests(dir);
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/missing stripe event id\/type/);
+  });
+
+  it('reports signature verification failure', () => {
+    const dir = tmpDir('ip-stripe-demo-');
+    const body = Buffer.from('{"id":"evt_x","type":"refund.updated"}');
+    fs.writeFileSync(path.join(dir, 'refund-created.bytes'), body);
+    fs.writeFileSync(path.join(dir, 'refund-created.headers.json'), '{"stripe-signature":"t=1704067200,v1=deadbeef"}');
+    fs.writeFileSync(path.join(dir, 'refund-created.sha256.txt'), crypto.createHash('sha256').update(body).digest('hex'));
+    const result = runStripeDemoFixtureTests(dir);
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/signature verification failed/);
+  });
+
+  it('verifyStripeDemoSignature rejects missing and stale signatures', () => {
+    const body = Buffer.from('{}');
+    expect(verifyStripeDemoSignature('secret', {}, body, 100)).toBe(false);
+    expect(
+      verifyStripeDemoSignature('secret', { 'stripe-signature': 't=100,v1=ab' }, body, 500),
+    ).toBe(false);
+  });
+
+  it('runs stripe demo fixtures CLI successfully', () => {
+    expect(runStripeDemoFixturesCli()).toBe(0);
   });
 });

@@ -49,6 +49,9 @@ describe('CLI entrypoints', () => {
     expect(runTsScript('conformance/jcs_conformance.ts')).toContain('All JCS conformance checks passed');
     expect(runTsScript('conformance/agent_manifest_test.ts')).toContain('All agent manifest projection checks passed');
     expect(runTsScript('conformance/webhook_findings.ts')).toContain('All webhook finding signature checks passed');
+    expect(runTsScript('conformance/stripe_demo_fixtures.ts')).toContain(
+      'All stripe@demo golden fixture checks passed',
+    );
     expect(runTsScript('integrity/verify_manifest.ts')).toContain('All integrity checks passed');
     expect(runTsScript('compatibility/verify_matrix.ts')).toContain('Compatibility matrix schema validated');
     expect(runTsScript('semantics/validate_reasons.ts')).toContain('reasons.json:');
