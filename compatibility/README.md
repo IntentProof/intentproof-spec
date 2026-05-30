@@ -88,6 +88,23 @@ referenced component version exists as a GitHub Release in the corresponding
 Spec CI runs `compatibility-pins-verify` on every PR; ecosystem workflows run
 the full cross-repo script when tools and core are checked out.
 
+## Ecosystem conformance workflow
+
+`IntentProof CI: Ecosystem Conformance` (`.github/workflows/ecosystem-conformance.yml`)
+runs on pull requests and pushes that touch:
+
+- `schema/**`, `golden/**`, `reference-policies/**`
+- `compatibility/**`, `conformance/**`
+- `scripts/run-ecosystem-conformance.sh`
+
+It checks out tools, core, and SDK repositories at the current tuple SHAs
+recorded in `pins.v1.json` / the `"current": true` matrix row, then runs
+`scripts/run-ecosystem-conformance.sh` (spec oracle, cross-repo pin gate,
+tools/core spec conformance, SDK signing golden tests, JCS differential smoke).
+
+Use [`compatibility-tuple-follow-up.md`](compatibility-tuple-follow-up.md) when
+opening the spec PR that refreshes tuple records after component releases.
+
 ## Related documents
 
 - [`PINS.md`](PINS.md) — pin locations and bump order
