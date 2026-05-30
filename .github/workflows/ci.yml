@@ -23,6 +23,30 @@ jobs:
       - name: Run tests
         run: npm test
 
+  ecosystem-pins:
+    name: "IntentProof CI: Ecosystem Pins"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-tools
+          ref: main
+          path: intentproof-tools
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify pins, matrix, and tools SPEC_REF
+        env:
+          INTENTPROOF_TOOLS_DIR: intentproof-tools
+        run: bash scripts/check-ecosystem-pins.sh
+
   counterparty-golden:
     name: "IntentProof CI: Counterparty Golden"
     runs-on: ubuntu-latest
