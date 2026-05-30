@@ -8,17 +8,17 @@
       "spec_version": {
         "repo": "intentproof-spec",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "05eb3e1ab10a03b688f794c01784b6e04070bc21"
+        "source_ref": "660526e20f9bd7d0912570620b49826e2b834781"
       },
       "tools_version": {
         "repo": "intentproof-tools",
         "version": "v0.0.0-release-dryrun.9",
-        "source_ref": "55867cf91f8b6c36eaff678c3e6271cd6b0d895a"
+        "source_ref": "6eff6bfe1805b49513fab6197ceb4902473a47f9"
       },
       "core_version": {
         "repo": "intentproof-core",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "2817566ee1b7fc01172fb59a24817af65a76e6be"
+        "source_ref": "4a90444ff04d389768a76f9f5d7b8f21500d13d4"
       },
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",

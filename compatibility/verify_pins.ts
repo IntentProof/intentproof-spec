@@ -71,6 +71,76 @@ function entriesForKind(entries: PinEntry[], refKind: string): PinEntry[] {
   return entries.filter((entry) => entry.ref_kind === refKind);
 }
 
+type MatrixComponent = {
+  repo: string;
+  version: string;
+  source_ref: string;
+};
+
+type CurrentMatrixEntry = {
+  current?: boolean;
+  spec_version: MatrixComponent;
+  tools_version: MatrixComponent;
+  core_version: MatrixComponent;
+};
+
+function pinShaForKind(pins: PinsDocument, refKind: string): string | undefined {
+  return pins.entries.find((entry) => entry.ref_kind === refKind)?.sha;
+}
+
+export function verifyCurrentMatrixPinAlignment(
+  root: string,
+  pins: PinsDocument,
+  fail: (msg: string) => void,
+  messages: string[],
+): void {
+  const matrixPath = path.join(root, 'compatibility', 'matrix.v1.json');
+  if (!fs.existsSync(matrixPath)) {
+    fail('Missing compatibility/matrix.v1.json for matrix pin alignment');
+    return;
+  }
+  const matrix = readJSON(matrixPath) as { entries: CurrentMatrixEntry[] };
+  const current = matrix.entries.find((entry) => entry.current === true);
+  if (!current) {
+    fail('No current matrix entry to check against pins manifest');
+    return;
+  }
+  messages.push('[PASS] Found current matrix entry');
+
+  const checks: Array<{ key: keyof CurrentMatrixEntry; label: string; expected?: string }> = [
+    { key: 'spec_version', label: 'spec_version', expected: pins.spec_ref },
+    {
+      key: 'tools_version',
+      label: 'tools_version',
+      expected: pinShaForKind(pins, 'oss_fuzz_tools_ref'),
+    },
+    {
+      key: 'core_version',
+      label: 'core_version',
+      expected: pinShaForKind(pins, 'oss_fuzz_core_ref'),
+    },
+  ];
+
+  for (const check of checks) {
+    const component = current[check.key];
+    if (!component || typeof component !== 'object' || !('source_ref' in component)) {
+      fail(`Matrix entry missing ${check.label}`);
+      continue;
+    }
+    if (!check.expected) {
+      fail(`Missing pins manifest entry for ${check.label}`);
+      continue;
+    }
+    if (component.source_ref !== check.expected) {
+      fail(
+        `Matrix ${check.label} source_ref ${component.source_ref} does not match pins manifest ${check.expected}`,
+      );
+    } else {
+      messages.push(`[PASS] Matrix ${check.label} matches pins manifest`);
+    }
+  }
+}
+
 export function verifyCompatibilityPins(options: VerifyPinsOptions = {}): {
   ok: boolean;
   messages: string[];
@@ -187,6 +257,8 @@ export function verifyCompatibilityPins(options: VerifyPinsOptions = {}): {
       messages.push('[PASS] tools and core SPEC_REF values match');
     }
   }
+
+  verifyCurrentMatrixPinAlignment(root, pins, fail, messages);
 
   return { ok: !hasError, messages };
 }
