@@ -14,6 +14,7 @@ JSON Schemas, golden fixtures, and cross-language conformance runner.
 - JSON Schemas in `schema/`
 - Golden fixtures in `golden/` (including `golden/multi-agent/` delegation cases)
 - Cross-repository compatibility matrix in `compatibility/`
+- Ecosystem pin contract in `compatibility/PINS.md` and `compatibility/pins.v1.json`
 - Conformance runner in `conformance/runner.ts`
 - Integrity manifest/signature tooling in `integrity/`
 
@@ -27,6 +28,7 @@ npm install
 
 - Run the conformance runner (below) against golden fixtures.
 - Verify compatibility matrix drift: `make compatibility-matrix-verify`
+- Verify ecosystem pin manifest: `make compatibility-pins-verify`
 - Dual-trust-root integrity verification (Ed25519 + Cosign/Rekor):
   [`integrity/README.md`](integrity/README.md)
 
@@ -40,6 +42,7 @@ platform work.
 ```bash
 npx ts-node conformance/runner.ts
 make compatibility-matrix-verify
+make compatibility-pins-verify
 ```
 
 CI runs schema validation, conformance, and integrity checks.

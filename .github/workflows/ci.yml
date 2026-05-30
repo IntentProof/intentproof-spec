@@ -45,3 +45,34 @@ jobs:
         env:
           INTENTPROOF_TOOLS_DIR: intentproof-tools
         run: bash scripts/check-counterparty-golden.sh .
+
+  ecosystem-pins:
+    name: "IntentProof CI: Ecosystem Pins"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: IntentProof/intentproof-tools
+          ref: main
+          path: intentproof-tools
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: IntentProof/intentproof-core
+          ref: main
+          path: intentproof-core
+
+      - name: Verify ecosystem pin alignment
+        env:
+          INTENTPROOF_TOOLS_DIR: intentproof-tools
+          INTENTPROOF_CORE_DIR: intentproof-core
+        run: bash scripts/check-ecosystem-pins.sh

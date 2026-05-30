@@ -25,6 +25,7 @@ import {
   githubReleaseExistsViaHttps,
   verifyCompatibilityMatrix,
 } from './compatibility/verify_matrix';
+import { verifyCompatibilityPins } from './compatibility/verify_pins';
 import { validateReasons } from './semantics/validate_reasons';
 import { validateProvenanceClasses } from './semantics/validate_provenance_classes';
 import { validateReferencePolicies } from './reference-policies/validate';
@@ -254,6 +255,49 @@ describe('compatibility matrix', () => {
       releaseExists: async () => true,
     });
     expect(ok.ok).toBe(true);
+  });
+});
+
+describe('compatibility pins', () => {
+  it('validates schema and manifest coverage', () => {
+    const result = verifyCompatibilityPins({ root: __dirname });
+    expect(result.ok).toBe(true);
+  });
+
+  it('fails when tools SPEC_REF drifts from manifest', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-pins-'));
+    fs.mkdirSync(path.join(dir, 'compatibility'));
+    fs.mkdirSync(path.join(dir, 'integrity'));
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/pins.v1.schema.json'),
+      path.join(dir, 'compatibility/pins.v1.schema.json'),
+    );
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/pins.v1.json'),
+      path.join(dir, 'compatibility/pins.v1.json'),
+    );
+    fs.writeFileSync(
+      path.join(dir, 'integrity', 'manifest.v1.json'),
+      JSON.stringify({
+        files: {
+          'compatibility/pins.v1.json': 'sha256:abc',
+          'compatibility/pins.v1.schema.json': 'sha256:abc',
+        },
+      }),
+    );
+    const toolsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-tools-'));
+    fs.writeFileSync(path.join(toolsDir, 'SPEC_REF'), '0000000000000000000000000000000000000000\n');
+    fs.mkdirSync(path.join(toolsDir, 'contrib/oss-fuzz/intentproof'), { recursive: true });
+    fs.writeFileSync(
+      path.join(toolsDir, 'contrib/oss-fuzz/intentproof/pins.env'),
+      [
+        'TOOLS_REF=19ccaeb9bf61c2c8fc9eaeeb4dc5a8e5e7ea51ab',
+        'SPEC_REF=660526e20f9bd7d0912570620b49826e2b834781',
+        'CORE_REF=b0a7a6f6b1bff674948d34251e70026556e06af0',
+      ].join('\n') + '\n',
+    );
+    const result = verifyCompatibilityPins({ root: dir, toolsDir });
+    expect(result.ok).toBe(false);
   });
 });
 

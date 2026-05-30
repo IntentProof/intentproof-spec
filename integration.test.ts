@@ -7,6 +7,7 @@ import { runWebhookFindingTests } from './conformance/webhook_findings';
 import { runStripeDemoFixtureTests } from './conformance/stripe_demo_fixtures';
 import { verifyManifest } from './integrity/verify_manifest';
 import { verifyCompatibilityMatrix } from './compatibility/verify_matrix';
+import { verifyCompatibilityPins } from './compatibility/verify_pins';
 import { validateReasons } from './semantics/validate_reasons';
 import { validateProvenanceClasses } from './semantics/validate_provenance_classes';
 import { validateReferencePolicies } from './reference-policies/validate';
@@ -48,6 +49,11 @@ describe('integration suite', () => {
   it('compatibility matrix validates (source-verified entries skip release checks)', async () => {
     const result = await verifyCompatibilityMatrix({ root });
     expect(result.ok).toBe(true);
+  });
+
+  it('compatibility pins manifest validates', () => {
+    const result = verifyCompatibilityPins({ root });
+    expect(result.ok, result.messages.filter((m) => m.startsWith('[FAIL]')).join('\n')).toBe(true);
   });
 
   it('reasons vocabulary validates', () => {

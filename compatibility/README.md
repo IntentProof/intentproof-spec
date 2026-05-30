@@ -4,6 +4,9 @@
 versioned IntentProof repositories. Each row states which versions of the spec,
 tools, core services, SDKs, and dashboard were verified together.
 
+Cross-repository **pin discipline** (`SPEC_REF`, OSS-Fuzz SHAs) is documented in
+[`PINS.md`](PINS.md) and recorded in [`pins.v1.json`](pins.v1.json).
+
 ## Updating The Matrix
 
 Update the matrix whenever any listed repository publishes a release that
