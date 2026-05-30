@@ -21,7 +21,7 @@ Cross-repo drift is blocked in GitHub Actions:
 |------|------|
 | `intentproof-spec` | `scripts/check-ecosystem-pins.sh` — `pins.spec_ref` matches `HEAD`, tools `SPEC_REF` matches pins, matrix schema |
 | `intentproof-tools` | Checkout spec at `SPEC_REF`; `scripts/check-spec-conformance.sh` after `go test` |
-| SDK repos | Checkout spec at `intentproof-tools` `SPEC_REF` (not floating `main`); `check-sdk-signing-fixtures-sync.sh` |
+| SDK repos | `SOURCE_REF` must match `HEAD`; spec CI checks all SDK `SOURCE_REF` vs pins/matrix; tests use spec at tools `SPEC_REF`; `check-sdk-signing-fixtures-sync.sh` |
 
 Local parity:
 

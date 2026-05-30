@@ -24,10 +24,15 @@ make compatibility-pins-verify
 | Repository | File | Purpose |
 |------------|------|---------|
 | `intentproof-tools` | `SPEC_REF` | Spec commit used in tools CI |
+| `intentproof-sdk-*` | `SOURCE_REF` | That SDK repo commit in the current tuple |
 | `intentproof-spec` | `compatibility/pins.v1.json` | Manifest of current SHAs |
 | `intentproof-spec` | `compatibility/matrix.v1.json` | Tuple history |
 
-`SPEC_REF` must be a full 40-character lowercase git SHA.
+`SPEC_REF` and `SOURCE_REF` must be full 40-character lowercase git SHAs.
+Each SDK runs `scripts/check-source-ref.sh` to catch commits on `main` that
+forgot to bump `SOURCE_REF`. Spec CI checks out each SDK at the pinned
+`source_ref` SHA and verifies `git rev-parse HEAD` matches pins; when
+`SOURCE_REF` is present it must match that same SHA (tuple tip commit).
 
 ## When to bump
 

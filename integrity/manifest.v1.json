@@ -1,9 +1,9 @@
 {
   "files": {
-    "compatibility/matrix.v1.json": "sha256:7d845a2b19d8e3f885240b90e11bc21dccd6db2787ab5ffbe4ae2f712ecf412a",
+    "compatibility/matrix.v1.json": "sha256:2e200f233bdaf9f0fd34972c6ebc4ae407ebc08e3a4e67718c6f6e483411b4f3",
     "compatibility/matrix.v1.schema.json": "sha256:c636c37cf5e2f015b621b4b49a1b8335a5c6047d0d606eee0793e0448473e450",
-    "compatibility/pins.v1.json": "sha256:08539500080a6a295ab883d6291608cb372994a6e30c68823c37fbeab3f316a8",
-    "compatibility/pins.v1.schema.json": "sha256:1dd12220cca6c1320bf229462af260ef63ce5c36a4a2aa85319156e84aebbc36",
+    "compatibility/pins.v1.json": "sha256:eeb9782b86bc0871b157ef6e7387f7879a65d462810d44c9cb9d03d9c5c1d0a3",
+    "compatibility/pins.v1.schema.json": "sha256:88236c64fab91a99bf0690ebe26091faa2c0ee91c0a2327d0815165637f5fcca",
     "golden/agent-manifest_cases.jsonl": "sha256:cd6f44a0e97a522e8c93f8b1e55c9065a8b4f1764f35c2ad13e2a2fe9813afa2",
     "golden/attestation_cases.jsonl": "sha256:1736ff3e2660a88dfa704bf8a1be8cdaccd3be86583860426c026b295d8e5314",
     "golden/bundle-manifest_cases.jsonl": "sha256:0eb84e21aaf6b8d2bd64d814b8742728872138aa8eb17d0ec8a9e8a00cde98ab",

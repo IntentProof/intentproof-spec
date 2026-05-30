@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
-# Verify tools SPEC_REF and matrix alignment against pins.v1.json.
+# Verify tools SPEC_REF, SDK SOURCE_REF, and matrix alignment against pins.v1.json.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-resolve_tools_dir() {
-  local candidate
-  if [[ -n "${INTENTPROOF_TOOLS_DIR:-}" && -f "${INTENTPROOF_TOOLS_DIR}/SPEC_REF" ]]; then
-    printf '%s\n' "$(cd "${INTENTPROOF_TOOLS_DIR}" && pwd)"
+resolve_repo_dir() {
+  local env_name="$1"
+  local sibling="$2"
+  local ref_file="$3"
+  local env_val="${!env_name:-}"
+  if [[ -n "$env_val" && -d "$env_val" ]]; then
+    printf '%s\n' "$(cd "$env_val" && pwd)"
     return 0
   fi
-  for candidate in "$ROOT/../intentproof-tools" "$ROOT/intentproof-tools"; do
-    if [[ -f "$candidate/SPEC_REF" ]]; then
+  local candidate
+  for candidate in "$ROOT/../$sibling" "$ROOT/$sibling"; do
+    if [[ -d "$candidate/.git" ]]; then
       printf '%s\n' "$(cd "$candidate" && pwd)"
       return 0
     fi
@@ -21,11 +25,34 @@ resolve_tools_dir() {
 }
 
 TOOLS_DIR=""
-if ! TOOLS_DIR="$(resolve_tools_dir)"; then
+SDK_NODE_DIR=""
+SDK_PYTHON_DIR=""
+SDK_GO_DIR=""
+
+if ! TOOLS_DIR="$(resolve_repo_dir INTENTPROOF_TOOLS_DIR intentproof-tools SPEC_REF)"; then
   echo "intentproof-tools checkout not found; set INTENTPROOF_TOOLS_DIR" >&2
   exit 2
 fi
+for pair in \
+  "INTENTPROOF_SDK_NODE_DIR intentproof-sdk-node SOURCE_REF" \
+  "INTENTPROOF_SDK_PYTHON_DIR intentproof-sdk-python SOURCE_REF" \
+  "INTENTPROOF_SDK_GO_DIR intentproof-sdk-go SOURCE_REF"; do
+  set -- $pair
+  if ! dir="$(resolve_repo_dir "$1" "$2" "$3")"; then
+    echo "$2 checkout not found; set $1" >&2
+    exit 2
+  fi
+  case "$2" in
+    intentproof-sdk-node) SDK_NODE_DIR="$dir" ;;
+    intentproof-sdk-python) SDK_PYTHON_DIR="$dir" ;;
+    intentproof-sdk-go) SDK_GO_DIR="$dir" ;;
+  esac
+done
+
 export INTENTPROOF_TOOLS_DIR="$TOOLS_DIR"
+export INTENTPROOF_SDK_NODE_DIR="$SDK_NODE_DIR"
+export INTENTPROOF_SDK_PYTHON_DIR="$SDK_PYTHON_DIR"
+export INTENTPROOF_SDK_GO_DIR="$SDK_GO_DIR"
 
 HEAD="$(git rev-parse HEAD)"
 PINS_REF="$(node -e "const p=require('./compatibility/pins.v1.json'); process.stdout.write(p.spec_ref)")"
@@ -40,7 +67,6 @@ if ! git merge-base --is-ancestor "$PINS_REF" HEAD; then
   exit 1
 fi
 
-# Paths that define the spec revision consumers (tools/SDKs) must pin.
 PINNED_PATHS=(schema golden reference-policies)
 if git diff --name-only "$PINS_REF" HEAD -- "${PINNED_PATHS[@]}" | grep -q .; then
   if [[ "$HEAD" != "$PINS_REF" ]]; then
@@ -52,7 +78,7 @@ if git diff --name-only "$PINS_REF" HEAD -- "${PINNED_PATHS[@]}" | grep -q .; th
   fi
 fi
 
-echo "Ecosystem pins check (pins_ref=$PINS_REF HEAD=$HEAD tools=$TOOLS_DIR)..."
+echo "Ecosystem pins check (pins_ref=$PINS_REF HEAD=$HEAD)..."
 npm run --silent compatibility-pins-verify
 npm run --silent compatibility-matrix-verify
 echo "PASS: ecosystem pins aligned."

@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import Ajv2020 from 'ajv/dist/2020';
@@ -19,9 +20,19 @@ export type PinsDocument = {
 export type VerifyPinsOptions = {
   root?: string;
   toolsDir?: string;
+  sdkNodeDir?: string;
+  sdkPythonDir?: string;
+  sdkGoDir?: string;
 };
 
 const SPEC_REF_FILE = 'SPEC_REF';
+const SOURCE_REF_FILE = 'SOURCE_REF';
+
+export const SDK_PIN_REPOS = [
+  { repo: 'intentproof-sdk-node', matrixKey: 'sdk_node_version' as const },
+  { repo: 'intentproof-sdk-python', matrixKey: 'sdk_python_version' as const },
+  { repo: 'intentproof-sdk-go', matrixKey: 'sdk_go_version' as const },
+];
 
 function readJSON(filePath: string): unknown {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -43,6 +54,18 @@ export function readSpecRefFile(repoDir: string): string {
   return sha;
 }
 
+export function readSourceRefFile(repoDir: string): string {
+  const filePath = path.join(repoDir, SOURCE_REF_FILE);
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Missing ${SOURCE_REF_FILE} in ${repoDir}`);
+  }
+  const sha = normalizeSha(fs.readFileSync(filePath, 'utf-8'));
+  if (!/^[0-9a-f]{40}$/.test(sha)) {
+    throw new Error(`Invalid ${SOURCE_REF_FILE} in ${repoDir}: ${sha}`);
+  }
+  return sha;
+}
+
 type MatrixComponent = {
   repo: string;
   version: string;
@@ -53,6 +76,9 @@ type CurrentMatrixEntry = {
   current?: boolean;
   spec_version: MatrixComponent;
   tools_version: MatrixComponent;
+  sdk_node_version: MatrixComponent;
+  sdk_python_version: MatrixComponent;
+  sdk_go_version: MatrixComponent;
 };
 
 export function verifyCurrentMatrixPinAlignment(
@@ -85,6 +111,13 @@ export function verifyCurrentMatrixPinAlignment(
       label: 'tools_version',
       expected: toolsPin?.sha,
     },
+    ...SDK_PIN_REPOS.map((sdk) => ({
+      key: sdk.matrixKey,
+      label: sdk.matrixKey,
+      expected: pins.entries.find(
+        (entry) => entry.repo === sdk.repo && entry.ref_kind === 'source_ref',
+      )?.sha,
+    })),
   ];
 
   for (const check of checks) {
@@ -103,6 +136,60 @@ export function verifyCurrentMatrixPinAlignment(
       );
     } else {
       messages.push(`[PASS] Matrix ${check.label} matches pins manifest`);
+    }
+  }
+}
+
+function verifySdkSourceRefs(
+  pins: PinsDocument,
+  options: VerifyPinsOptions,
+  fail: (msg: string) => void,
+  messages: string[],
+): void {
+  const sdkDirs: Array<{ repo: string; dir?: string }> = [
+    { repo: 'intentproof-sdk-node', dir: options.sdkNodeDir },
+    { repo: 'intentproof-sdk-python', dir: options.sdkPythonDir },
+    { repo: 'intentproof-sdk-go', dir: options.sdkGoDir },
+  ];
+
+  for (const { repo, dir } of sdkDirs) {
+    if (!dir) {
+      continue;
+    }
+    const expected = pins.entries.find(
+      (entry) => entry.repo === repo && entry.ref_kind === 'source_ref',
+    );
+    if (!expected) {
+      fail(`Missing pins manifest entry for ${repo}`);
+      continue;
+    }
+    let headSha: string;
+    try {
+      headSha = normalizeSha(
+        execSync('git rev-parse HEAD', { cwd: dir, encoding: 'utf-8' }),
+      );
+    } catch {
+      fail(`${repo} checkout is not a git repository: ${dir}`);
+      continue;
+    }
+    if (headSha !== expected.sha) {
+      fail(
+        `${repo} checkout HEAD ${headSha} does not match pins manifest ${expected.sha}`,
+      );
+      continue;
+    }
+    messages.push(`[PASS] ${repo} checkout HEAD matches pins manifest`);
+
+    const sourceRefPath = path.join(dir, SOURCE_REF_FILE);
+    if (fs.existsSync(sourceRefPath)) {
+      const actual = readSourceRefFile(dir);
+      if (actual !== expected.sha) {
+        fail(
+          `${repo} SOURCE_REF ${actual} does not match pins manifest ${expected.sha}`,
+        );
+      } else {
+        messages.push(`[PASS] ${repo} SOURCE_REF matches pins manifest`);
+      }
     }
   }
 }
@@ -169,6 +256,7 @@ export function verifyCompatibilityPins(options: VerifyPinsOptions = {}): {
     }
   }
 
+  verifySdkSourceRefs(pins, options, fail, messages);
   verifyCurrentMatrixPinAlignment(root, pins, fail, messages);
 
   return { ok: !hasError, messages };
@@ -191,9 +279,11 @@ export async function runVerifyCompatibilityPinsCli(
 
 /* v8 ignore start */
 if (require.main === module) {
-  const toolsDir = process.env.INTENTPROOF_TOOLS_DIR?.trim();
   runVerifyCompatibilityPinsCli({
-    toolsDir: toolsDir || undefined,
+    toolsDir: process.env.INTENTPROOF_TOOLS_DIR?.trim() || undefined,
+    sdkNodeDir: process.env.INTENTPROOF_SDK_NODE_DIR?.trim() || undefined,
+    sdkPythonDir: process.env.INTENTPROOF_SDK_PYTHON_DIR?.trim() || undefined,
+    sdkGoDir: process.env.INTENTPROOF_SDK_GO_DIR?.trim() || undefined,
   }).then((code) => process.exit(code));
 }
 /* v8 ignore stop */

@@ -19,7 +19,7 @@
     },
     "entries": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 4,
       "items": {
         "$ref": "#/$defs/entry"
       }
@@ -32,10 +32,15 @@
       "required": ["repo", "ref_kind", "sha"],
       "properties": {
         "repo": {
-          "enum": ["intentproof-tools"]
+          "enum": [
+            "intentproof-tools",
+            "intentproof-sdk-node",
+            "intentproof-sdk-python",
+            "intentproof-sdk-go"
+          ]
         },
         "ref_kind": {
-          "enum": ["spec_ref"]
+          "enum": ["spec_ref", "source_ref"]
         },
         "sha": {
           "type": "string",

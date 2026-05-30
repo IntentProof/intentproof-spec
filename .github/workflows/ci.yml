@@ -27,13 +27,59 @@ jobs:
     name: "IntentProof CI: Ecosystem Pins"
     runs-on: ubuntu-latest
     steps:
+      # pins.spec_ref may be an ancestor of HEAD; shallow PR clones omit it.
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - uses: actions/checkout@v6
         with:
           repository: IntentProof/intentproof-tools
           ref: main
           path: intentproof-tools
+
+      - name: Resolve pinned SDK source_ref SHAs
+        id: ecosystem_pins
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const pins = require('./compatibility/pins.v1.json');
+          const sha = (repo) => {
+            const entry = pins.entries.find(
+              (e) => e.repo === repo && e.ref_kind === 'source_ref',
+            );
+            if (!entry?.sha) {
+              console.error(`Missing source_ref pin for ${repo}`);
+              process.exit(1);
+            }
+            return entry.sha;
+          };
+          const out = process.env.GITHUB_OUTPUT;
+          const write = (key, value) => {
+            fs.appendFileSync(out, `${key}=${value}\n`);
+          };
+          write('sdk_node_ref', sha('intentproof-sdk-node'));
+          write('sdk_python_ref', sha('intentproof-sdk-python'));
+          write('sdk_go_ref', sha('intentproof-sdk-go'));
+          NODE
+
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-sdk-node
+          ref: ${{ steps.ecosystem_pins.outputs.sdk_node_ref }}
+          path: intentproof-sdk-node
+
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-sdk-python
+          ref: ${{ steps.ecosystem_pins.outputs.sdk_python_ref }}
+          path: intentproof-sdk-python
+
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-sdk-go
+          ref: ${{ steps.ecosystem_pins.outputs.sdk_go_ref }}
+          path: intentproof-sdk-go
 
       - uses: actions/setup-node@v6
         with:
@@ -42,9 +88,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify pins, matrix, and tools SPEC_REF
+      - name: Verify pins, matrix, tools SPEC_REF, and SDK SOURCE_REF
         env:
           INTENTPROOF_TOOLS_DIR: intentproof-tools
+          INTENTPROOF_SDK_NODE_DIR: intentproof-sdk-node
+          INTENTPROOF_SDK_PYTHON_DIR: intentproof-sdk-python
+          INTENTPROOF_SDK_GO_DIR: intentproof-sdk-go
         run: bash scripts/check-ecosystem-pins.sh
 
   counterparty-golden:
