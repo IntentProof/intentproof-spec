@@ -11,9 +11,9 @@ jobs:
     name: "IntentProof CI: Build and Test"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -27,15 +27,15 @@ jobs:
     name: "IntentProof CI: Counterparty Golden"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: IntentProof/intentproof-tools
           ref: main
           path: intentproof-tools
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: intentproof-tools/go.mod
 
