@@ -122,4 +122,27 @@ echo "== jcs differential smoke =="
   go run ./cmd/jcs-differential-fuzz/ -iterations 64
 )
 
+echo "== stripe adapter conformance =="
+require_cmd npx
+npx ts-node "${ROOT}/conformance/stripe_demo_fixtures.ts"
+
+(
+  cd "$CORE_DIR"
+  INTENTPROOF_SPEC_DIR="$ROOT" GOWORK=off go test ./cmd/attestation-gw/ \
+    -run 'TestStripe.*' -count=1
+)
+
+(
+  cd "$TOOLS_DIR"
+  INTENTPROOF_SPEC_DIR="$ROOT" go test ./pkg/demo/ \
+    -run 'TestStripeGoldenFixtureVerifyAndCanonicalize|TestReplayStripeDemoIntoStore' \
+    -count=1
+)
+
+echo "== bundle verification profile gate =="
+(
+  cd "$TOOLS_DIR"
+  bash ./scripts/check-bundle-verification-profile.sh "$ROOT"
+)
+
 echo "PASS: ecosystem conformance completed."
