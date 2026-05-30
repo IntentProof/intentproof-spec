@@ -1,0 +1,32 @@
+{
+  "schema": "intentproof.compatibility.pins.v1",
+  "generated_at": "2026-05-30T17:00:00Z",
+  "spec_ref": "660526e20f9bd7d0912570620b49826e2b834781",
+  "entries": [
+    {
+      "repo": "intentproof-tools",
+      "ref_kind": "spec_ref",
+      "sha": "660526e20f9bd7d0912570620b49826e2b834781"
+    },
+    {
+      "repo": "intentproof-core",
+      "ref_kind": "spec_ref",
+      "sha": "660526e20f9bd7d0912570620b49826e2b834781"
+    },
+    {
+      "repo": "intentproof-tools",
+      "ref_kind": "oss_fuzz_tools_ref",
+      "sha": "19ccaeb9bf61c2c8fc9eaeeb4dc5a8e5e7ea51ab"
+    },
+    {
+      "repo": "intentproof-tools",
+      "ref_kind": "oss_fuzz_spec_ref",
+      "sha": "660526e20f9bd7d0912570620b49826e2b834781"
+    },
+    {
+      "repo": "intentproof-tools",
+      "ref_kind": "oss_fuzz_core_ref",
+      "sha": "b0a7a6f6b1bff674948d34251e70026556e06af0"
+    }
+  ]
+}

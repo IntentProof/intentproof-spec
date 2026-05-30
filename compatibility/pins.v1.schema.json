@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.intentproof.io/compatibility/pins.v1.schema.json",
+  "title": "IntentProof Ecosystem Pins",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "generated_at", "spec_ref", "entries"],
+  "properties": {
+    "schema": {
+      "const": "intentproof.compatibility.pins.v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "spec_ref": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "ref_kind", "sha"],
+      "properties": {
+        "repo": {
+          "enum": [
+            "intentproof-tools",
+            "intentproof-core"
+          ]
+        },
+        "ref_kind": {
+          "enum": [
+            "spec_ref",
+            "oss_fuzz_tools_ref",
+            "oss_fuzz_spec_ref",
+            "oss_fuzz_core_ref"
+          ]
+        },
+        "sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    }
+  }
+}
