@@ -27,7 +27,10 @@ jobs:
     name: "IntentProof CI: Ecosystem Pins"
     runs-on: ubuntu-latest
     steps:
+      # pins.spec_ref may be an ancestor of HEAD; shallow PR clones omit it.
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - uses: actions/checkout@v6
         with:
