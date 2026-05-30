@@ -1,54 +1,25 @@
 # Contributing to intentproof-spec
 
-Thanks for your interest in IntentProof.
+Thank you for helping improve IntentProof.
 
-## Issues welcome
+## How to help
 
-Please report bugs, schema ambiguities, and conformance gaps via
-[GitHub Issues](https://github.com/IntentProof/intentproof-spec/issues).
-That is the primary way to help right now.
+We welcome [GitHub Issues](https://github.com/IntentProof/intentproof-spec/issues)
+and pull requests — schema clarifications, golden fixtures, conformance fixes,
+and documentation.
 
-We do **not** accept unsolicited pull requests from outside the
-maintainer team. If you are a customer or partner with a change that
-must land upstream, contact IntentProof, Inc. before opening a PR.
+- **Small fixes:** open a PR with a short summary and test plan.
+- **Schema or golden changes:** open an issue or PR that explains downstream
+  impact on tools and SDKs; coordinated bumps may be needed.
 
-Maintainer commits use the Developer Certificate of Origin (DCO) below.
+## Pull requests
 
-## Developer Certificate of Origin (DCO)
-
-Merged commits in this repository use the
-[Developer Certificate of Origin 1.1](https://developercertificate.org/).
-
-Every commit must carry a `Signed-off-by:` trailer matching the
-author email. The easiest way to do this is to pass `-s` to `git
-commit`:
-
-```bash
-git commit -s -m "..."
-```
-
-You can also retroactively sign off the last commit with:
-
-```bash
-git commit --amend --no-edit -s
-```
-
-Then force-push the amended branch:
-
-```bash
-git push --force-with-lease
-```
-
-Commits that do not include a valid `Signed-off-by` trailer will
-be rejected by CI.
-
-## Trademark
-
-"IntentProof" and "Verified by IntentProof" are trademarks of
-IntentProof, Inc. Apache 2.0 grants a copyright license; it does not grant a
-trademark license. See [`TRADEMARK.md`](TRADEMARK.md).
+- Run `npx ts-node conformance/runner.ts` and the `make compatibility-*-verify`
+  targets when you touch schemas, fixtures, or compatibility files.
+- Regenerate the signed integrity manifest when inventoried files change — see
+  [`integrity/README.md`](integrity/README.md).
 
 ## License
 
-By contributing as a maintainer, you agree your commits are licensed
-under the Apache License 2.0 (see `LICENSE`).
+By contributing, you agree your contributions are licensed under the MIT
+License (see `LICENSE`).
