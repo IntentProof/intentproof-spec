@@ -222,6 +222,65 @@ describe('compatibility matrix', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('rejects short source_ref values', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-matrix-short-'));
+    fs.mkdirSync(path.join(dir, 'compatibility'));
+    fs.mkdirSync(path.join(dir, 'integrity'));
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/matrix.v1.schema.json'),
+      path.join(dir, 'compatibility/matrix.v1.schema.json'),
+    );
+    const base = JSON.parse(
+      fs.readFileSync(path.join(__dirname, 'compatibility/matrix.v1.json'), 'utf-8'),
+    ) as { schema: string; generated_at: string; entries: Record<string, unknown>[] };
+    const entry = base.entries[0] as Record<string, unknown>;
+    const spec = entry.spec_version as Record<string, string>;
+    spec.source_ref = '9b30bbd3110b';
+    fs.writeFileSync(path.join(dir, 'compatibility/matrix.v1.json'), JSON.stringify(base));
+    fs.writeFileSync(
+      path.join(dir, 'integrity/manifest.v1.json'),
+      JSON.stringify({
+        files: {
+          'compatibility/matrix.v1.json': 'sha256:abc',
+          'compatibility/matrix.v1.schema.json': 'sha256:abc',
+        },
+      }),
+    );
+    const result = await verifyCompatibilityMatrix({ root: dir });
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/schema validation failed/i);
+  });
+
+  it('fails when more than one entry is current', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-matrix-current-'));
+    fs.mkdirSync(path.join(dir, 'compatibility'));
+    fs.mkdirSync(path.join(dir, 'integrity'));
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/matrix.v1.schema.json'),
+      path.join(dir, 'compatibility/matrix.v1.schema.json'),
+    );
+    const base = JSON.parse(
+      fs.readFileSync(path.join(__dirname, 'compatibility/matrix.v1.json'), 'utf-8'),
+    ) as { schema: string; generated_at: string; entries: Record<string, unknown>[] };
+    base.entries = [
+      { ...base.entries[0], current: true },
+      { ...base.entries[0], current: true, tuple_id: 'duplicate' },
+    ];
+    fs.writeFileSync(path.join(dir, 'compatibility/matrix.v1.json'), JSON.stringify(base));
+    fs.writeFileSync(
+      path.join(dir, 'integrity/manifest.v1.json'),
+      JSON.stringify({
+        files: {
+          'compatibility/matrix.v1.json': 'sha256:abc',
+          'compatibility/matrix.v1.schema.json': 'sha256:abc',
+        },
+      }),
+    );
+    const result = await verifyCompatibilityMatrix({ root: dir });
+    expect(result.ok).toBe(false);
+    expect(result.messages.join('\n')).toMatch(/more than one matrix entry is marked current/i);
+  });
+
   it('checks released entries with injected release lookup', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-matrix-'));
     fs.mkdirSync(path.join(dir, 'compatibility'));

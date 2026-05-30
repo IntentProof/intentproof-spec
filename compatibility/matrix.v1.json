@@ -1,46 +1,53 @@
 {
   "schema": "intentproof.compatibility.matrix.v1",
-  "generated_at": "2026-05-17T14:15:00Z",
+  "generated_at": "2026-05-30T19:00:00Z",
   "entries": [
     {
+      "tuple_id": "head-source-verified-2026-05-30",
+      "current": true,
       "spec_version": {
         "repo": "intentproof-spec",
-        "version": "v1.0.0-bootstrap.1",
-        "source_ref": "9b30bbd3110b"
+        "version": "v0.0.0-source-verified.1",
+        "source_ref": "05eb3e1ab10a03b688f794c01784b6e04070bc21"
       },
       "tools_version": {
         "repo": "intentproof-tools",
-        "version": "v0.0.0-bootstrap.1",
-        "source_ref": "b16c847be697"
+        "version": "v0.0.0-release-dryrun.9",
+        "source_ref": "55867cf91f8b6c36eaff678c3e6271cd6b0d895a"
       },
       "core_version": {
         "repo": "intentproof-core",
-        "version": "v0.0.0-bootstrap.1",
-        "source_ref": "c2e5cdf612bf"
+        "version": "v0.0.0-source-verified.1",
+        "source_ref": "2817566ee1b7fc01172fb59a24817af65a76e6be"
       },
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",
-        "version": "v1.0.0-bootstrap.1",
-        "source_ref": "8cf96470fe70"
+        "version": "v0.2.0",
+        "source_ref": "eeaeb4d3c75c9e4eb641e21283105b01e904a1e1"
       },
       "sdk_python_version": {
         "repo": "intentproof-sdk-python",
-        "version": "v0.1.0-bootstrap.1",
-        "source_ref": "89a0a2ab746f"
+        "version": "v0.2.0",
+        "source_ref": "b0bc49904f1b351fda83573c9ec88f7e05836390"
+      },
+      "sdk_go_version": {
+        "repo": "intentproof-sdk-go",
+        "version": "v0.0.0-source-verified.1",
+        "source_ref": "d9f5de7ad7754dfebe10d920e5d6a814909a3ad7"
       },
       "dashboard_version": {
         "repo": "intentproof-dashboard",
-        "version": "v1.0.0-bootstrap.1",
-        "source_ref": "8e949d9671fe"
+        "version": "v0.0.0-source-verified.1",
+        "source_ref": "6acd60b1d939a9bf21cc0b4174f6a73a5883f365"
       },
-      "verified_at": "2026-05-17T14:15:00Z",
+      "verified_at": "2026-05-30T19:00:00Z",
       "ci_run": {
-        "system": "local",
-        "id": "bootstrap-2026-05-17",
-        "url": "https://github.com/IntentProof/intentproof-spec/actions"
+        "system": "github-actions",
+        "id": "26690264582",
+        "url": "https://github.com/IntentProof/intentproof-spec/actions/runs/26690264582"
       },
       "release_status": "source-verified",
-      "notes": "Bootstrap row for current source-compatible repositories before the first public GitHub Releases exist. Change release_status to released only after every component version in the row is published as a GitHub Release."
+      "notes": "Rolling HEAD tuple for ecosystem drift Phase 2. Component versions without GitHub Releases use source-verified semver labels; change release_status to released only after every component version is published."
     }
   ]
 }

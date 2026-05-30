@@ -22,11 +22,14 @@ type Component = {
 
 type MatrixEntry = {
   release_status: 'source-verified' | 'released';
+  current?: boolean;
+  tuple_id?: string;
   spec_version: Component;
   tools_version: Component;
   core_version: Component;
   sdk_node_version: Component;
   sdk_python_version: Component;
+  sdk_go_version: Component;
   dashboard_version: Component;
 };
 
@@ -41,6 +44,7 @@ export const MATRIX_COMPONENT_KEYS = [
   'core_version',
   'sdk_node_version',
   'sdk_python_version',
+  'sdk_go_version',
   'dashboard_version',
 ] as const;
 
@@ -116,6 +120,15 @@ export async function verifyCompatibilityMatrix(
     }
   }
   messages.push('[PASS] Integrity manifest covers compatibility files');
+
+  const currentEntries = matrix.entries.filter((entry) => entry.current === true);
+  if (currentEntries.length > 1) {
+    messages.push('[FAIL] More than one matrix entry is marked current');
+    return { ok: false, messages };
+  }
+  if (currentEntries.length === 1) {
+    messages.push('[PASS] Exactly one current matrix entry');
+  }
 
   for (const [entryIndex, entry] of matrix.entries.entries()) {
     if (entry.release_status !== 'released') {

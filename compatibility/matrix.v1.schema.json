@@ -30,6 +30,7 @@
         "core_version",
         "sdk_node_version",
         "sdk_python_version",
+        "sdk_go_version",
         "dashboard_version",
         "verified_at",
         "ci_run",
@@ -52,8 +53,18 @@
         "sdk_python_version": {
           "$ref": "#/$defs/component"
         },
+        "sdk_go_version": {
+          "$ref": "#/$defs/component"
+        },
         "dashboard_version": {
           "$ref": "#/$defs/component"
+        },
+        "current": {
+          "type": "boolean"
+        },
+        "tuple_id": {
+          "type": "string",
+          "minLength": 1
         },
         "verified_at": {
           "type": "string",
@@ -97,6 +108,7 @@
             "intentproof-core",
             "intentproof-sdk-node",
             "intentproof-sdk-python",
+            "intentproof-sdk-go",
             "intentproof-dashboard"
           ]
         },
@@ -106,7 +118,7 @@
         },
         "source_ref": {
           "type": "string",
-          "pattern": "^[0-9a-f]{12,40}$"
+          "pattern": "^[0-9a-f]{40}$"
         },
         "release_url": {
           "type": "string",
