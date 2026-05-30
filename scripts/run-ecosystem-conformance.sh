@@ -90,6 +90,7 @@ echo "== node sdk signing golden =="
 (
   cd "$SDK_NODE_DIR"
   npm ci
+  npm run build
   INTENTPROOF_SPEC_DIR="$ROOT" npm test
   INTENTPROOF_SPEC_DIR="$ROOT" bash ./scripts/check-sdk-signing-fixtures-sync.sh
 )
@@ -113,6 +114,7 @@ echo "== jcs differential smoke =="
 (
   cd "$TOOLS_DIR"
   export INTENTPROOF_SPEC_DIR="$ROOT"
+  # jcs-differential-fuzz uses INTENTPROOF_{NODE,PYTHON}_SDK_DIR (tools convention).
   export INTENTPROOF_NODE_SDK_DIR="$SDK_NODE_DIR"
   export INTENTPROOF_PYTHON_SDK_DIR="$SDK_PYTHON_DIR"
   go test -count=1 ./cmd/jcs-differential-fuzz/ \

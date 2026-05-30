@@ -61,12 +61,6 @@ jobs:
           PR_SIBLING_BRANCH: ${{ github.head_ref }}
         run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "$PR_SIBLING_BRANCH"
 
-      - name: Prefer coordinated tools topic branch
-        if: github.event_name == 'pull_request'
-        run: |
-          git -C intentproof-tools fetch origin phase3-conformance-oss-fuzz-gate 2>/dev/null || exit 0
-          git -C intentproof-tools checkout FETCH_HEAD
-
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-core
