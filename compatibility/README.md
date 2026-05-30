@@ -7,10 +7,9 @@ Pin discipline: [`PINS.md`](PINS.md).
 
 ## OSS tuple (today)
 
-The living product is **spec + tools + SDKs**, verified offline via golden
-bundles and conformance runners. Matrix rows may still list retired
-`intentproof-core` / `intentproof-dashboard` components until the v2 schema
-drops them.
+The living product is **spec + tools + SDKs**, verified via golden bundles and
+conformance runners. Matrix rows may still list legacy repository names until
+schema v2 trims the tuple.
 
 At most one row sets `"current": true`. CI checks that row against
 `pins.v1.json` where configured.

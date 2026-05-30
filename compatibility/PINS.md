@@ -19,8 +19,8 @@ make compatibility-pins-verify
 | `intentproof-sdk-python` | Python signing SDK |
 | `intentproof-sdk-go` | Go signing SDK |
 
-`intentproof-core` and `intentproof-dashboard` entries in older matrix rows are
-**retired** placeholders until the compatibility schema is trimmed.
+Legacy repository names in older matrix rows are placeholders until the
+compatibility schema is trimmed.
 
 ## Pin files
 

@@ -3,7 +3,7 @@
 [![CI](https://github.com/IntentProof/intentproof-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/IntentProof/intentproof-spec/actions/workflows/ci.yml)
 
 Normative schemas, golden fixtures, and cross-language conformance tooling for
-the local-first IntentProof stack.
+IntentProof.
 
 ## Contents
 
@@ -11,8 +11,8 @@ the local-first IntentProof stack.
 - JSON Schemas in `schema/`
 - Golden fixtures in `golden/` (including counterparty bundles)
 - Conformance runner in `conformance/`
-- Compatibility records in `compatibility/` (OSS repos only; legacy matrix
-  fields for retired repos are placeholders until the next tuple refresh)
+- Compatibility records in `compatibility/` (legacy matrix fields trimmed in a
+  future schema revision)
 
 ## Verify locally
 
