@@ -1,6 +1,0 @@
-# Dependency vulnerability allowlist with expiry model.
-# HIGH-severity exceptions require security on-call approval.
-# Mirror approved entries into .osv-scanner.toml [[IgnoredVulns]] with
-# matching ignoreUntil dates. Expired entries fail CI via
-# scripts/check-deps-allowlist.sh.
-allowlist: []

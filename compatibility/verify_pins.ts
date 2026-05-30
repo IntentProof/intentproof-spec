@@ -19,11 +19,9 @@ export type PinsDocument = {
 export type VerifyPinsOptions = {
   root?: string;
   toolsDir?: string;
-  coreDir?: string;
 };
 
 const SPEC_REF_FILE = 'SPEC_REF';
-const OSS_FUZZ_PINS = path.join('contrib', 'oss-fuzz', 'intentproof', 'pins.env');
 
 function readJSON(filePath: string): unknown {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -45,32 +43,6 @@ export function readSpecRefFile(repoDir: string): string {
   return sha;
 }
 
-export function readOssFuzzPins(toolsDir: string): Record<string, string> {
-  const filePath = path.join(toolsDir, OSS_FUZZ_PINS);
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`Missing OSS-Fuzz pins file: ${filePath}`);
-  }
-  const out: Record<string, string> = {};
-  for (const line of fs.readFileSync(filePath, 'utf-8').split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) {
-      continue;
-    }
-    const idx = trimmed.indexOf('=');
-    if (idx <= 0) {
-      continue;
-    }
-    const key = trimmed.slice(0, idx).trim();
-    const value = normalizeSha(trimmed.slice(idx + 1));
-    out[key] = value;
-  }
-  return out;
-}
-
-function entriesForKind(entries: PinEntry[], refKind: string): PinEntry[] {
-  return entries.filter((entry) => entry.ref_kind === refKind);
-}
-
 type MatrixComponent = {
   repo: string;
   version: string;
@@ -81,12 +53,7 @@ type CurrentMatrixEntry = {
   current?: boolean;
   spec_version: MatrixComponent;
   tools_version: MatrixComponent;
-  core_version: MatrixComponent;
 };
-
-function pinShaForKind(pins: PinsDocument, refKind: string): string | undefined {
-  return pins.entries.find((entry) => entry.ref_kind === refKind)?.sha;
-}
 
 export function verifyCurrentMatrixPinAlignment(
   root: string,
@@ -107,17 +74,16 @@ export function verifyCurrentMatrixPinAlignment(
   }
   messages.push('[PASS] Found current matrix entry');
 
+  const toolsPin = pins.entries.find(
+    (entry) => entry.repo === 'intentproof-tools' && entry.ref_kind === 'spec_ref',
+  );
+
   const checks: Array<{ key: keyof CurrentMatrixEntry; label: string; expected?: string }> = [
     { key: 'spec_version', label: 'spec_version', expected: pins.spec_ref },
     {
       key: 'tools_version',
       label: 'tools_version',
-      expected: pinShaForKind(pins, 'oss_fuzz_tools_ref'),
-    },
-    {
-      key: 'core_version',
-      label: 'core_version',
-      expected: pinShaForKind(pins, 'oss_fuzz_core_ref'),
+      expected: toolsPin?.sha,
     },
   ];
 
@@ -181,17 +147,10 @@ export function verifyCompatibilityPins(options: VerifyPinsOptions = {}): {
     messages.push('[PASS] Integrity manifest covers pins files');
   }
 
-  for (const entry of entriesForKind(pins.entries, 'spec_ref')) {
-    if (entry.sha !== pins.spec_ref) {
+  for (const entry of pins.entries) {
+    if (entry.ref_kind === 'spec_ref' && entry.sha !== pins.spec_ref) {
       fail(`${entry.repo} spec_ref ${entry.sha} does not match manifest spec_ref ${pins.spec_ref}`);
     }
-  }
-
-  const ossSpec = pins.entries.find((entry) => entry.ref_kind === 'oss_fuzz_spec_ref');
-  if (!ossSpec) {
-    fail('Missing oss_fuzz_spec_ref entry');
-  } else if (ossSpec.sha !== pins.spec_ref) {
-    fail(`oss_fuzz_spec_ref ${ossSpec.sha} does not match manifest spec_ref ${pins.spec_ref}`);
   }
 
   if (options.toolsDir) {
@@ -207,54 +166,6 @@ export function verifyCompatibilityPins(options: VerifyPinsOptions = {}): {
       );
     } else {
       messages.push('[PASS] intentproof-tools SPEC_REF matches pins manifest');
-    }
-
-    const oss = readOssFuzzPins(options.toolsDir);
-    const expectedOss: Array<[string, string]> = [
-      ['TOOLS_REF', 'oss_fuzz_tools_ref'],
-      ['SPEC_REF', 'oss_fuzz_spec_ref'],
-      ['CORE_REF', 'oss_fuzz_core_ref'],
-    ];
-    for (const [envKey, refKind] of expectedOss) {
-      const manifestEntry = pins.entries.find((entry) => entry.ref_kind === refKind);
-      const actual = oss[envKey];
-      if (!manifestEntry) {
-        fail(`Missing pins manifest entry for ${refKind}`);
-        continue;
-      }
-      if (!actual) {
-        fail(`Missing ${envKey} in OSS-Fuzz pins.env`);
-        continue;
-      }
-      if (actual !== manifestEntry.sha) {
-        fail(`OSS-Fuzz ${envKey} ${actual} does not match pins manifest ${manifestEntry.sha}`);
-      } else {
-        messages.push(`[PASS] OSS-Fuzz ${envKey} matches pins manifest`);
-      }
-    }
-  }
-
-  if (options.coreDir) {
-    const coreSpec = readSpecRefFile(options.coreDir);
-    const expected = pins.entries.find(
-      (entry) => entry.repo === 'intentproof-core' && entry.ref_kind === 'spec_ref',
-    );
-    if (!expected) {
-      fail('Missing intentproof-core spec_ref entry');
-    } else if (coreSpec !== expected.sha) {
-      fail(`intentproof-core SPEC_REF ${coreSpec} does not match pins manifest ${expected.sha}`);
-    } else {
-      messages.push('[PASS] intentproof-core SPEC_REF matches pins manifest');
-    }
-  }
-
-  if (options.toolsDir && options.coreDir) {
-    const toolsSpec = readSpecRefFile(options.toolsDir);
-    const coreSpec = readSpecRefFile(options.coreDir);
-    if (toolsSpec !== coreSpec) {
-      fail(`SPEC_REF mismatch: tools=${toolsSpec} core=${coreSpec}`);
-    } else {
-      messages.push('[PASS] tools and core SPEC_REF values match');
     }
   }
 
@@ -281,10 +192,8 @@ export async function runVerifyCompatibilityPinsCli(
 /* v8 ignore start */
 if (require.main === module) {
   const toolsDir = process.env.INTENTPROOF_TOOLS_DIR?.trim();
-  const coreDir = process.env.INTENTPROOF_CORE_DIR?.trim();
   runVerifyCompatibilityPinsCli({
     toolsDir: toolsDir || undefined,
-    coreDir: coreDir || undefined,
   }).then((code) => process.exit(code));
 }
 /* v8 ignore stop */

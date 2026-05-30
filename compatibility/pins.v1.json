@@ -7,26 +7,6 @@
       "repo": "intentproof-tools",
       "ref_kind": "spec_ref",
       "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
-    },
-    {
-      "repo": "intentproof-core",
-      "ref_kind": "spec_ref",
-      "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
-    },
-    {
-      "repo": "intentproof-tools",
-      "ref_kind": "oss_fuzz_tools_ref",
-      "sha": "e6d44a2968d10cd6803c5cb323938b6d11846770"
-    },
-    {
-      "repo": "intentproof-tools",
-      "ref_kind": "oss_fuzz_spec_ref",
-      "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
-    },
-    {
-      "repo": "intentproof-tools",
-      "ref_kind": "oss_fuzz_core_ref",
-      "sha": "4a90444ff04d389768a76f9f5d7b8f21500d13d4"
     }
   ]
 }

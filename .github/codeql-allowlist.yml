@@ -1,4 +1,0 @@
-# CodeQL finding allowlist with expiry model.
-# New entries require security on-call approval.
-# Expired entries fail CI via scripts/check-codeql-allowlist.sh.
-allowlist: []

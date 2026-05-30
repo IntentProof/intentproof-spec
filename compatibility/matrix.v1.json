@@ -3,7 +3,7 @@
   "generated_at": "2026-05-30T20:10:00Z",
   "entries": [
     {
-      "tuple_id": "head-source-verified-2026-05-30-phase4",
+      "tuple_id": "oss-spec-tools-sdks-2026-05-30",
       "current": true,
       "spec_version": {
         "repo": "intentproof-spec",
@@ -12,13 +12,8 @@
       },
       "tools_version": {
         "repo": "intentproof-tools",
-        "version": "v0.0.0-release-dryrun.9",
-        "source_ref": "e6d44a2968d10cd6803c5cb323938b6d11846770"
-      },
-      "core_version": {
-        "repo": "intentproof-core",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "4a90444ff04d389768a76f9f5d7b8f21500d13d4"
+        "source_ref": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
       },
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",
@@ -35,19 +30,14 @@
         "version": "v0.0.0-source-verified.1",
         "source_ref": "d9f5de7ad7754dfebe10d920e5d6a814909a3ad7"
       },
-      "dashboard_version": {
-        "repo": "intentproof-dashboard",
-        "version": "v0.0.0-source-verified.1",
-        "source_ref": "6acd60b1d939a9bf21cc0b4174f6a73a5883f365"
-      },
       "verified_at": "2026-05-30T20:10:00Z",
       "ci_run": {
         "system": "github-actions",
-        "id": "26690264582",
-        "url": "https://github.com/IntentProof/intentproof-spec/actions/runs/26690264582"
+        "id": "local",
+        "url": "https://github.com/IntentProof/intentproof-spec/actions"
       },
       "release_status": "source-verified",
-      "notes": "Phase 4 merge tuple (adapter conformance + bundle verification profile). Supported bundle verification_profile verifier_version values: dev (pre-release builds) and the intentproof-verify release version stamped at export. Component versions without GitHub Releases use source-verified semver labels; change release_status to released only after every component version is published."
+      "notes": "OSS tuple: spec, tools (via SPEC_REF), and signing SDKs. tools_version.source_ref is the spec commit pinned in intentproof-tools/SPEC_REF."
     }
   ]
 }

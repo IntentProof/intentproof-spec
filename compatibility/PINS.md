@@ -19,16 +19,12 @@ make compatibility-pins-verify
 | `intentproof-sdk-python` | Python signing SDK |
 | `intentproof-sdk-go` | Go signing SDK |
 
-Legacy repository names in older matrix rows are placeholders until the
-compatibility schema is trimmed.
-
 ## Pin files
 
 | Repository | File | Purpose |
 |------------|------|---------|
 | `intentproof-tools` | `SPEC_REF` | Spec commit used in tools CI |
-| `intentproof-tools` | `contrib/oss-fuzz/intentproof/pins.env` | Optional fuzz build SHAs |
-| `intentproof-spec` | `compatibility/pins.v1.json` | Signed manifest of current SHAs |
+| `intentproof-spec` | `compatibility/pins.v1.json` | Manifest of current SHAs |
 | `intentproof-spec` | `compatibility/matrix.v1.json` | Tuple history |
 
 `SPEC_REF` must be a full 40-character lowercase git SHA.

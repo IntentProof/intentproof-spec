@@ -32,18 +32,10 @@
       "required": ["repo", "ref_kind", "sha"],
       "properties": {
         "repo": {
-          "enum": [
-            "intentproof-tools",
-            "intentproof-core"
-          ]
+          "enum": ["intentproof-tools"]
         },
         "ref_kind": {
-          "enum": [
-            "spec_ref",
-            "oss_fuzz_tools_ref",
-            "oss_fuzz_spec_ref",
-            "oss_fuzz_core_ref"
-          ]
+          "enum": ["spec_ref"]
         },
         "sha": {
           "type": "string",
