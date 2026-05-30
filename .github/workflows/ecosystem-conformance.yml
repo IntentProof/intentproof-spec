@@ -39,16 +39,6 @@ jobs:
       - name: Install spec dependencies
         run: npm ci
 
-      - name: Read current tuple refs
-        id: tuple
-        run: |
-          set -euo pipefail
-          {
-            echo "sdk_node_ref=$(jq -r '.entries[] | select(.current==true) | .sdk_node_version.source_ref' compatibility/matrix.v1.json)"
-            echo "sdk_python_ref=$(jq -r '.entries[] | select(.current==true) | .sdk_python_version.source_ref' compatibility/matrix.v1.json)"
-            echo "sdk_go_ref=$(jq -r '.entries[] | select(.current==true) | .sdk_go_version.source_ref' compatibility/matrix.v1.json)"
-          } >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-tools
@@ -76,29 +66,28 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-sdk-node
-          ref: ${{ steps.tuple.outputs.sdk_node_ref }}
+          ref: main
           path: intentproof-sdk-node
 
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-sdk-python
-          ref: ${{ steps.tuple.outputs.sdk_python_ref }}
+          ref: main
           path: intentproof-sdk-python
 
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-sdk-go
-          ref: ${{ steps.tuple.outputs.sdk_go_ref }}
+          ref: main
           path: intentproof-sdk-go
 
-      - name: Prefer coordinated SDK topic branches
-        if: github.event_name == 'pull_request'
+      - name: Prefer go SDK topic branch when signing golden not on main
         run: |
-          set -euo pipefail
-          for repo in intentproof-sdk-node intentproof-sdk-python intentproof-sdk-go; do
-            git -C "$repo" fetch origin phase3-sdk-signing-golden 2>/dev/null || continue
-            git -C "$repo" checkout FETCH_HEAD
-          done
+          if [[ -f intentproof-sdk-go/scripts/check-sdk-signing-fixtures-sync.sh ]]; then
+            exit 0
+          fi
+          git -C intentproof-sdk-go fetch origin phase3-sdk-signing-golden 2>/dev/null || exit 0
+          git -C intentproof-sdk-go checkout FETCH_HEAD
 
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b
         with:
