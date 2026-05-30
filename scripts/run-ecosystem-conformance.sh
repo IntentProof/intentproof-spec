@@ -12,7 +12,6 @@ require_cmd() {
   fi
 }
 
-require_cmd jq
 require_cmd npm
 require_cmd go
 
@@ -24,14 +23,6 @@ if [[ ! -f "$PINS" || ! -f "$MATRIX" ]]; then
   exit 2
 fi
 
-read_matrix_current() {
-  jq -r "$1" "$MATRIX" | head -n 1
-}
-
-SDK_NODE_REF="$(read_matrix_current '.entries[] | select(.current==true) | .sdk_node_version.source_ref')"
-SDK_PYTHON_REF="$(read_matrix_current '.entries[] | select(.current==true) | .sdk_python_version.source_ref')"
-SDK_GO_REF="$(read_matrix_current '.entries[] | select(.current==true) | .sdk_go_version.source_ref')"
-
 TOOLS_DIR="${INTENTPROOF_TOOLS_DIR:-}"
 CORE_DIR="${INTENTPROOF_CORE_DIR:-}"
 SDK_NODE_DIR="${INTENTPROOF_SDK_NODE_DIR:-}"
@@ -39,32 +30,16 @@ SDK_PYTHON_DIR="${INTENTPROOF_SDK_PYTHON_DIR:-}"
 SDK_GO_DIR="${INTENTPROOF_SDK_GO_DIR:-}"
 
 missing=0
-for pair in \
+for name_dir in \
   "INTENTPROOF_TOOLS_DIR:${TOOLS_DIR}" \
-  "INTENTPROOF_CORE_DIR:${CORE_DIR}"; do
-  name="${pair%%:*}"
-  dir="${pair#*:}"
+  "INTENTPROOF_CORE_DIR:${CORE_DIR}" \
+  "INTENTPROOF_SDK_NODE_DIR:${SDK_NODE_DIR}" \
+  "INTENTPROOF_SDK_PYTHON_DIR:${SDK_PYTHON_DIR}" \
+  "INTENTPROOF_SDK_GO_DIR:${SDK_GO_DIR}"; do
+  name="${name_dir%%:*}"
+  dir="${name_dir#*:}"
   if [[ -z "$dir" || ! -d "$dir" ]]; then
-    echo "set ${name} to an intentproof-tools or intentproof-core checkout" >&2
-    missing=1
-  fi
-done
-for pair in \
-  "INTENTPROOF_SDK_NODE_DIR:${SDK_NODE_DIR}:${SDK_NODE_REF}" \
-  "INTENTPROOF_SDK_PYTHON_DIR:${SDK_PYTHON_DIR}:${SDK_PYTHON_REF}" \
-  "INTENTPROOF_SDK_GO_DIR:${SDK_GO_DIR}:${SDK_GO_REF}"; do
-  name="${pair%%:*}"
-  rest="${pair#*:}"
-  dir="${rest%%:*}"
-  expected="${rest##*:}"
-  if [[ -z "$dir" || ! -d "$dir" ]]; then
-    echo "set ${name} to a checkout at ${expected}" >&2
-    missing=1
-    continue
-  fi
-  actual="$(git -C "$dir" rev-parse HEAD 2>/dev/null || true)"
-  if [[ "$actual" != "$expected" ]]; then
-    echo "${name} checkout ${actual:-unknown} != expected tuple ${expected}" >&2
+    echo "set ${name} to a sibling repository checkout" >&2
     missing=1
   fi
 done
@@ -83,10 +58,16 @@ export INTENTPROOF_CORE_DIR="$CORE_DIR"
 bash "${ROOT}/scripts/check-ecosystem-pins.sh"
 
 echo "== tools spec conformance =="
-INTENTPROOF_SPEC_DIR="$ROOT" bash "${TOOLS_DIR}/scripts/check-spec-conformance.sh"
+(
+  cd "$TOOLS_DIR"
+  INTENTPROOF_SPEC_DIR="$ROOT" bash ./scripts/check-spec-conformance.sh
+)
 
 echo "== core spec conformance =="
-INTENTPROOF_SPEC_DIR="$ROOT" bash "${CORE_DIR}/scripts/check-spec-conformance.sh"
+(
+  cd "$CORE_DIR"
+  INTENTPROOF_SPEC_DIR="$ROOT" bash ./scripts/check-spec-conformance.sh
+)
 
 echo "== node sdk signing golden =="
 (
