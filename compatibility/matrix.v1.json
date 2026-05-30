@@ -47,7 +47,7 @@
         "url": "https://github.com/IntentProof/intentproof-spec/actions/runs/26690264582"
       },
       "release_status": "source-verified",
-      "notes": "Rolling HEAD tuple for ecosystem drift Phase 2. Component versions without GitHub Releases use source-verified semver labels; change release_status to released only after every component version is published."
+      "notes": "Rolling HEAD tuple for ecosystem drift Phase 4. Supported bundle verification_profile verifier_version values: dev (pre-release builds) and the intentproof-verify release version stamped at export. Component versions without GitHub Releases use source-verified semver labels; change release_status to released only after every component version is published."
     }
   ]
 }

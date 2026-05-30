@@ -51,6 +51,9 @@ jobs:
           PR_SIBLING_BRANCH: ${{ github.head_ref }}
         run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "$PR_SIBLING_BRANCH"
 
+      - name: Prefer tools bundle profile branch when gate not on main
+        run: bash scripts/prefer-tools-bundle-profile-ref.sh intentproof-tools
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-core
@@ -80,14 +83,6 @@ jobs:
           repository: IntentProof/intentproof-sdk-go
           ref: main
           path: intentproof-sdk-go
-
-      - name: Prefer go SDK topic branch when signing golden not on main
-        run: |
-          if [[ -f intentproof-sdk-go/scripts/check-sdk-signing-fixtures-sync.sh ]]; then
-            exit 0
-          fi
-          git -C intentproof-sdk-go fetch origin phase3-sdk-signing-golden 2>/dev/null || exit 0
-          git -C intentproof-sdk-go checkout FETCH_HEAD
 
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b
         with:
