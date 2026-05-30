@@ -44,8 +44,6 @@ jobs:
         run: |
           set -euo pipefail
           {
-            echo "tools_ref=$(jq -r '.entries[] | select(.ref_kind=="oss_fuzz_tools_ref") | .sha' compatibility/pins.v1.json)"
-            echo "core_ref=$(jq -r '.entries[] | select(.ref_kind=="oss_fuzz_core_ref") | .sha' compatibility/pins.v1.json)"
             echo "sdk_node_ref=$(jq -r '.entries[] | select(.current==true) | .sdk_node_version.source_ref' compatibility/matrix.v1.json)"
             echo "sdk_python_ref=$(jq -r '.entries[] | select(.current==true) | .sdk_python_version.source_ref' compatibility/matrix.v1.json)"
             echo "sdk_go_ref=$(jq -r '.entries[] | select(.current==true) | .sdk_go_version.source_ref' compatibility/matrix.v1.json)"
@@ -54,7 +52,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-tools
-          ref: ${{ steps.tuple.outputs.tools_ref }}
+          ref: main
           path: intentproof-tools
 
       - name: Prefer sibling PR branch for tools
@@ -66,7 +64,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-core
-          ref: ${{ steps.tuple.outputs.core_ref }}
+          ref: main
           path: intentproof-core
 
       - name: Prefer sibling PR branch for core
@@ -97,7 +95,7 @@ jobs:
         with:
           go-version-file: intentproof-tools/go.mod
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: '3.11'
 

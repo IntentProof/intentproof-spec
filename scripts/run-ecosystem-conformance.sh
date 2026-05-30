@@ -24,16 +24,10 @@ if [[ ! -f "$PINS" || ! -f "$MATRIX" ]]; then
   exit 2
 fi
 
-read_pin() {
-  jq -r "$1" "$PINS"
-}
-
 read_matrix_current() {
   jq -r "$1" "$MATRIX" | head -n 1
 }
 
-TOOLS_REF="$(read_pin '.entries[] | select(.ref_kind=="oss_fuzz_tools_ref") | .sha')"
-CORE_REF="$(read_pin '.entries[] | select(.ref_kind=="oss_fuzz_core_ref") | .sha')"
 SDK_NODE_REF="$(read_matrix_current '.entries[] | select(.current==true) | .sdk_node_version.source_ref')"
 SDK_PYTHON_REF="$(read_matrix_current '.entries[] | select(.current==true) | .sdk_python_version.source_ref')"
 SDK_GO_REF="$(read_matrix_current '.entries[] | select(.current==true) | .sdk_go_version.source_ref')"
@@ -46,8 +40,16 @@ SDK_GO_DIR="${INTENTPROOF_SDK_GO_DIR:-}"
 
 missing=0
 for pair in \
-  "INTENTPROOF_TOOLS_DIR:${TOOLS_DIR}:${TOOLS_REF}" \
-  "INTENTPROOF_CORE_DIR:${CORE_DIR}:${CORE_REF}" \
+  "INTENTPROOF_TOOLS_DIR:${TOOLS_DIR}" \
+  "INTENTPROOF_CORE_DIR:${CORE_DIR}"; do
+  name="${pair%%:*}"
+  dir="${pair#*:}"
+  if [[ -z "$dir" || ! -d "$dir" ]]; then
+    echo "set ${name} to an intentproof-tools or intentproof-core checkout" >&2
+    missing=1
+  fi
+done
+for pair in \
   "INTENTPROOF_SDK_NODE_DIR:${SDK_NODE_DIR}:${SDK_NODE_REF}" \
   "INTENTPROOF_SDK_PYTHON_DIR:${SDK_PYTHON_DIR}:${SDK_PYTHON_REF}" \
   "INTENTPROOF_SDK_GO_DIR:${SDK_GO_DIR}:${SDK_GO_REF}"; do
@@ -105,7 +107,7 @@ echo "== python sdk signing golden =="
 echo "== go sdk signing golden =="
 (
   cd "$SDK_GO_DIR"
-  GOWORK=off go test ./intentproof -run TestSigningGoldenBytes -count=1
+  INTENTPROOF_SPEC_DIR="$ROOT" GOWORK=off go test ./intentproof -run TestSigningGoldenBytes -count=1
   INTENTPROOF_SPEC_DIR="$ROOT" bash ./scripts/check-sdk-signing-fixtures-sync.sh
 )
 
