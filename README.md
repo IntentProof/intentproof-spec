@@ -11,6 +11,7 @@ JSON Schemas, golden fixtures, and cross-language conformance runner.
 
 ## Scope
 
+- **v0.1 local contract:** [`docs/v0.1-local-contract.md`](docs/v0.1-local-contract.md)
 - JSON Schemas in `schema/`
 - Golden fixtures in `golden/` (including `golden/multi-agent/` delegation cases)
 - Cross-repository compatibility matrix in `compatibility/`
