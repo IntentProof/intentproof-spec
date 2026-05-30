@@ -7,6 +7,10 @@ tools, core services, SDKs, and dashboard were verified together.
 Cross-repository **pin discipline** (`SPEC_REF`, OSS-Fuzz SHAs) is documented in
 [`PINS.md`](PINS.md) and recorded in [`pins.v1.json`](pins.v1.json).
 
+Each matrix entry may include optional `tuple_id` and `current` fields. At most
+one row should set `"current": true` to mark the active HEAD tuple used for
+ecosystem drift checks.
+
 ## Updating The Matrix
 
 Update the matrix whenever any listed repository publishes a release that
@@ -37,6 +41,7 @@ make compatibility-matrix-verify
 ```
 
 The verifier validates `matrix.v1.json` against
-`matrix.v1.schema.json`. For rows with `release_status: "released"`, it also
+`matrix.v1.schema.json`. Each component `source_ref` must be a full 40-character
+git SHA. For rows with `release_status: "released"`, it also
 confirms that each referenced component version exists as a GitHub Release in
 the corresponding `IntentProof/*` repository.
