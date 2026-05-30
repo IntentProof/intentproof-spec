@@ -8,8 +8,7 @@ Pin discipline: [`PINS.md`](PINS.md).
 ## OSS tuple (today)
 
 The living product is **spec + tools + SDKs**, verified via golden bundles and
-conformance runners. Matrix rows may still list legacy repository names until
-schema v2 trims the tuple.
+conformance runners.
 
 At most one row sets `"current": true`. CI checks that row against
 `pins.v1.json` where configured.
@@ -21,8 +20,6 @@ At most one row sets `"current": true`. CI checks that row against
 3. Update `pins.v1.json` and the `"current": true` row in `matrix.v1.json`.
 4. Run `make compatibility-matrix-verify` and `make compatibility-pins-verify`.
 5. Regenerate the signed integrity manifest when inventoried files changed.
-
-Template: [`compatibility-tuple-follow-up.md`](compatibility-tuple-follow-up.md).
 
 ## Verify
 

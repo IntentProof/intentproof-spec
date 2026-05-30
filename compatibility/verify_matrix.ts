@@ -26,11 +26,9 @@ type MatrixEntry = {
   tuple_id?: string;
   spec_version: Component;
   tools_version: Component;
-  core_version: Component;
   sdk_node_version: Component;
   sdk_python_version: Component;
   sdk_go_version: Component;
-  dashboard_version: Component;
 };
 
 type Matrix = {
@@ -41,11 +39,9 @@ type Matrix = {
 export const MATRIX_COMPONENT_KEYS = [
   'spec_version',
   'tools_version',
-  'core_version',
   'sdk_node_version',
   'sdk_python_version',
   'sdk_go_version',
-  'dashboard_version',
 ] as const;
 
 function readJSON(filePath: string): unknown {

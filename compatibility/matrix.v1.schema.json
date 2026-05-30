@@ -27,11 +27,9 @@
       "required": [
         "spec_version",
         "tools_version",
-        "core_version",
         "sdk_node_version",
         "sdk_python_version",
         "sdk_go_version",
-        "dashboard_version",
         "verified_at",
         "ci_run",
         "release_status",
@@ -44,9 +42,6 @@
         "tools_version": {
           "$ref": "#/$defs/component"
         },
-        "core_version": {
-          "$ref": "#/$defs/component"
-        },
         "sdk_node_version": {
           "$ref": "#/$defs/component"
         },
@@ -54,9 +49,6 @@
           "$ref": "#/$defs/component"
         },
         "sdk_go_version": {
-          "$ref": "#/$defs/component"
-        },
-        "dashboard_version": {
           "$ref": "#/$defs/component"
         },
         "current": {
@@ -105,11 +97,9 @@
           "enum": [
             "intentproof-spec",
             "intentproof-tools",
-            "intentproof-core",
             "intentproof-sdk-node",
             "intentproof-sdk-python",
-            "intentproof-sdk-go",
-            "intentproof-dashboard"
+            "intentproof-sdk-go"
           ]
         },
         "version": {

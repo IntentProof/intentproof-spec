@@ -350,15 +350,6 @@ describe('compatibility pins', () => {
     );
     const toolsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-tools-'));
     fs.writeFileSync(path.join(toolsDir, 'SPEC_REF'), '0000000000000000000000000000000000000000\n');
-    fs.mkdirSync(path.join(toolsDir, 'contrib/oss-fuzz/intentproof'), { recursive: true });
-    fs.writeFileSync(
-      path.join(toolsDir, 'contrib/oss-fuzz/intentproof/pins.env'),
-      [
-        'TOOLS_REF=19ccaeb9bf61c2c8fc9eaeeb4dc5a8e5e7ea51ab',
-        'SPEC_REF=7f89ac7bca5d6cf5c924f2352656bf692910e36e',
-        'CORE_REF=b0a7a6f6b1bff674948d34251e70026556e06af0',
-      ].join('\n') + '\n',
-    );
     const result = verifyCompatibilityPins({ root: dir, toolsDir });
     expect(result.ok).toBe(false);
   });
