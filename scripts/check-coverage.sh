@@ -32,13 +32,24 @@ rules_file="$(mktemp)"
 trap 'rm -f "$rules_file"' EXIT
 printf '%s\n' "${CRITICAL_RULES[@]}" >"$rules_file"
 
+coverage_percent_display() {
+  awk -v c="$1" -v t="$2" 'BEGIN {
+    if (t == 0) { print "0.0"; exit }
+    printf "%.1f", int(1000 * c / t) / 10
+  }'
+}
+
+threshold_met() {
+  awk -v c="$1" -v t="$2" -v min="$3" \
+    'BEGIN { exit !(t > 0 && c * 100 >= t * min) }'
+}
+
 report_threshold() {
   local label="$1" covered="$2" total="$3" min="$4"
   local pct
-  pct="$(awk -v c="$covered" -v t="$total" 'BEGIN { printf "%.1f", 100 * c / t }')"
+  pct="$(coverage_percent_display "$covered" "$total")"
   echo "${label}: ${pct}% (${covered}/${total} statements), minimum ${min}%"
-  if awk -v c="$covered" -v t="$total" -v min="$min" \
-    'BEGIN { exit !(t > 0 && c * 100 >= t * min) }'; then
+  if threshold_met "$covered" "$total" "$min"; then
     echo "  PASS"
     return 0
   fi
