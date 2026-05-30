@@ -1,27 +1,27 @@
 {
   "schema": "intentproof.compatibility.pins.v1",
-  "generated_at": "2026-05-30T18:00:00Z",
-  "spec_ref": "660526e20f9bd7d0912570620b49826e2b834781",
+  "generated_at": "2026-05-30T20:10:00Z",
+  "spec_ref": "7f89ac7bca5d6cf5c924f2352656bf692910e36e",
   "entries": [
     {
       "repo": "intentproof-tools",
       "ref_kind": "spec_ref",
-      "sha": "660526e20f9bd7d0912570620b49826e2b834781"
+      "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
     },
     {
       "repo": "intentproof-core",
       "ref_kind": "spec_ref",
-      "sha": "660526e20f9bd7d0912570620b49826e2b834781"
+      "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
     },
     {
       "repo": "intentproof-tools",
       "ref_kind": "oss_fuzz_tools_ref",
-      "sha": "6eff6bfe1805b49513fab6197ceb4902473a47f9"
+      "sha": "e6d44a2968d10cd6803c5cb323938b6d11846770"
     },
     {
       "repo": "intentproof-tools",
       "ref_kind": "oss_fuzz_spec_ref",
-      "sha": "660526e20f9bd7d0912570620b49826e2b834781"
+      "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
     },
     {
       "repo": "intentproof-tools",

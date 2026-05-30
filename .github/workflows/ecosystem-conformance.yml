@@ -51,9 +51,6 @@ jobs:
           PR_SIBLING_BRANCH: ${{ github.head_ref }}
         run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "$PR_SIBLING_BRANCH"
 
-      - name: Prefer tools bundle profile branch when gate not on main
-        run: bash scripts/prefer-tools-bundle-profile-ref.sh intentproof-tools
-
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-core

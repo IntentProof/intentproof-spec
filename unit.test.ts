@@ -355,7 +355,7 @@ describe('compatibility pins', () => {
       path.join(toolsDir, 'contrib/oss-fuzz/intentproof/pins.env'),
       [
         'TOOLS_REF=19ccaeb9bf61c2c8fc9eaeeb4dc5a8e5e7ea51ab',
-        'SPEC_REF=660526e20f9bd7d0912570620b49826e2b834781',
+        'SPEC_REF=7f89ac7bca5d6cf5c924f2352656bf692910e36e',
         'CORE_REF=b0a7a6f6b1bff674948d34251e70026556e06af0',
       ].join('\n') + '\n',
     );
