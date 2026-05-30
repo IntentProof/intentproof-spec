@@ -1,12 +1,12 @@
 {
   "schema": "intentproof.compatibility.pins.v1",
-  "generated_at": "2026-05-30T20:10:00Z",
-  "spec_ref": "7f89ac7bca5d6cf5c924f2352656bf692910e36e",
+  "generated_at": "2026-05-30T23:08:36Z",
+  "spec_ref": "c636412a410f3ed157382d53aacc0a300a05eca8",
   "entries": [
     {
       "repo": "intentproof-tools",
       "ref_kind": "spec_ref",
-      "sha": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
+      "sha": "c636412a410f3ed157382d53aacc0a300a05eca8"
     }
   ]
 }

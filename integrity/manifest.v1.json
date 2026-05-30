@@ -1,8 +1,8 @@
 {
   "files": {
-    "compatibility/matrix.v1.json": "sha256:17dd47600141d8e18fb859446e340d5264dc42dc7877df0e6a0bf7577075228f",
+    "compatibility/matrix.v1.json": "sha256:7d845a2b19d8e3f885240b90e11bc21dccd6db2787ab5ffbe4ae2f712ecf412a",
     "compatibility/matrix.v1.schema.json": "sha256:c636c37cf5e2f015b621b4b49a1b8335a5c6047d0d606eee0793e0448473e450",
-    "compatibility/pins.v1.json": "sha256:cf0f8c246bb9e5d43deb51bf5f370d1ac158d9cdbd0496df11c2bffe4bc2fb73",
+    "compatibility/pins.v1.json": "sha256:08539500080a6a295ab883d6291608cb372994a6e30c68823c37fbeab3f316a8",
     "compatibility/pins.v1.schema.json": "sha256:1dd12220cca6c1320bf229462af260ef63ce5c36a4a2aa85319156e84aebbc36",
     "golden/agent-manifest_cases.jsonl": "sha256:cd6f44a0e97a522e8c93f8b1e55c9065a8b4f1764f35c2ad13e2a2fe9813afa2",
     "golden/attestation_cases.jsonl": "sha256:1736ff3e2660a88dfa704bf8a1be8cdaccd3be86583860426c026b295d8e5314",
