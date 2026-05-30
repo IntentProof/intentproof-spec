@@ -26,6 +26,9 @@ The signature timestamp is fixed at `1704067200` (2024-01-01T00:00:00Z).
 Replay environments use the signature timestamp as the verification clock for
 `stripe@demo` so bytes remain valid offline.
 
+Body bytes and SHA-256 fingerprints are covered by the spec integrity manifest
+and `conformance/stripe_demo_fixtures.ts` (adapter conformance checks).
+
 ## Provenance
 
 Generated for IntentProof golden demo Path 1 (`intentproof demo refund`).

@@ -4,6 +4,7 @@ import { runConformance } from './conformance/runner';
 import { runJcsConformanceTests } from './conformance/jcs_conformance';
 import { runAgentManifestTests } from './conformance/agent_manifest_test';
 import { runWebhookFindingTests } from './conformance/webhook_findings';
+import { runStripeDemoFixtureTests } from './conformance/stripe_demo_fixtures';
 import { verifyManifest } from './integrity/verify_manifest';
 import { verifyCompatibilityMatrix } from './compatibility/verify_matrix';
 import { validateReasons } from './semantics/validate_reasons';
@@ -33,6 +34,11 @@ describe('integration suite', () => {
       path.join(root, 'well-known-keys', 'webhook-signer-2026q2.pem'),
     );
     expect(result.ok).toBe(true);
+  });
+
+  it('stripe@demo golden fixtures pass adapter conformance checks', () => {
+    const result = runStripeDemoFixtureTests(path.join(root, 'golden', 'demo', 'stripe'));
+    expect(result.ok, result.messages.filter((m) => m.startsWith('[FAIL]')).join('\n')).toBe(true);
   });
 
   it('integrity manifest verifies', () => {
