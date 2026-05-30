@@ -29,6 +29,23 @@ SDK_NODE_DIR="${INTENTPROOF_SDK_NODE_DIR:-}"
 SDK_PYTHON_DIR="${INTENTPROOF_SDK_PYTHON_DIR:-}"
 SDK_GO_DIR="${INTENTPROOF_SDK_GO_DIR:-}"
 
+abs_sibling_dir() {
+  local dir="$1"
+  if [[ -z "$dir" ]]; then
+    return 1
+  fi
+  if [[ "$dir" != /* ]]; then
+    dir="${ROOT}/${dir}"
+  fi
+  cd "$dir" && pwd
+}
+
+TOOLS_DIR="$(abs_sibling_dir "$TOOLS_DIR" || true)"
+CORE_DIR="$(abs_sibling_dir "$CORE_DIR" || true)"
+SDK_NODE_DIR="$(abs_sibling_dir "$SDK_NODE_DIR" || true)"
+SDK_PYTHON_DIR="$(abs_sibling_dir "$SDK_PYTHON_DIR" || true)"
+SDK_GO_DIR="$(abs_sibling_dir "$SDK_GO_DIR" || true)"
+
 missing=0
 for name_dir in \
   "INTENTPROOF_TOOLS_DIR:${TOOLS_DIR}" \
