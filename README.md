@@ -28,9 +28,9 @@ Integrity manifest verification: [`integrity/README.md`](integrity/README.md).
 ## Support
 
 [GitHub Issues](https://github.com/IntentProof/intentproof-spec/issues) —
-see [CONTRIBUTING.md](CONTRIBUTING.md). Security:
-[SECURITY.md](SECURITY.md).
+see [CONTRIBUTING.md](CONTRIBUTING.md). Security reports:
+`security@intentproof.io` or a private GitHub Security Advisory.
 
 ## License
 
-MIT — see [LICENSE](LICENSE) and [TRADEMARK.md](TRADEMARK.md).
+MIT — see [LICENSE](LICENSE).
