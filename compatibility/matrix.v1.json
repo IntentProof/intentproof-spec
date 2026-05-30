@@ -1,6 +1,6 @@
 {
   "schema": "intentproof.compatibility.matrix.v1",
-  "generated_at": "2026-05-30T20:10:00Z",
+  "generated_at": "2026-05-30T23:08:36Z",
   "entries": [
     {
       "tuple_id": "oss-spec-tools-sdks-2026-05-30",
@@ -8,36 +8,36 @@
       "spec_version": {
         "repo": "intentproof-spec",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
+        "source_ref": "c636412a410f3ed157382d53aacc0a300a05eca8"
       },
       "tools_version": {
         "repo": "intentproof-tools",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "7f89ac7bca5d6cf5c924f2352656bf692910e36e"
+        "source_ref": "c636412a410f3ed157382d53aacc0a300a05eca8"
       },
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",
         "version": "v0.2.0",
-        "source_ref": "eeaeb4d3c75c9e4eb641e21283105b01e904a1e1"
+        "source_ref": "6ac1f110aab7a919a9736b46fec41390ce7b7714"
       },
       "sdk_python_version": {
         "repo": "intentproof-sdk-python",
         "version": "v0.2.0",
-        "source_ref": "b0bc49904f1b351fda83573c9ec88f7e05836390"
+        "source_ref": "025c773ee9532fd7d81c57e59ff3f2051a900a08"
       },
       "sdk_go_version": {
         "repo": "intentproof-sdk-go",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "d9f5de7ad7754dfebe10d920e5d6a814909a3ad7"
+        "source_ref": "9959d5a68b2fa14fff0314fef2ab329dfe39988f"
       },
-      "verified_at": "2026-05-30T20:10:00Z",
+      "verified_at": "2026-05-30T23:08:36Z",
       "ci_run": {
-        "system": "github-actions",
-        "id": "local",
+        "system": "local",
+        "id": "pins-alignment",
         "url": "https://github.com/IntentProof/intentproof-spec/actions"
       },
       "release_status": "source-verified",
-      "notes": "OSS tuple: spec, tools (via SPEC_REF), and signing SDKs. tools_version.source_ref is the spec commit pinned in intentproof-tools/SPEC_REF."
+      "notes": "Pins aligned to spec main after OSS tooling trim merges. tools_version.source_ref matches intentproof-tools/SPEC_REF."
     }
   ]
 }
