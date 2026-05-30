@@ -7,6 +7,7 @@
     "golden/bundle-manifest_cases.jsonl": "sha256:eba3cc9b023b2b57d3de1a834a1ad147a5649abdf676cfabf60a7eb9c5b906d2",
     "golden/certificate_cases.jsonl": "sha256:257ac610f7aa12c0fdf053893ca47499643d4cc25ed1dade81378124a7a3d901",
     "golden/claim_cases.jsonl": "sha256:b07865f370a28fbbf4e0769d560a684b4ba6f0b28bdaa16c95bbf6e85b6edfb0",
+    "golden/demo/stripe/refund-created.headers.json": "sha256:7bc1ebc9dc081a69cf22ce62e73075069b5a25bd8d69d642c822a536ea5025a0",
     "golden/execution_event_cases.jsonl": "sha256:5530c119160f75f7f69641c412f938155652631b629eba04d4eecd8e220eae26",
     "golden/finding_cases.jsonl": "sha256:ccd73ea8d6131dfb4cd5ddf8b0329f5619421461acf47e3bb9e61d12f3125b6f",
     "golden/flow_cases.jsonl": "sha256:b9841ea5411e24afd23ce412f8c85593ea0c9eddced732f0d67aa30437b49a26",

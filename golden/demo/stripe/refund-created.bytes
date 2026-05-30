@@ -1,0 +1,1 @@
+{"id":"evt_demo_refund_created_001","type":"refund.updated","created":1704067200,"data":{"object":{"id":"re_demo_golden_001","amount":2500,"currency":"usd","status":"succeeded"}}}
