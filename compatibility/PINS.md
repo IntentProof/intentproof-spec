@@ -63,10 +63,13 @@ Update pins in a **coordinated PR set** when any of the following change:
    new spec commit **in the same change set** when possible.
 3. Update **`compatibility/pins.v1.json`** in spec (same PR as manifest regen
    or immediate follow-up).
-4. Regenerate **`integrity/manifest.v1.json`** when inventoried spec files
+4. Refresh the **`"current": true`** row in **`compatibility/matrix.v1.json`**
+   (spec/tools/core SHAs must match the pins manifest — see
+   [`README.md`](README.md) Path A).
+5. Regenerate **`integrity/manifest.v1.json`** when inventoried spec files
    changed.
-5. Update **OSS-Fuzz `pins.env`** when fuzz surfaces or spec corpora changed.
-6. Run **`scripts/check-ecosystem-pins.sh`** from a workspace checkout before
+6. Update **OSS-Fuzz `pins.env`** when fuzz surfaces or spec corpora changed.
+7. Run **`scripts/check-ecosystem-pins.sh`** from a workspace checkout before
    pushing.
 
 ## Local verification
@@ -85,6 +88,7 @@ From CI, each consumer workflow checks out spec plus sibling repos at `main`
 
 ## Related documents
 
-- [`README.md`](README.md) — compatibility matrix update procedure
+- [`README.md`](README.md) — compatibility matrix update procedure (Path A/B)
+- [`compatibility-tuple-follow-up.md`](compatibility-tuple-follow-up.md) — spec follow-up PR checklist
 - [`../integrity/README.md`](../integrity/README.md) — manifest signing
 - [`../golden/fuzz-corpora/README.md`](../golden/fuzz-corpora/README.md) — fuzz corpus bump notes
