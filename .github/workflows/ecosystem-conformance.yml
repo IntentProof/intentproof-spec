@@ -51,6 +51,14 @@ jobs:
           PR_SIBLING_BRANCH: ${{ github.head_ref }}
         run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "$PR_SIBLING_BRANCH"
 
+      - name: Prefer tools bundle profile branch when gate not on main
+        run: |
+          if [[ -f intentproof-tools/scripts/check-bundle-verification-profile.sh ]]; then
+            exit 0
+          fi
+          git -C intentproof-tools fetch origin phase4-bundle-verification-profile 2>/dev/null || exit 0
+          git -C intentproof-tools checkout FETCH_HEAD
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           repository: IntentProof/intentproof-core
