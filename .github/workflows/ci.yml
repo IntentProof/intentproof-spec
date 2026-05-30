@@ -73,7 +73,9 @@ jobs:
 
       - name: Prefer sibling PR branch for tools
         if: github.event_name == 'pull_request'
-        run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "${{ github.head_ref }}"
+        env:
+          PR_SIBLING_BRANCH: ${{ github.head_ref }}
+        run: bash scripts/prefer-pr-sibling-ref.sh intentproof-tools "$PR_SIBLING_BRANCH"
 
       - name: Verify ecosystem pin alignment
         env:
