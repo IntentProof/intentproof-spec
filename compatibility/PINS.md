@@ -24,10 +24,12 @@ make compatibility-pins-verify
 | Repository | File | Purpose |
 |------------|------|---------|
 | `intentproof-tools` | `SPEC_REF` | Spec commit used in tools CI |
+| `intentproof-sdk-*` | `SOURCE_REF` | That SDK repo commit in the current tuple |
 | `intentproof-spec` | `compatibility/pins.v1.json` | Manifest of current SHAs |
 | `intentproof-spec` | `compatibility/matrix.v1.json` | Tuple history |
 
-`SPEC_REF` must be a full 40-character lowercase git SHA.
+`SPEC_REF` and `SOURCE_REF` must be full 40-character lowercase git SHAs.
+Each SDK runs `scripts/check-source-ref.sh` so `SOURCE_REF` matches `HEAD`.
 
 ## When to bump
 

@@ -35,6 +35,24 @@ jobs:
           ref: main
           path: intentproof-tools
 
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-sdk-node
+          ref: main
+          path: intentproof-sdk-node
+
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-sdk-python
+          ref: main
+          path: intentproof-sdk-python
+
+      - uses: actions/checkout@v6
+        with:
+          repository: IntentProof/intentproof-sdk-go
+          ref: main
+          path: intentproof-sdk-go
+
       - uses: actions/setup-node@v6
         with:
           node-version: '20'
@@ -42,9 +60,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify pins, matrix, and tools SPEC_REF
+      - name: Verify pins, matrix, tools SPEC_REF, and SDK SOURCE_REF
         env:
           INTENTPROOF_TOOLS_DIR: intentproof-tools
+          INTENTPROOF_SDK_NODE_DIR: intentproof-sdk-node
+          INTENTPROOF_SDK_PYTHON_DIR: intentproof-sdk-python
+          INTENTPROOF_SDK_GO_DIR: intentproof-sdk-go
         run: bash scripts/check-ecosystem-pins.sh
 
   counterparty-golden:

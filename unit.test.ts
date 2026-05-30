@@ -354,6 +354,37 @@ describe('compatibility pins', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('fails when sdk SOURCE_REF drifts from manifest', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-sdk-pins-'));
+    fs.mkdirSync(path.join(dir, 'compatibility'));
+    fs.mkdirSync(path.join(dir, 'integrity'));
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/pins.v1.schema.json'),
+      path.join(dir, 'compatibility/pins.v1.schema.json'),
+    );
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/pins.v1.json'),
+      path.join(dir, 'compatibility/pins.v1.json'),
+    );
+    fs.copyFileSync(
+      path.join(__dirname, 'compatibility/matrix.v1.json'),
+      path.join(dir, 'compatibility/matrix.v1.json'),
+    );
+    fs.writeFileSync(
+      path.join(dir, 'integrity', 'manifest.v1.json'),
+      JSON.stringify({
+        files: {
+          'compatibility/pins.v1.json': 'sha256:abc',
+          'compatibility/pins.v1.schema.json': 'sha256:abc',
+        },
+      }),
+    );
+    const sdkDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-sdk-node-'));
+    fs.writeFileSync(path.join(sdkDir, 'SOURCE_REF'), '0000000000000000000000000000000000000000\n');
+    const result = verifyCompatibilityPins({ root: dir, sdkNodeDir: sdkDir });
+    expect(result.ok).toBe(false);
+  });
+
   it('fails when current matrix row drifts from pins manifest', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ip-matrix-pins-'));
     fs.mkdirSync(path.join(dir, 'compatibility'));

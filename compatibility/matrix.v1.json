@@ -18,17 +18,17 @@
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",
         "version": "v0.2.0",
-        "source_ref": "6ac1f110aab7a919a9736b46fec41390ce7b7714"
+        "source_ref": "ebf1c7f7585f6a8ce4993100ce66c42517b8106d"
       },
       "sdk_python_version": {
         "repo": "intentproof-sdk-python",
         "version": "v0.2.0",
-        "source_ref": "025c773ee9532fd7d81c57e59ff3f2051a900a08"
+        "source_ref": "62dc0738053fdab8d8a9178e0c7f674369599632"
       },
       "sdk_go_version": {
         "repo": "intentproof-sdk-go",
         "version": "v0.0.0-source-verified.1",
-        "source_ref": "9959d5a68b2fa14fff0314fef2ab329dfe39988f"
+        "source_ref": "4ef01d2cc3d3dfc8f531d97b8cdae67adfe3a68e"
       },
       "verified_at": "2026-05-30T23:08:36Z",
       "ci_run": {
@@ -37,7 +37,7 @@
         "url": "https://github.com/IntentProof/intentproof-spec/actions"
       },
       "release_status": "source-verified",
-      "notes": "Pins aligned to spec main after OSS tooling trim merges. tools_version.source_ref matches intentproof-tools/SPEC_REF."
+      "notes": "OSS tuple: spec + tools (SPEC_REF) + SDKs (SOURCE_REF). tools_version.source_ref is the pinned spec commit."
     }
   ]
 }
