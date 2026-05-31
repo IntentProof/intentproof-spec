@@ -1,6 +1,6 @@
 {
   "schema": "intentproof.compatibility.matrix.v1",
-  "generated_at": "2026-05-30T23:08:36Z",
+  "generated_at": "2026-05-31T01:00:00Z",
   "entries": [
     {
       "tuple_id": "oss-spec-tools-sdks-2026-05-30",
@@ -12,7 +12,7 @@
       },
       "tools_version": {
         "repo": "intentproof-tools",
-        "version": "v0.0.0-source-verified.1",
+        "version": "v0.1.0",
         "source_ref": "c636412a410f3ed157382d53aacc0a300a05eca8"
       },
       "sdk_node_version": {
@@ -30,14 +30,14 @@
         "version": "v0.0.0-source-verified.1",
         "source_ref": "8647b3a85f65bbb2c95a7c5cc28afd1cf4253814"
       },
-      "verified_at": "2026-05-30T23:58:00Z",
+      "verified_at": "2026-05-31T01:00:00Z",
       "ci_run": {
         "system": "github-actions",
-        "id": "26698325160",
-        "url": "https://github.com/IntentProof/intentproof-spec/actions/runs/26698325160"
+        "id": "26698450682",
+        "url": "https://github.com/IntentProof/intentproof-tools/actions/runs/26698450682"
       },
       "release_status": "source-verified",
-      "notes": "Spec GitHub Release v1.0.0 published (tag cb30225). Normative pin c636412; tools SPEC_REF and SDK source_ref pins unchanged until those repos release."
+      "notes": "Tools GitHub Release v0.1.0 published (tag at 0e7c9cd). tools_version.source_ref remains normative spec pin c636412; pins.spec_ref and SDK source_ref pins unchanged."
     }
   ]
 }

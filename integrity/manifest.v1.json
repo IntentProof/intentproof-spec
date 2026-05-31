@@ -1,6 +1,6 @@
 {
   "files": {
-    "compatibility/matrix.v1.json": "sha256:25a30d8decf71dcbd3ed1a3067dca01175f56b78a5773dc6f719b4c70b87d253",
+    "compatibility/matrix.v1.json": "sha256:f1fe75f5521838da741e62d0d760ee5bc73a6c0f8ac47d4c33a96b8a53e839c7",
     "compatibility/matrix.v1.schema.json": "sha256:c636c37cf5e2f015b621b4b49a1b8335a5c6047d0d606eee0793e0448473e450",
     "compatibility/pins.v1.json": "sha256:f60c7cf42267c9ad5881ac5a525edda979485afcaa56ee1c091bc00e4e3fee5d",
     "compatibility/pins.v1.schema.json": "sha256:88236c64fab91a99bf0690ebe26091faa2c0ee91c0a2327d0815165637f5fcca",
