@@ -1,6 +1,6 @@
 {
   "schema": "intentproof.compatibility.pins.v1",
-  "generated_at": "2026-05-31T00:00:00Z",
+  "generated_at": "2026-05-31T02:00:00Z",
   "spec_ref": "c636412a410f3ed157382d53aacc0a300a05eca8",
   "entries": [
     {
@@ -11,17 +11,17 @@
     {
       "repo": "intentproof-sdk-node",
       "ref_kind": "source_ref",
-      "sha": "e3149e8441995bd282ac0cd9a4fca4d9bc7c2daf"
+      "sha": "11caebc9261899b21bd8f172dcd54f6230eddf57"
     },
     {
       "repo": "intentproof-sdk-python",
       "ref_kind": "source_ref",
-      "sha": "03bcef7f960949863d4664d29146d3cbc88b2caa"
+      "sha": "82cd1af205ef9e9bdd7909899657f93a0eee93da"
     },
     {
       "repo": "intentproof-sdk-go",
       "ref_kind": "source_ref",
-      "sha": "8647b3a85f65bbb2c95a7c5cc28afd1cf4253814"
+      "sha": "5cdbd625f2a0bd39f71d3e92b4e1041cf80c7cdc"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema": "intentproof.compatibility.matrix.v1",
-  "generated_at": "2026-05-31T01:00:00Z",
+  "generated_at": "2026-05-31T02:00:00Z",
   "entries": [
     {
       "tuple_id": "oss-spec-tools-sdks-2026-05-30",
@@ -17,27 +17,27 @@
       },
       "sdk_node_version": {
         "repo": "intentproof-sdk-node",
-        "version": "v0.2.0",
-        "source_ref": "e3149e8441995bd282ac0cd9a4fca4d9bc7c2daf"
+        "version": "v0.2.1",
+        "source_ref": "11caebc9261899b21bd8f172dcd54f6230eddf57"
       },
       "sdk_python_version": {
         "repo": "intentproof-sdk-python",
-        "version": "v0.2.0",
-        "source_ref": "03bcef7f960949863d4664d29146d3cbc88b2caa"
+        "version": "v0.2.1",
+        "source_ref": "82cd1af205ef9e9bdd7909899657f93a0eee93da"
       },
       "sdk_go_version": {
         "repo": "intentproof-sdk-go",
-        "version": "v0.0.0-source-verified.1",
-        "source_ref": "8647b3a85f65bbb2c95a7c5cc28afd1cf4253814"
+        "version": "v0.2.0",
+        "source_ref": "5cdbd625f2a0bd39f71d3e92b4e1041cf80c7cdc"
       },
-      "verified_at": "2026-05-31T01:00:00Z",
+      "verified_at": "2026-05-31T02:00:00Z",
       "ci_run": {
         "system": "github-actions",
-        "id": "26698450682",
-        "url": "https://github.com/IntentProof/intentproof-tools/actions/runs/26698450682"
+        "id": "26698720063",
+        "url": "https://github.com/IntentProof/intentproof-sdk-node/actions/runs/26698720063"
       },
       "release_status": "source-verified",
-      "notes": "Tools GitHub Release v0.1.0 published (tag at 0e7c9cd). tools_version.source_ref remains normative spec pin c636412; pins.spec_ref and SDK source_ref pins unchanged."
+      "notes": "SDK registry releases: node/python v0.2.1 (npm/PyPI), go v0.2.0 (module tag + GH release). source_ref pins are current main merge commits (includes in-tree version metadata sync). spec/tools pins unchanged."
     }
   ]
 }
