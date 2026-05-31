@@ -7,7 +7,7 @@
       "current": true,
       "spec_version": {
         "repo": "intentproof-spec",
-        "version": "v0.0.0-source-verified.1",
+        "version": "v1.0.0",
         "source_ref": "c636412a410f3ed157382d53aacc0a300a05eca8"
       },
       "tools_version": {
@@ -30,14 +30,14 @@
         "version": "v0.0.0-source-verified.1",
         "source_ref": "8647b3a85f65bbb2c95a7c5cc28afd1cf4253814"
       },
-      "verified_at": "2026-05-30T23:08:36Z",
+      "verified_at": "2026-05-30T23:58:00Z",
       "ci_run": {
-        "system": "local",
-        "id": "pins-alignment",
-        "url": "https://github.com/IntentProof/intentproof-spec/actions"
+        "system": "github-actions",
+        "id": "26698325160",
+        "url": "https://github.com/IntentProof/intentproof-spec/actions/runs/26698325160"
       },
       "release_status": "source-verified",
-      "notes": "OSS tuple: spec + tools (SPEC_REF) + SDKs (SOURCE_REF). tools_version.source_ref is the pinned spec commit."
+      "notes": "Spec GitHub Release v1.0.0 published (tag cb30225). Normative pin c636412; tools SPEC_REF and SDK source_ref pins unchanged until those repos release."
     }
   ]
 }
