@@ -11,7 +11,7 @@ jobs:
     name: "IntentProof CI: Build and Test"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v6
         with:
@@ -28,11 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # pins.spec_ref may be an ancestor of HEAD; shallow PR clones omit it.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: IntentProof/intentproof-tools
           ref: main
@@ -63,19 +63,19 @@ jobs:
           write('sdk_go_ref', sha('intentproof-sdk-go'));
           NODE
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: IntentProof/intentproof-sdk-node
           ref: ${{ steps.ecosystem_pins.outputs.sdk_node_ref }}
           path: intentproof-sdk-node
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: IntentProof/intentproof-sdk-python
           ref: ${{ steps.ecosystem_pins.outputs.sdk_python_ref }}
           path: intentproof-sdk-python
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: IntentProof/intentproof-sdk-go
           ref: ${{ steps.ecosystem_pins.outputs.sdk_go_ref }}
@@ -100,9 +100,9 @@ jobs:
     name: "IntentProof CI: Counterparty Golden"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: IntentProof/intentproof-tools
           ref: main
