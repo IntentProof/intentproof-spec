@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
 
@@ -81,7 +81,7 @@ jobs:
           ref: ${{ steps.ecosystem_pins.outputs.sdk_go_ref }}
           path: intentproof-sdk-go
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
 
@@ -108,7 +108,7 @@ jobs:
           ref: main
           path: intentproof-tools
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version-file: intentproof-tools/go.mod
 
